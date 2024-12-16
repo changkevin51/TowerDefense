@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tower Defense Game</title>
+    <link rel="stylesheet" href="index.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
+    <script src="path.js"></script>
+    <script src="enemy.js"></script>
+    <script src="turret.js"></script>
+    <script src="projectile.js"></script>
+    <script src="wave.js"></script>
+    <script src="index.js"></script>
+</head>
+<body>
+    <div id="wrapper">
+        <header id="header">Tower Defense Game</header>
+        <div id="container">
+            <div id="gameCanvas"></div>
+            <div id="gameMenu">
+                <div id="menuInfo">
+                    <div title="Money">
+                        <img src="images/money.png" alt="Money Icon">
+                        <h2 id="Money">100</h2>
+                    </div>
+                    <div title="Health">
+                        <img src="images/health.png" alt="Health Icon">
+                        <h2 id="Health">100</h2>
+                    </div>
+                    <div title="Wave">
+                        <img src="images/wave.png" alt="Wave Icon">
+                        <h2 id="Wave">0</h2>
+                    </div>
+                </div>  
+                <div id="menuButtons">
+                    <button class="hoverButton" onclick="buyTurret()" onmouseover="checkTurret()">Buy a Turret
+                        <span class="hoverText" id="buyTurretText">Price: $150</span>
+                    </button>
+                    <button class="hoverButton" onclick="upgradeTurret()" onmouseover="checkUpgrade()">Upgrade Turret
+                        <span class="hoverText" id="upgradeTurretText">Price: $200</span>
+                    </button>
+                    <button class="hoverButton" onclick="startWave()" onmouseover="checkWave()">Start Wave
+                        <span class="hoverText" id="waveText"></span>
+                    </button>
+                    <button class="hoverButton" onclick="toggleSpeed()" onmouseover="checkSpeed()">Toggle Speed
+                        <span class="hoverText" id="speedText">Current Speed: 1x</span>
+                    </button>
+                    <button class="hoverButton" onclick="changeTargetMode()" onmouseover="changeTargetMode()">Change Target Mode
+                        <span class="hoverText" id="targetModeText">Mode: 0 (Closest)</span>
+                    </button>
+                </div>            
+            </div>
+        </div>
+    </div>
+    <div id="healthPopup" class="popupMessage">+ x Health</div>
+    <footer id="footer">
+        A project by Kevin Chang
+    </footer>
+</body>
+</html>

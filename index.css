@@ -1,0 +1,158 @@
+#wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(to bottom, #6bff99, #36a370);
+    margin: 0;
+    padding: 0;
+}
+
+#container {
+    display: flex;
+    width: 1000px;
+    height: 700px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    margin-top: 50px;
+    justify-content: center;
+}
+
+#header {
+    text-align: center;
+    font-size: 36px;
+    font-weight: bold;
+    color: #fff;
+    background: linear-gradient(90deg, #007acc, #36a370);
+    padding: 20px;
+    border-radius: 10px 10px 0 0;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+#gameCanvas {
+    flex: 1;
+    border: 2px solid #333;
+    margin-right: 10px;
+}
+
+#gameMenu {
+    width: 250px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#menuInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#menuInfo img {
+    float: left;
+    width: 50px;
+}
+
+#menuInfo h2 {
+    float: left;
+    width: 125px;
+    font-size: 20px;
+    padding-left: 25px;
+}
+
+#menuButtons button {
+    float: left;
+    height: 75px;
+    width: 200px;
+    font-size: 20px;
+}
+
+#menuButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.hoverButton {
+    position: relative;
+    background-color: #007acc;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.hoverButton .hoverText {
+    position: absolute;
+    right: 220px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 200px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px;
+    font-size: 14px;
+    border-radius: 5px;
+    text-align: center;
+    visibility: hidden;
+    z-index: 1;
+}
+
+.hoverButton:hover .hoverText {
+    visibility: visible;
+}
+
+.hoverButton:hover {
+    background-color: #005f99;
+}
+
+.popupMessage {
+    position: absolute;
+    top: 26%;
+    right: 390px;
+    transform: translate(-50%, -50%);
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 18px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+    z-index: 100;
+}
+
+.popupMessage.show {
+    visibility: visible;
+    opacity: 0.7;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+#footer {
+    text-align: center;
+    font-size: 14px;
+    color: #ffffff;
+    background-color: #333333;
+    padding: 10px;
+    margin-top: 20px;
+    width: 100%;
+    position: relative;
+}
