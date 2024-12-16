@@ -1,21 +1,38 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d);
+    background-size: 400% 400%;
+    animation: gradientShift 10s ease infinite;
+}
+
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
 #wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    min-height: 100vh;
+    min-height: calc(100vh - 50px); /* Adjusted to account for footer height */
     width: 100%;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    background: none; /* Keep the wrapper transparent */
 }
 
-body {
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(to bottom, #6bff99, #36a370);
-    margin: 0;
-    padding: 0;
-}
+
 
 #container {
     display: flex;
@@ -152,7 +169,6 @@ body {
     color: #ffffff;
     background-color: #333333;
     padding: 10px;
-    margin-top: 20px;
     width: 100%;
-    position: relative;
+    position: relative; /* Ensure it stays within the flow of the document */
 }
