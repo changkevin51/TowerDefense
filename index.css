@@ -33,7 +33,6 @@ body {
 }
 
 
-
 #container {
     display: flex;
     width: 1000px;
@@ -158,6 +157,28 @@ body {
 }
 
 .popupMessage.show {
+    visibility: visible;
+    opacity: 0.7;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+#moneypopup {
+    position: absolute;
+    top: 20%;
+    right: 425px;
+    transform: translate(-50%, -50%);
+    background-color: #FFDF00;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 18px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+    z-index: 100;
+}
+
+#moneypopup.show {
     visibility: visible;
     opacity: 0.7;
     transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;

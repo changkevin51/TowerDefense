@@ -1,4 +1,3 @@
-
 var playing = true;
 
 var sangImg;
@@ -18,7 +17,7 @@ var levelOneNodes = [
  var enemies;
  var turrets;
  var projectiles;
- var money = 1000;
+ var money = 1100;
  var health = 100;
  var wave;
  var waveNumber = 1;
@@ -90,7 +89,7 @@ function filterArrays() {
             text = "Max Upgrade!";
         } else {
             text = "Price: $";
-            text += (turret.upgrades+ 2) * 100;
+            text += (turret.upgrades+ 2) * 110;
         }
     } else {
         text = "No Turret Selected!";
@@ -127,16 +126,17 @@ function filterArrays() {
         console.log("Wave not ready");
         return; 
     }
-
   
     wave.start();
     updateInfo();
     
     let healthIncrease = 2*wave.number;  
     health += healthIncrease;
+
+    money += 100;  
     updateInfo();
     
-   
+    showMoneyPopup(100);
     showHealthPopup(healthIncrease);
 }
 
@@ -149,6 +149,14 @@ function showHealthPopup(amount) {
     }, 1000); 
 }
 
+function showMoneyPopup(amount) {
+    const popup = document.getElementById('moneypopup');
+    popup.textContent = `+ ${amount} $`; 
+    popup.classList.add('show'); 
+    setTimeout(() => {
+        popup.classList.remove('show');
+    }, 1000); 
+}
 
 function checkCollision() {
     for(var enemy of enemies) {
@@ -158,7 +166,7 @@ function checkCollision() {
 
                 enemy.strength -= damage;
                 projectile.strength -= damage;
-                money += damage;
+                money += round(damage*0.7);
                 updateInfo();
                 filterArrays();
             }
@@ -212,11 +220,16 @@ function changeTargetMode() {
 }
 function toggleSpeed() {
     if (gameSpeed === 1) {
+        gameSpeed = 1.5;
+    } else if (gameSpeed === 1.5) {
         gameSpeed = 2;
     } else {
         gameSpeed = 1;
     }
-    frameRate(frameRateBase * gameSpeed);
+    wave.gameSpeed = gameSpeed; // Update speed dynamically
+    turrets.forEach(t => t.gameSpeed = gameSpeed);
+    projectiles.forEach(p => p.gameSpeed = gameSpeed);
+    enemies.forEach(enemy => enemy.updateGameSpeed(gameSpeed));
     updateSpeedText();
 }
 

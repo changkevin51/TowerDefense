@@ -9,17 +9,18 @@ class Turret {
         this.lookAngle = 0;
         this.placed = false;
         this.selected = false;
-        this.projectileSpeed = 6.5;
+        this.projectileSpeed = 6.5; // was 6.5
         this.projectileStrength = 1;
         this.shootCooldown = 30;
         this.shootingTimer = 30;
         this.targetMode = 0;
         this.upgrades = 0;
         this.maxUpgrades = 3;
+        this.gameSpeed = gameSpeed;
     }
 
     upgrade() {
-        let upgradePrice = (this.upgrades+ 2) * 100;
+        let upgradePrice = (this.upgrades+ 2) * 120;
         if(this.upgrades < this.maxUpgrades && money >= upgradePrice) {
             money -= upgradePrice;
             updateInfo();
@@ -118,20 +119,21 @@ class Turret {
     }
 
     shootProjectile() {
-        if (this.shootingTimer < this.shootCooldown) {
+        if (this.shootingTimer < this.shootCooldown / this.gameSpeed) { // Adjust cooldown
             this.shootingTimer += 1;
         } else {
             this.shootingTimer = 0;
-        
-        let x = this.x + (this.gunSize * cos(this.lookAngle));
-        let y = this.y + (this.gunSize * sin(this.lookAngle));
 
-        let xSpeed = this.projectileSpeed * cos(this.lookAngle);
-        let ySpeed = this.projectileSpeed * sin(this.lookAngle);
+            let x = this.x + (this.gunSize * cos(this.lookAngle));
+            let y = this.y + (this.gunSize * sin(this.lookAngle));
 
-        projectiles.push(new Projectile(x, y, xSpeed, ySpeed, this.projectileStrength));
-      }
+            let xSpeed = this.projectileSpeed * cos(this.lookAngle) * this.gameSpeed; // Adjust speed
+            let ySpeed = this.projectileSpeed * sin(this.lookAngle) * this.gameSpeed;
+
+            projectiles.push(new Projectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed));
+        }
     }
+    
 
     getEnemyClosestToTurret() {
         var closestDistance = Infinity;

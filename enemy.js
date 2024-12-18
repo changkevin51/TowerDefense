@@ -11,6 +11,7 @@ class Enemy {
         this.targetNode = 0;
         this.finished = false;
         this.maxHealth = maxHealth; // Store the maximum health
+        this.gameSpeed = gameSpeed;
     }
 
     draw() {
@@ -38,8 +39,8 @@ class Enemy {
     }
     
     move() {
-        this.x += this.xSpeed;
-        this.y += this.ySpeed;
+        this.x += this.xSpeed * this.gameSpeed; // Scale xSpeed
+        this.y += this.ySpeed * this.gameSpeed; // Scale ySpeed
     }
 
     findTarget() {
@@ -89,6 +90,10 @@ class Enemy {
         let lastNode = this.nodes[i - 1];
         distance += dist(this.x, this.y, lastNode.x, this.y);
         return distance;
+    }
+
+    updateGameSpeed(newGameSpeed) {
+        this.gameSpeed = newGameSpeed;
     }
 
     update() {

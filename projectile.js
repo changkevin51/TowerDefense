@@ -6,6 +6,7 @@ class Projectile {
         this.ySpeed = ySpeed;
         this.strength = strength;
         this.size = 10;
+        this.gameSpeed = gameSpeed;
     }
 
     draw() {
@@ -14,8 +15,8 @@ class Projectile {
     }
 
     move() {
-        this.x += this.xSpeed;
-        this.y += this.ySpeed;
+        this.x += this.xSpeed * this.gameSpeed; 
+        this.y += this.ySpeed * this.gameSpeed; 
     }
 
     update() {
