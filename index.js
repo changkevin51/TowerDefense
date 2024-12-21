@@ -22,6 +22,8 @@ var levelOneNodes = [
  var wave;
  var waveNumber = 1;
  var gameSpeed = 1; 
+ var isCooldown = false;
+ let isWaveCooldown = false;
  var frameRateBase = 60; 
  var turretPrice = 150; 
  const turretPriceIncreaseFactor = 1.5; 
@@ -126,6 +128,10 @@ function filterArrays() {
         console.log("Wave not ready");
         return; 
     }
+    isWaveCooldown = true; // Disable the button
+    setTimeout(() => {
+        isWaveCooldown = false; // Re-enable the button after 1.5 seconds
+    }, 1500);
   
     wave.start();
     updateInfo();
@@ -218,7 +224,16 @@ function changeTargetMode() {
         checkTargetMode();  
     }
 }
+
 function toggleSpeed() {
+    if (isCooldown || isWaveCooldown) return; // Exit if cooldown is active
+
+    isCooldown = true; // Activate button click cooldown
+    setTimeout(() => {
+        isCooldown = false; // Deactivate cooldown after 0.7 seconds
+    }, 800);
+
+    // Update game speed
     if (gameSpeed === 1) {
         gameSpeed = 1.5;
     } else if (gameSpeed === 1.5) {
@@ -226,10 +241,13 @@ function toggleSpeed() {
     } else {
         gameSpeed = 1;
     }
-    wave.gameSpeed = gameSpeed; // Update speed dynamically
+
+    // Apply the new game speed dynamically
+    wave.gameSpeed = gameSpeed;
     turrets.forEach(t => t.gameSpeed = gameSpeed);
     projectiles.forEach(p => p.gameSpeed = gameSpeed);
     enemies.forEach(enemy => enemy.updateGameSpeed(gameSpeed));
+
     updateSpeedText();
 }
 
