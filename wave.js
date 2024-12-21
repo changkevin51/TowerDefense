@@ -11,14 +11,14 @@ class Wave {
         this.currentMember = 0;
         this.enemyStrength = 1;
         this.enemyMaxHealth = 8;
-        this.healthIncreasePerWave = 1.5;
+        this.healthIncreasePerWave = 1.2;
         this.gameSpeed = gameSpeed;
     }
 
     updateDifficulty() {
-        this.groupSize = Math.ceil(this.number / 4) + 1;
+        this.groupSize = Math.ceil(this.number / 5);
         // this.enemyMaxHealth = Math.round((5 + (this.number - 1) * this.healthIncreasePerWave) / (this.groupSize * 0.75))+3;
-        this.enemyMaxHealth = Math.round((5 + Math.pow(this.number, 1.4) * this.healthIncreasePerWave) / (this.groupSize * 0.75)) + 3;
+        this.enemyMaxHealth = Math.round((Math.pow(this.number, 1.55) * this.healthIncreasePerWave) / (this.groupSize * 0.7)) + 2;
 
     }
 

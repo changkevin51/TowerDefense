@@ -89,7 +89,7 @@ function filterArrays() {
             text = "Max Upgrade!";
         } else {
             text = "Price: $";
-            text += (turret.upgrades+ 2) * 110;
+            text += (turret.upgrades+ 2) * 120;
         }
     } else {
         text = "No Turret Selected!";
@@ -166,7 +166,7 @@ function checkCollision() {
 
                 enemy.strength -= damage;
                 projectile.strength -= damage;
-                money += round(damage*0.7);
+                money += round(damage*0.5);
                 updateInfo();
                 filterArrays();
             }
