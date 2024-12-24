@@ -9,8 +9,9 @@ var levelOneNodes = [
     {x: 400, y: 500},
     {x: 400, y: 200},
     {x: 200, y: 200},
-    {x: 200, y: 100},
-    {x: 800, y: 100}
+    {x: 200, y: 80},
+    {x: 600, y: 80},
+    {x: 600, y: 800}
 ];
 
  var path;
@@ -135,15 +136,18 @@ function filterArrays() {
   
     wave.start();
     updateInfo();
-    
+    waveNumber += 1
+    showMoneyPopup(100);
     let healthIncrease = 2*wave.number;  
     health += healthIncrease;
-
-    money += 100;  
-    updateInfo();
-    
-    showMoneyPopup(100);
     showHealthPopup(healthIncrease);
+    money += 100;  
+    
+    
+
+    if (wave.number % 8 === 0) {
+        showBossWarning();
+      }
 }
 
 function showHealthPopup(amount) {
@@ -164,6 +168,15 @@ function showMoneyPopup(amount) {
     }, 1000); 
 }
 
+
+function showBossWarning(amount) {
+    const popup = document.getElementById('bossWarningPopup');
+    popup.textContent = 'Boss Wave Incoming!'; 
+    popup.classList.add('show'); 
+    setTimeout(() => {
+        popup.classList.remove('show');
+    }, 1000); 
+}
 function checkCollision() {
     for(var enemy of enemies) {
         for(var projectile of projectiles) {
