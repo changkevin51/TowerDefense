@@ -129,9 +129,9 @@ function filterArrays() {
         console.log("Wave not ready");
         return; 
     }
-    isWaveCooldown = true; // Disable the button
+    isWaveCooldown = true; 
     setTimeout(() => {
-        isWaveCooldown = false; // Re-enable the button after 1.5 seconds
+        isWaveCooldown = false;
     }, 1500);
   
     wave.start();

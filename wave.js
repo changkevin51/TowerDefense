@@ -48,8 +48,11 @@ class Wave {
         if (this.timeToSpawn(this.currentGroup, this.currentMember)) {
             if (this.isBossWave) {
                 // Boss wave logic
+
                 const bossCount = Math.floor(this.number / 8);
-                const bossHealthMultiplier = bossCount === 1 ? this.number / 2 : this.number / 3.5;
+                const bossHealthMultiplier = bossCount === 1 
+                ? this.number / 2 
+                : this.number / (3.5 + bossCount * 0.2);
 
                 if (this.currentMember < bossCount) {
                     enemies.push(new Enemy(this.enemyMaxHealth * bossHealthMultiplier, 3, levelOneNodes, this.enemyMaxHealth * bossHealthMultiplier));

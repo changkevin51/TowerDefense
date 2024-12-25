@@ -142,8 +142,8 @@ body {
 
 #healthPopup {
     position: absolute;
-    top: 31%;
-    right: 390px;
+    top: 39%;
+    right: 10%;
     transform: translate(-50%, -50%);
     background-color: red;
     color: white;
@@ -154,6 +154,7 @@ body {
     visibility: hidden;
     transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
     z-index: 100;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 #healthPopup.show {
@@ -164,8 +165,8 @@ body {
 
 #moneypopup {
     position: absolute;
-    top: 23%;
-    right: 425px;
+    top: 29%;
+    right: 13%;
     transform: translate(-50%, -50%);
     background-color: #FFDF00;
     color: white;
@@ -176,6 +177,7 @@ body {
     visibility: hidden;
     transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
     z-index: 100;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 #moneypopup.show {
@@ -186,8 +188,8 @@ body {
 
 #bossWarningPopup {
     position: absolute;
-    top: 39%;
-    right: 300px;
+    top: 49%;
+    right: 2%;
     transform: translate(-50%, -50%);
     background-color: rgb(29, 13, 122);
     color: white;
@@ -198,6 +200,7 @@ body {
     visibility: hidden;
     transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
     z-index: 100;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 #bossWarningPopup.show {

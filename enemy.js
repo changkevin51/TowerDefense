@@ -68,7 +68,7 @@ class Enemy {
 
             if (this.targetNode === this.nodes.length - 1) {
                 this.finished = true;
-                health -= this.strength;
+                health -= round(this.strength);
                 if (health <= 0) {
                     health = 0;
                     playing = false;
