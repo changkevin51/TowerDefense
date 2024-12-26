@@ -40,14 +40,15 @@ class Wave {
     timeToSpawn(group, member) {
         const groupDuration = this.memberDelay * (this.groupSize - 1);
         const groupStart = group * (this.groupDelay + groupDuration);
-        const memberStart = member * this.memberDelay; // Adjusted for speed
-        return Math.abs(this.timer - (groupStart + memberStart)) < 1; // Frame-based tolerance
+        const memberStart = member * this.memberDelay;
+        const spawnTime = groupStart + memberStart;
+    
+        return this.timer >= spawnTime && this.timer < spawnTime + this.gameSpeed;
     }
 
     spawnEnemies() {
         if (this.timeToSpawn(this.currentGroup, this.currentMember)) {
             if (this.isBossWave) {
-                // Boss wave logic
 
                 const bossCount = Math.floor(this.number / 8);
                 const bossHealthMultiplier = bossCount === 1 
@@ -58,10 +59,10 @@ class Wave {
                     enemies.push(new Enemy(this.enemyMaxHealth * bossHealthMultiplier, 3, levelOneNodes, this.enemyMaxHealth * bossHealthMultiplier));
                     this.currentMember++;
                 } else {
-                    this.active = false; // End boss wave after all bosses are spawned
+                    this.active = false; 
                 }
             } else {
-                // Normal enemy spawn logic
+               
                 enemies.push(new Enemy(this.enemyMaxHealth, 3, levelOneNodes, this.enemyMaxHealth));
                 this.currentMember++;
                 if (this.currentMember >= this.groupSize) {
@@ -79,9 +80,9 @@ class Wave {
 
     update() {
         if (this.active) {
-            this.gameSpeed = gameSpeed; // Synchronize local gameSpeed with global
+            this.gameSpeed = gameSpeed; 
             this.spawnEnemies();
-            this.timer += 1 * this.gameSpeed; // Increment based on actual gameSpeed
+            this.timer += 1 * this.gameSpeed; 
         }
     }
 }

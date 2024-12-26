@@ -10,25 +10,22 @@ class Enemy {
         this.size = 30;
         this.targetNode = 0;
         this.finished = false;
-        this.maxHealth = maxHealth; // Store the maximum health
+        this.maxHealth = maxHealth; 
         this.gameSpeed = gameSpeed;
     }
 
     draw() {
-        // Draw enemy body
         fill('red');
         ellipse(this.x, this.y, this.size, this.size);
         
-        // Draw health bar background
-        fill(255, 0, 0); // Red for empty health
+        fill(255, 0, 0); 
         rect(this.x - 15, this.y - 25, 30, 5); 
         
-        // Draw health bar foreground
-        fill(0, 255, 0); // Green for remaining health
+
+        fill(0, 255, 0); 
         let healthWidth = (this.strength / this.maxHealth) * 30;
         rect(this.x - 15, this.y - 25, healthWidth, 5);
 
-        // Display remaining health as text
         fill('black');
         textAlign(CENTER, CENTER);
         textSize(15);
@@ -37,16 +34,15 @@ class Enemy {
     }
     
     move() {
-        this.x += this.xSpeed * this.gameSpeed; // Scale xSpeed
-        this.y += this.ySpeed * this.gameSpeed; // Scale ySpeed
+        this.x += this.xSpeed * this.gameSpeed;
+        this.y += this.ySpeed * this.gameSpeed; 
     }
 
     findTarget() {
         if (this.xSpeed === 0 && this.ySpeed === 0) {
-            // Find the next target node
             this.targetNode++;
             if (this.targetNode >= this.nodes.length) {
-                return; // Prevent out-of-bounds access
+                return; 
             }
             let target = this.nodes[this.targetNode];
             let xDifference = target.x - this.x;
