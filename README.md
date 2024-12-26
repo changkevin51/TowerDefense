@@ -1,32 +1,36 @@
-# Tower Defense Game
+# Tower Defense Game2
 
-A simple tower defense game made with JavaScript and p5.js. Players defend their base by placing turrets, earning money, and surviving waves of enemies.
+NOTE: THIS GAME IS DESIGNED TO BE HARD. STRATEGY IS REQUIRED TO GET THROUGH FURTHER WAVES. 
+
+A fun tower defense game made with JavaScript and p5.js. Players defend their base by placing turrets, earning money, and surviving waves of enemies.
+
+Personal Record: Wave 40
 
 ---
 
 ## Features
 - **Core Mechanics**:
-  - Place turrets to stop enemies following a predefined path.
-  - Upgrade turrets for better efficiency.
+  - Place turrets to stop enemies from advancing.
+  - Upgrade turrets for better efficiency/damage.
   - Earn money by damaging enemies and surviving waves.
-  - Adjust game speed between normal (1x) and fast (2x).
+  - **NEW**: Adjust game speed between normal (1x), medium (1.5x) and fast (2x).
 - **UI Integration**:
   - Display stats like money, health, wave status, and turret prices.
   - Buttons for buying and upgrading turrets.
-  - Health and wave indicators for gameplay feedback.
-- **Dynamic Gameplay**:
+  - Health and wave indicators for enemies and bosses.
+- **Gameplay**:
   - Enemies grow stronger with each wave.
   - Collision system between projectiles and enemies.
-  - Scaling turret prices to increase difficulty.
+  - Turret prices increase as you progress!
 
 ---
 
 ## How to Play
 1. **Start the Game**:
-   - You begin with $1000, 100 health, and Wave 1.
+   - You begin with $1000, 100 health, and a free turret :)
 2. **Place Turrets**:
    - Click "Buy Turret" to purchase a turret (requires money).
-   - Place the turret on valid spots in the game area.
+   - Place the turret on valid spots in the game area (Think about strategic placements).
 3. **Upgrade Turrets**:
    - Select a turret and click "Upgrade" to enhance its stats.
 4. **Switch Target Modes**:
@@ -37,27 +41,17 @@ A simple tower defense game made with JavaScript and p5.js. Players defend their
 5. **Start Waves**:
    - Click "Start Wave" when the current wave is ready.
    - Defeat enemies before they deplete your health.
+   - **NEW**: Waves will auto start by default when "Start Wave" is clicked. You can disable this by clicking the button again while wave is active.
 6. **Adjust Game Speed**:
-   - Use the "Toggle Speed" button to switch between 1x and 2x speed.
+   - Use the "Toggle Speed" button to switch between 1x, 1.5x, and 2x speed.
 
 ---
 
 ## Key Stats
-- **Money**: Used to buy and upgrade turrets.
-- **Health**: Starts at 100. Game over when health reaches 0.
+- **Money**: Starts at 1000 and increases by 100 every wave. Used to buy and upgrade turrets.
+- **Health**: Starts at 100 and increases by 20 every wave. The game is over when health reaches 0.
 - **Turret Prices**: Starts at $150, increases with each turret bought.
 - **Wave Number**: Tracks your progress through enemy waves.
-
----
-
-## Game Structure
-- **Path**: Enemies follow a predefined path defined by nodes.
-- **Turrets**:
-  - Can be placed, upgraded, and set to different targeting modes.
-  - Fire projectiles to damage enemies.
-- **Projectiles**: Interact with enemies using collision detection.
-- **Enemies**: Spawn in waves, increasing in strength and number.
-- **Wave System**: Controls enemy spawning and difficulty scaling.
 
 ---
 
@@ -87,8 +81,10 @@ start index.html
 or use Live Preview extension in VS Code
 
 ## Future ideas
+- ✅ <del>Boss waves 
+- ✅ <del>Auto start waves
 - Add more turret types with unique abilities.
-- Introduce different enemy types and bosses.
+- Introduce different enemy types.
 - Implement animations and sound effects.
 - Add maps and levels
 - Increase max upgrade level
