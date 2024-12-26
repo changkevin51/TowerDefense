@@ -34,8 +34,6 @@ class Enemy {
         textSize(15);
         text(floor(this.strength), this.x, this.y);
 
-        // Log health for debugging
-        console.log(`Enemy health: ${this.strength}`);
     }
     
     move() {

@@ -104,6 +104,12 @@ body {
     gap: 15px;
 }
 
+.autoStartToggle {
+    display: block; /* Makes the span a block-level element */
+    font-size: smaller;
+    opacity: 0.7;
+}
+
 .hoverButton {
     position: relative;
     background-color: #007acc;

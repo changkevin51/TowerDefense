@@ -8,8 +8,8 @@ var levelOneNodes = [
     {x: 100, y: 500},
     {x: 400, y: 500},
     {x: 400, y: 200},
-    {x: 200, y: 200},
-    {x: 200, y: 80},
+    {x: 220, y: 200},
+    {x: 220, y: 80},
     {x: 600, y: 80},
     {x: 600, y: 800}
 ];
@@ -28,6 +28,8 @@ var levelOneNodes = [
  var frameRateBase = 60; 
  var turretPrice = 150; 
  const turretPriceIncreaseFactor = 1.5; 
+ var autoStart = false;
+
 
  function setup() {
     createCanvas(700, 700).parent("gameCanvas");
@@ -110,6 +112,28 @@ function filterArrays() {
     document.getElementById("waveText").textContent = text;
  }
 
+ function updateWaveButtonText() {
+    // Update Auto Start text
+    const autoStartText = document.querySelector('.autoStartToggle');
+    autoStartText.textContent = `Auto Start Toggle: ${autoStart ? "True" : "False"}`;
+
+    // Update Wave status text
+    const waveButton = document.querySelector('#waveText');
+    waveButton.textContent = wave.active ? "Wave Active" : "Wave Ready";
+}
+
+
+function toggleAutoStart() {
+    autoStart = !autoStart;
+    updateWaveButtonText();
+
+    // Immediately start the wave if autoStart is enabled and conditions allow
+    if (autoStart && !wave.active && enemies.length === 0 && !isWaveCooldown) {
+        startWave();
+    }
+}
+
+
  function drawGameOver() {
     background(0, 0, 0, 20);
     fill(255);
@@ -142,13 +166,31 @@ function filterArrays() {
     health += healthIncrease;
     showHealthPopup(healthIncrease);
     money += 100;  
-    
+
+    console.log(`AutoStart: ${autoStart}, Wave Active: ${wave.active}, Enemies Remaining: ${enemies.length}, Cooldown: ${isWaveCooldown}`);
+
     
 
     if (wave.number % 8 === 0) {
         showBossWarning();
-      }
+    }
+
+    if (autoStart) {
+        scheduleNextWaveCheck();
+    }
 }
+
+function scheduleNextWaveCheck() {
+    const checkNextWave = () => {
+        if (autoStart && !wave.active && enemies.length === 0 && !isWaveCooldown) {
+            startWave(); // Start the next wave automatically
+        } else if (autoStart) {
+            setTimeout(checkNextWave, 1000); // Check every second if the next wave can be started
+        }
+    };
+    setTimeout(checkNextWave, 3000); // Initial delay for the auto-start check
+}
+
 
 function showHealthPopup(amount) {
     const popup = document.getElementById('healthPopup');
