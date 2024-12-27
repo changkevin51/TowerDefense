@@ -29,6 +29,8 @@ var levelOneNodes = [
  var turretPrice = 150; 
  const turretPriceIncreaseFactor = 1.5; 
  var autoStart = false;
+ var showStartArrow = true; 
+
 
 
  function setup() {
@@ -45,30 +47,39 @@ var levelOneNodes = [
 }
 
 function draw() {
-   if(playing) {
-    background(0, 200, 0); 
-    image(sandImg, 0, 0, 700, 700); 
-    path.draw();
+    if (playing) {
+        background(0, 200, 0);
+        image(sandImg, 0, 0, 700, 700);
+        path.draw();
 
-    for(var enemy of enemies) {
-        enemy.update();
+        // Draw green arrow at the start of the path ONLY ONCE at the beginning
+        if (showStartArrow) {
+            path.drawStartArrow();
+        }
+
+        for (var enemy of enemies) {
+            enemy.update();
+        }
+
+        for (var turret of turrets) {
+            turret.update();
+        }
+
+        for (var projectile of projectiles) {
+            projectile.update();
+        }
+
+        filterArrays();
+        checkCollision();
+        wave.update();
+
+        // Check if the game has started (e.g., first enemy spawned or wave started)
+        if (enemies.length > 0 || wave.active) {
+            showStartArrow = false; // Hide the arrow once the game begins
+        }
+    } else {
+        drawGameOver();
     }
-
-    for(var turret of turrets) {
-        turret.update();
-    }
-
-    for(var projectile of projectiles) {
-        projectile.update();
-    }
-
-    filterArrays();
-    checkCollision();
-    wave.update();
-}else{
-    drawGameOver();
-}
-
 }
 
 function filterArrays() {
@@ -113,11 +124,9 @@ function filterArrays() {
  }
 
  function updateWaveButtonText() {
-    // Update Auto Start text
     const autoStartText = document.querySelector('.autoStartToggle');
     autoStartText.textContent = `Auto Start Toggle: ${autoStart ? "True" : "False"}`;
 
-    // Update Wave status text
     const waveButton = document.querySelector('#waveText');
     waveButton.textContent = wave.active ? "Wave Active" : "Wave Ready";
 }
@@ -127,7 +136,6 @@ function toggleAutoStart() {
     autoStart = !autoStart;
     updateWaveButtonText();
 
-    // Immediately start the wave if autoStart is enabled and conditions allow
     if (autoStart && !wave.active && enemies.length === 0 && !isWaveCooldown) {
         startWave();
     }
@@ -183,12 +191,12 @@ function toggleAutoStart() {
 function scheduleNextWaveCheck() {
     const checkNextWave = () => {
         if (autoStart && !wave.active && enemies.length === 0 && !isWaveCooldown) {
-            startWave(); // Start the next wave automatically
+            startWave(); 
         } else if (autoStart) {
-            setTimeout(checkNextWave, 1000); // Check every second if the next wave can be started
+            setTimeout(checkNextWave, 1000); 
         }
     };
-    setTimeout(checkNextWave, 3000); // Initial delay for the auto-start check
+    setTimeout(checkNextWave, 3000); 
 }
 
 
@@ -285,8 +293,8 @@ function toggleSpeed() {
 
     isCooldown = true; // Activate button click cooldown
     setTimeout(() => {
-        isCooldown = false; // Deactivate cooldown after 0.7 seconds
-    }, 800);
+        isCooldown = false; 
+    }, 50);
 
     // Update game speed
     if (gameSpeed === 1) {

@@ -53,7 +53,7 @@ class Wave {
                 const bossCount = Math.floor(this.number / 8);
                 const bossHealthMultiplier = bossCount === 1 
                 ? this.number / 2 
-                : this.number / (3.5 + bossCount * 0.2);
+                : this.number / (2.6 + bossCount * 0.8);
 
                 if (this.currentMember < bossCount) {
                     enemies.push(new Enemy(this.enemyMaxHealth * bossHealthMultiplier, 3, levelOneNodes, this.enemyMaxHealth * bossHealthMultiplier));

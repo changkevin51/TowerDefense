@@ -3,6 +3,7 @@ class Path {
         this.nodes = nodes;
         this.size = 50;
         this.color = '#4B2E2E';
+        this.arrowDrawn = false;
         this.createRoads();
     }
 
@@ -21,7 +22,36 @@ class Path {
                 corner.startAngle, corner.endAngle
             );
         }
+
+        if (!this.arrowDrawn) {
+            this.drawStartArrow();
+            this.arrowDrawn = true;
+        }
     }
+
+    drawStartArrow() {
+        let startNode = this.nodes[0];
+        let endNode = this.nodes[1];
+    
+        push();
+        stroke('green');
+        strokeWeight(8);
+        fill('green');
+    
+        let midX = (startNode.x + endNode.x) / 2;
+        let midY = (startNode.y + endNode.y) / 2;
+    
+        let angle = atan2(endNode.y - startNode.y, endNode.x - startNode.x);
+        translate(midX, midY);
+        rotate(angle);
+    
+        line(-20, 0, 40, 0);
+        line(40, 0, 25, -15);
+        line(40, 0, 25, 15);
+    
+        pop();
+    }
+    
 
     createRoads() {
         this.roads = [];
