@@ -9,7 +9,7 @@ class Turret {
         this.lookAngle = 0;
         this.placed = false;
         this.selected = false;
-        this.projectileSpeed = 6.5; // was 6.5
+        this.projectileSpeed = 6.5; 
         this.projectileStrength = 1;
         this.shootCooldown = 30;
         this.shootingTimer = 30;

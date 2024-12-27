@@ -19,7 +19,7 @@ class Wave {
     updateDifficulty() {
         this.groupSize = Math.ceil(this.number / 5);
         this.enemyMaxHealth = Math.round((Math.pow(this.number, 1.53) * this.healthIncreasePerWave) / (this.groupSize * 0.7));
-    }
+    }   // ENEMY HEALTH FORMULA
 
     start() {
         if (!this.active && enemies.length === 0) {
@@ -53,7 +53,7 @@ class Wave {
                 const bossCount = Math.floor(this.number / 8);
                 const bossHealthMultiplier = bossCount === 1 
                 ? this.number / 2 
-                : this.number / (2.6 + bossCount * 0.8);
+                : this.number / (2.3 + bossCount*1.1); // BOSS HEALTH FORMULA
 
                 if (this.currentMember < bossCount) {
                     enemies.push(new Enemy(this.enemyMaxHealth * bossHealthMultiplier, 3, levelOneNodes, this.enemyMaxHealth * bossHealthMultiplier));
