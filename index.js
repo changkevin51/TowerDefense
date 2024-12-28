@@ -166,14 +166,16 @@ function toggleAutoStart() {
         isWaveCooldown = false;
     }, 1500);
   
-    wave.start();
-    updateInfo();
+
     waveNumber += 1
     showMoneyPopup(150);
     let healthIncrease = 2*wave.number;  
     health += healthIncrease;
     showHealthPopup(healthIncrease);
     money += 150;  
+    
+    wave.start();
+    updateInfo();
 
     console.log(`AutoStart: ${autoStart}, Wave Active: ${wave.active}, Enemies Remaining: ${enemies.length}, Cooldown: ${isWaveCooldown}`);
 

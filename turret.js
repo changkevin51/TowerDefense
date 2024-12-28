@@ -69,7 +69,7 @@ class Turret {
             textSize(15);
             text(this.targetMode, this.x, this.y);
         }
-        
+
         text("level " + (this.upgrades+1), this.x, this.y - this.size / 2 - 10);
     }
     
@@ -106,6 +106,7 @@ class Turret {
             if(CircleInCircle(this, turret)) {
                 return true;
             }
+            
         }
         return false;
     }
