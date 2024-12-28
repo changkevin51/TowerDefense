@@ -172,7 +172,7 @@ function toggleAutoStart() {
     let healthIncrease = 2*wave.number;  
     health += healthIncrease;
     showHealthPopup(healthIncrease);
-    money += 100;  
+    money += 150;  
 
     console.log(`AutoStart: ${autoStart}, Wave Active: ${wave.active}, Enemies Remaining: ${enemies.length}, Cooldown: ${isWaveCooldown}`);
 
