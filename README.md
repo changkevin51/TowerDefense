@@ -84,11 +84,13 @@ or use Live Preview extension in VS Code
 - ✅ <del>Boss waves 
 - ✅ <del>Auto start waves
 - Add more turret types with unique abilities.
-  - ✅ <del>Sniper
+  - ✅ Sniper
 - Introduce different enemy types.
 - Implement animations and sound effects.
+  - ✅ Sniper hit effect
 - Add maps and levels
 - Increase max upgrade level
+- Add Tutorial
 
 
 
