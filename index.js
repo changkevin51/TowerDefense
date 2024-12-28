@@ -27,7 +27,8 @@ var levelOneNodes = [
  let isWaveCooldown = false;
  var frameRateBase = 60; 
  var turretPrice = 150; 
- const turretPriceIncreaseFactor = 1.5; 
+ const turretPriceIncreaseFactor = 1.3; 
+ const sniperPriceIncreaseFactor = 1.65; 
  var autoStart = false;
  var showStartArrow = true; 
  var turretPriceSniper = 300;
@@ -332,7 +333,7 @@ function buyTurret(type) {
     } else if (type === 'sniper' && money >= turretPriceSniper) {
         money -= turretPriceSniper;
         turrets.push(new SniperTurret(path.roads));
-        turretPriceSniper = Math.round(turretPriceSniper * turretPriceIncreaseFactor);
+        turretPriceSniper = Math.round(turretPriceSniper * sniperPriceIncreaseFactor);
     } else {
         console.log("not enough money");
         return; 
