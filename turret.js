@@ -60,7 +60,7 @@ class Turret {
         fill('yellow');
         textSize(12);
         textAlign(CENTER, CENTER);
-        text("level " + (this.upgrades+1), this.x, this.y - this.size / 2 - 10);
+        
     
 
         if(this.selected) {
@@ -69,6 +69,8 @@ class Turret {
             textSize(15);
             text(this.targetMode, this.x, this.y);
         }
+        
+        text("level " + (this.upgrades+1), this.x, this.y - this.size / 2 - 10);
     }
     
     chooseColor() {
