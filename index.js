@@ -168,7 +168,7 @@ function toggleAutoStart() {
     wave.start();
     updateInfo();
     waveNumber += 1
-    showMoneyPopup(100);
+    showMoneyPopup(150);
     let healthIncrease = 2*wave.number;  
     health += healthIncrease;
     showHealthPopup(healthIncrease);
