@@ -1,3 +1,9 @@
+var powImage;
+
+function preload() {
+    powImage = loadImage('images/pow.png'); 
+}
+
 class Turret {
     constructor(roads) {
         this.roads = roads;
@@ -9,14 +15,14 @@ class Turret {
         this.lookAngle = 0;
         this.placed = false;
         this.selected = false;
-        this.projectileSpeed = 6.5; // was 6.5
+        this.projectileSpeed = 6.5; 
         this.projectileStrength = 1;
         this.shootCooldown = 30;
         this.shootingTimer = 30;
         this.targetMode = 0;
         this.upgrades = 0;
         this.maxUpgrades = 3;
-        this.gameSpeed = gameSpeed;
+        this.gameSpeed = gameSpeed; 
     }
 
     upgrade() {
@@ -300,3 +306,126 @@ function unselectAllTurrets() {
                 turret.selected = false;
         }
  }
+
+class SniperTurret extends Turret {
+    constructor(roads) {
+        super(roads);
+        this.range = 400;
+        this.size = 60;
+        this.gunSize = 55;
+        this.shootCooldown = 100;
+        this.projectileStrength = 4;
+        this.hitEffects = [];
+        this.targetMode = 2;
+        this.upgrades = 0;
+        this.currentTarget = null;
+    }
+
+    upgrade() {
+        let upgradePrice = (this.upgrades + 2) * 250;
+        if (this.upgrades < this.maxUpgrades && money >= upgradePrice) {
+            money -= upgradePrice;
+            updateInfo();
+            this.upgrades++;
+            this.shootCooldown -= 10;
+            this.projectileStrength += (5 + this.upgrades);
+            this.range += 50;
+        }
+    }
+
+    shootEnemy(enemy) {
+        if (enemy) {
+            let damage = Math.min(enemy.strength, this.projectileStrength);
+            enemy.strength -= damage;
+    
+            money += Math.round(damage * 0.5);
+            updateInfo();
+    
+            if (enemy.strength <= 0) {
+                enemy.strength = 0;
+            }
+    
+            this.displayHitEffect(enemy);
+        }
+    }
+    
+
+    targetEnemy() {
+        // Check if locked target is still valid
+        if (this.currentTarget) {
+            let distance = dist(this.currentTarget.x, this.currentTarget.y, this.x, this.y);
+            if (distance > this.range + this.currentTarget.size / 2 || this.currentTarget.strength <= 0) {
+                this.currentTarget = null;
+            }
+        }
+
+        // If no valid locked target, pick a new one
+        if (!this.currentTarget) {
+            if (this.targetMode === 0) {
+                this.currentTarget = this.getEnemyClosestToTurret();
+            } else if (this.targetMode === 1) {
+                this.currentTarget = this.getStrongestEnemy();
+            } else if (this.targetMode === 2) {
+                this.currentTarget = this.getEnemyFarthestFromStart();
+            }
+        }
+
+        if (!this.currentTarget) return;
+
+        this.lookAngle = atan2(this.currentTarget.y - this.y, this.currentTarget.x - this.x);
+        if (this.shootingTimer >= this.shootCooldown / this.gameSpeed) {
+            this.shootingTimer = 0;
+            this.shootEnemy(this.currentTarget);
+        } else {
+            this.shootingTimer += 1;
+        }
+    }
+
+    displayHitEffect(enemy) {
+        this.hitEffects.push({
+            enemy: enemy,
+            size: 1,
+            growing: true,
+            lastX: enemy.x,
+            lastY: enemy.y,
+        });
+    }
+
+    drawHitEffects() {
+        for (let i = this.hitEffects.length - 1; i >= 0; i--) {
+            let effect = this.hitEffects[i];
+            let x = effect.enemy.strength > 0 ? effect.enemy.x : effect.lastX;
+            let y = effect.enemy.strength > 0 ? effect.enemy.y : effect.lastY;
+
+            push();
+            imageMode(CENTER);
+            tint(255, 200);
+            image(powImage, x, y, effect.size, effect.size);
+            pop();
+
+            if (effect.growing) {
+                effect.size += 10;
+                if (effect.size >= 100) effect.growing = false;
+            } else {
+                effect.size -= 10;
+                if (effect.size <= 0) this.hitEffects.splice(i, 1);
+            }
+
+            if (effect.enemy.strength <= 0) {
+                effect.lastX = x;
+                effect.lastY = y;
+            }
+        }
+    }
+
+    update() {
+        if (!this.placed) {
+            this.followMouse();
+        } else {
+            this.targetEnemy();
+        }
+
+        this.draw();
+        this.drawHitEffects();
+    }
+}

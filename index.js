@@ -18,7 +18,7 @@ var levelOneNodes = [
  var enemies;
  var turrets;
  var projectiles;
- var money = 1100;
+ var money = 1200;
  var health = 100;
  var wave;
  var waveNumber = 1;
@@ -30,7 +30,7 @@ var levelOneNodes = [
  const turretPriceIncreaseFactor = 1.5; 
  var autoStart = false;
  var showStartArrow = true; 
-
+ var turretPriceSniper = 300;
 
 
  function setup() {
@@ -43,7 +43,6 @@ var levelOneNodes = [
     projectiles = [];
     wave = new Wave();
     updateInfo();
-    turrets.push(new Turret(path.roads));
 }
 
 function draw() {
@@ -52,7 +51,6 @@ function draw() {
         image(sandImg, 0, 0, 700, 700);
         path.draw();
 
-        // Draw green arrow at the start of the path ONLY ONCE at the beginning
         if (showStartArrow) {
             path.drawStartArrow();
         }
@@ -73,9 +71,8 @@ function draw() {
         checkCollision();
         wave.update();
 
-        // Check if the game has started (e.g., first enemy spawned or wave started)
         if (enemies.length > 0 || wave.active) {
-            showStartArrow = false; // Hide the arrow once the game begins
+            showStartArrow = false; 
         }
     } else {
         drawGameOver();
@@ -87,31 +84,33 @@ function filterArrays() {
     projectiles = projectiles.filter(p => p.inWorld() && p.strength > 0);
 }
 
- function checkTurret() {
-    var text = "";
-    if(getTurretBeingPlaced() != null) {
-        text = "Unavailable";
-    } else {
-        text = "Price: $100";
-    }
+function checkTurret() {
+    const text = "Select a turret to buy";
     document.getElementById("buyTurretText").textContent = text;
- }
+}
 
- function checkUpgrade() {
-    var text = "";
-    var turret = getTurretBeingSelected();
-    if(turret != null) {
-        if(turret.upgrades >= turret.maxUpgrades) {
+function checkUpgrade() {
+    let text = "";
+    const turret = getTurretBeingSelected();
+
+    if (turret !== null) {
+        if (turret.upgrades >= turret.maxUpgrades) {
             text = "Max Upgrade!";
         } else {
             text = "Price: $";
-            text += (turret.upgrades+ 2) * 120;
+            if (turret instanceof SniperTurret) {
+                text += (turret.upgrades + 2) * 250; 
+            } else {
+                text += (turret.upgrades + 2) * 120; 
+            }
         }
     } else {
         text = "No Turret Selected!";
     }
+
     document.getElementById("upgradeTurretText").textContent = text;
- }
+}
+
 
  function checkWave() {
     var text = "";
@@ -289,14 +288,13 @@ function changeTargetMode() {
 }
 
 function toggleSpeed() {
-    if (isCooldown || isWaveCooldown) return; // Exit if cooldown is active
+    if (isCooldown || isWaveCooldown) return; 
 
-    isCooldown = true; // Activate button click cooldown
+    isCooldown = true;
     setTimeout(() => {
         isCooldown = false; 
     }, 50);
 
-    // Update game speed
     if (gameSpeed === 1) {
         gameSpeed = 1.5;
     } else if (gameSpeed === 1.5) {
@@ -305,7 +303,6 @@ function toggleSpeed() {
         gameSpeed = 1;
     }
 
-    // Apply the new game speed dynamically
     wave.gameSpeed = gameSpeed;
     turrets.forEach(t => t.gameSpeed = gameSpeed);
     projectiles.forEach(p => p.gameSpeed = gameSpeed);
@@ -324,19 +321,33 @@ function updateSpeedText() {
     speedText.textContent = `Current Speed: ${gameSpeed}x`;
 }
 
-function buyTurret() {
-    let turret = getTurretBeingPlaced();
-    if (money >= turretPrice && turret == null) { 
-        money -= turretPrice;  
-        updateInfo(); 
-        turrets.push(new Turret(path.roads));  
-        turretPrice = Math.round(turretPrice * 1.5); 
-        document.getElementById('buyTurretText').innerText = `Price: $${turretPrice}`; 
+function buyTurret(type) {
+    const menu = document.getElementById('turretMenu');
+    menu.style.display = 'none';
+
+    if (type === 'shooter' && money >= turretPrice) {
+        money -= turretPrice;
+        turrets.push(new Turret(path.roads));
+        turretPrice = Math.round(turretPrice * turretPriceIncreaseFactor); // Increment price for next purchase
+    } else if (type === 'sniper' && money >= turretPriceSniper) {
+        money -= turretPriceSniper;
+        turrets.push(new SniperTurret(path.roads));
+        turretPriceSniper = Math.round(turretPriceSniper * turretPriceIncreaseFactor);
+    } else {
+        console.log("not enough money");
+        return; 
     }
+
+    updateInfo();
+    updateTurretMenuText();
 }
 
-function checkTurret() {
-    document.getElementById('buyTurretText').innerText = `Price: $${turretPrice}`;
+function updateTurretMenuText() {
+    const shooterButton = document.querySelector("#turretMenu button:nth-child(1) span");
+    const sniperButton = document.querySelector("#turretMenu button:nth-child(2) span");
+
+    shooterButton.textContent = `Buy Shooter - $${turretPrice}`;
+    sniperButton.textContent = `Buy Sniper - $${turretPriceSniper}`;
 }
 
 function checkTargetMode() {
@@ -354,5 +365,10 @@ function checkTargetMode() {
         text = "No Turret Selected!";
     }
     document.getElementById("targetModeText").textContent = text;
+}
+
+function showTurretMenu() {
+    const menu = document.getElementById('turretMenu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
 }
 

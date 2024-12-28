@@ -233,3 +233,53 @@ body {
     margin-top: 20px;
     line-height: 0;
 }
+
+.popupMenu {
+    position: absolute;
+    top: 50%;
+    left: 57%;
+    transform: translate(-50%, -50%);
+    background: rgba(20, 20, 20, 0.95);
+    color: #fff;
+    border-radius: 12px;
+    padding: 15px;
+    z-index: 100;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 200px;
+    text-align: center;
+}
+
+.popupMenu button {
+    background: linear-gradient(145deg, #007acc, #005f99);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: transform 0.3s, background-color 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    gap: 10px;
+    margin: 3px;
+}
+
+.popupMenu button:hover {
+    background: linear-gradient(145deg, #005f99, #003f66);
+    transform: translateY(-2px);
+}
+
+.popupMenu button img {
+    width: 55px;
+    height: 55px;
+}
+
+.popupMenu button:active {
+    transform: translateY(1px);
+}
+

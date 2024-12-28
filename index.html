@@ -18,8 +18,8 @@
     <header id="header">
       Tower Defense Game
     </header>
-    <h4 id="message">This tower defense game is designed to push your strategic skills to the limit. Pay close attention to turret placement, mode selection, and resource management.</h3>
-    <h4 id="message">It's OK to lose some health at the start. You'll get them back eventually!</h3>
+    <h4 id="message">This tower defense game is designed to push your strategic skills to the limit. Pay close attention to turret placement, mode selection, and resource management.</h4>
+    <h4 id="message">It's OK to lose some health at the start. You'll get them back eventually!</h4>
 
     <div id="container">
       <div id="gameCanvas"></div>
@@ -39,10 +39,25 @@
           </div>
         </div>
         <div id="menuButtons">
-          <button class="hoverButton" onclick="buyTurret()" onmouseover="checkTurret()">Buy a Turret
-            <span class="hoverText" id="buyTurretText">Price: $150</span>
+          <button class="hoverButton" onclick="showTurretMenu()" onmouseover="checkTurret()">
+            Buy a Turret
+            <span class="hoverText" id="buyTurretText">Select a turret to buy</span>
           </button>
-          <button class="hoverButton" onclick="upgradeTurret()" onmouseover="checkUpgrade()">Upgrade Turret
+
+          <div id="turretMenu" class="popupMenu" style="display: none;">
+            <button onclick="buyTurret('shooter')">
+              <span>Buy Shooter - $150</span>
+              <img src="images/shooter_icon.png" alt="Shooter Icon">
+            </button>
+            <button onclick="buyTurret('sniper')">
+              <span>Buy Sniper - $300</span>
+              <img src="images/sniper_icon.png" alt="Sniper Icon">
+            </button>
+          </div>
+          
+
+          <button class="hoverButton" onclick="upgradeTurret()" onmouseover="checkUpgrade()">
+            Upgrade Turret
             <span class="hoverText" id="upgradeTurretText">Price: $200</span>
           </button>
           <button id="startWaveButton" class="hoverButton" onclick="toggleAutoStart()" onmouseover="checkWave()">
@@ -50,11 +65,13 @@
             <span class="autoStartToggle">Auto Start Toggle: False</span>
             <span class="hoverText" id="waveText">Wave Ready</span>
           </button>
-        
-          <button class="hoverButton" onclick="toggleSpeed()" onmouseover="checkSpeed()">Toggle Speed
+
+          <button class="hoverButton" onclick="toggleSpeed()" onmouseover="checkSpeed()">
+            Toggle Speed
             <span class="hoverText" id="speedText">Current Speed: 1x</span>
           </button>
-          <button class="hoverButton" onclick="changeTargetMode()" onmouseover="checkTargetMode()">Change Target Mode
+          <button class="hoverButton" onclick="changeTargetMode()" onmouseover="checkTargetMode()">
+            Change Target Mode
             <span class="hoverText" id="targetModeText">Mode: 0 (Closest)</span>
           </button>
         </div>

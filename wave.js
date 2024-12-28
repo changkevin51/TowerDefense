@@ -28,8 +28,6 @@ class Wave {
             this.timer = 0;
             this.currentGroup = 0;
             this.currentMember = 0;
-
-            // Check if it's a boss wave
             this.isBossWave = this.number % 8 === 0;
 
             this.updateDifficulty();
