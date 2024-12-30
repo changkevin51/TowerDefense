@@ -238,7 +238,7 @@ body {
     background-color: #333333;
     padding: 10px;
     width: 100%;
-    position: relative; /* Ensure it stays within the flow of the document */
+    position: relative; 
 }
 
 #message
