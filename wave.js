@@ -18,7 +18,7 @@ class Wave {
 
     updateDifficulty() {
         this.groupSize = Math.ceil(this.number / 5);
-        this.enemyMaxHealth = Math.round((Math.pow(this.number, 1.53) * this.healthIncreasePerWave) / (this.groupSize * 0.7));
+        this.enemyMaxHealth = Math.round((Math.pow(this.number, 1.54) * this.healthIncreasePerWave) / (this.groupSize * 0.7));
     }
 
     start() {

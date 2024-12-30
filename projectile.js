@@ -34,8 +34,24 @@ class Projectile {
 class PiercingProjectile extends Projectile {
     constructor(x, y, xSpeed, ySpeed, strength, gameSpeed, size) {
         super(x, y, xSpeed, ySpeed, strength, gameSpeed, size);
-        this.hitEnemies = new Set(); 
+        this.hitEnemies = new Set();
     }
+
+    draw() {
+        push();
+        
+        if (orbImage) {
+            imageMode(CENTER);
+            image(orbImage, this.x, this.y, this.size, this.size);
+        } else {
+            fill(0, 255, 0);
+            ellipse(this.x, this.y, this.size, this.size);
+        }
+    
+        pop();
+    }
+    
+
     update() {
         this.move();
         this.draw();

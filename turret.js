@@ -1,9 +1,3 @@
-var powImage;
-
-function preload() {
-    powImage = loadImage('images/pow.png'); 
-}
-
 class Turret {
     constructor(roads) {
         this.roads = roads;
@@ -368,7 +362,7 @@ class SniperTurret extends Turret {
             money -= upgradePrice;
             updateInfo();
             this.upgrades++;
-            this.shootCooldown -= 10;
+            this.shootCooldown -= 8;
             this.projectileStrength += (5 + this.upgrades);
             this.range += 50;
         }
@@ -483,14 +477,14 @@ class WizardTurret extends Turret {
     }
 
     upgrade() {
-        let upgradePrice = (this.upgrades + 2) * 280;
+        let upgradePrice = (this.upgrades + 2) * 250;
         if (this.upgrades < this.maxUpgrades && money >= upgradePrice) {
             money -= upgradePrice;
             updateInfo();
             this.upgrades++;
-            this.shootCooldown -= 10;
-            this.projectileStrength += (2 + this.upgrades);
-            this.range += 50;
+            this.shootCooldown -= 2;
+            this.projectileStrength += (4 + this.upgrades);
+            this.range += 30;
         }
     }
 
@@ -503,7 +497,7 @@ class WizardTurret extends Turret {
             let xSpeed = this.projectileSpeed * cos(this.lookAngle);
             let ySpeed = this.projectileSpeed * sin(this.lookAngle);
     
-            projectiles.push(new PiercingProjectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 40));
+            projectiles.push(new PiercingProjectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 50));
         }
     }
     

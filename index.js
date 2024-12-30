@@ -16,6 +16,8 @@ var levelOneNodes = [
 
  var path;
  var enemies;
+ var powImage;
+ var orbImage;
  var turrets;
  var projectiles;
  var money = 1200;
@@ -29,12 +31,16 @@ var levelOneNodes = [
  var turretPrice = 150; 
  const turretPriceIncreaseFactor = 1.4; 
  const sniperPriceIncreaseFactor = 1.65; 
- const wizardPriceIncreaseFactor = 1.75;
+ const wizardPriceIncreaseFactor = 4;
  var autoStart = false;
  var showStartArrow = true; 
  var turretPriceSniper = 300;
  var turretPriceWizard = 400;
  
+ function preload() {
+    orbImage = loadImage('images/OrbProjectile.gif');
+    powImage = loadImage('images/pow.png'); 
+}
 
 
  function setup() {
@@ -103,7 +109,7 @@ function checkUpgrade() {
                 text += (turret.upgrades + 2) * 250; 
             }
             else if (turret instanceof WizardTurret) {
-                text += (turret.upgrades + 2) * 280;
+                text += (turret.upgrades + 2) * 250;
             } else {
                 text += (turret.upgrades + 2) * 120; 
             }
@@ -278,25 +284,34 @@ function mousePressed() {
         let turret = getTurretBeingPlaced();
 
         if (turret != null) {
-            if (turret.isValid()) {
-                turret.placed = true;
+            // Check if the player has enough money
+            if ((turret.type === 'shooter' && money >= turretPrice) ||
+                (turret.type === 'sniper' && money >= turretPriceSniper) ||
+                (turret.type === 'wizard' && money >= turretPriceWizard)) {
+                
+                if (turret.isValid()) {
+                    turret.placed = true;
 
-                if (turret.type === 'shooter') {
-                    money -= turretPrice;
-                    turretPrice = Math.round(turretPrice * turretPriceIncreaseFactor);
-                } else if (turret.type === 'sniper') {
-                    money -= turretPriceSniper;
-                    turretPriceSniper = Math.round(turretPriceSniper * sniperPriceIncreaseFactor);
-                } else if (turret.type === 'wizard') {
-                    money -= turretPriceWizard;
-                    turretPriceWizard = Math.round(turretPriceWizard * wizardPriceIncreaseFactor);
+                    if (turret.type === 'shooter') {
+                        money -= turretPrice;
+                        turretPrice = Math.round(turretPrice * turretPriceIncreaseFactor);
+                    } else if (turret.type === 'sniper') {
+                        money -= turretPriceSniper;
+                        turretPriceSniper = Math.round(turretPriceSniper * sniperPriceIncreaseFactor);
+                    } else if (turret.type === 'wizard') {
+                        money -= turretPriceWizard;
+                        turretPriceWizard = Math.round(turretPriceWizard * wizardPriceIncreaseFactor);
+                    }
+
+                    updateInfo();
+                    updateTurretMenuText(); 
+                    document.getElementById("buyText").textContent = "Buy a Turret";
+                } else {
+                    cancelTurretSelection(turret);
                 }
-
-                updateInfo();
-                updateTurretMenuText(); 
-                document.getElementById("buyText").textContent = "Buy a Turret";
             } else {
-                cancelTurretSelection(turret);
+                console.log("Not enough money to place turret!");
+                document.getElementById("buyText").textContent = "Not enough money!";
             }
         } else {
             turret = getTurretBeingClicked();
@@ -311,6 +326,7 @@ function mousePressed() {
         }
     }
 }
+
 
 
 
@@ -396,26 +412,58 @@ function buyTurret(type) {
     }
 
     let newTurret = null;
+    let price = 0;
+
+    const buyTextElement = document.getElementById("buyText");
+
     if (type === 'shooter') {
+        price = turretPrice;
+        if (money < price) {
+            console.log("Not enough money to buy Shooter Turret!");
+            buyTextElement.textContent = "Not enough money!";
+            setTimeout(() => {
+                buyTextElement.textContent = "Buy a Turret";
+            }, 1000); 
+            return;
+        }
         newTurret = new Turret(path.roads);
         newTurret.type = 'shooter';
-        turrets.push(newTurret);
     } else if (type === 'sniper') {
+        price = turretPriceSniper;
+        if (money < price) {
+            console.log("Not enough money to buy Sniper Turret!");
+            buyTextElement.textContent = "Not enough money!";
+            setTimeout(() => {
+                buyTextElement.textContent = "Buy a Turret";
+            }, 1000);
+            return;
+        }
         newTurret = new SniperTurret(path.roads);
         newTurret.type = 'sniper';
-        turrets.push(newTurret);
     } else if (type === 'wizard') {
+        price = turretPriceWizard;
+        if (money < price) {
+            console.log("Not enough money to buy Wizard Turret!");
+            buyTextElement.textContent = "Not enough money!";
+            setTimeout(() => {
+                buyTextElement.textContent = "Buy a Turret";
+            }, 1000);
+            return;
+        }
         newTurret = new WizardTurret(path.roads);
         newTurret.type = 'wizard';
-        turrets.push(newTurret);
     } else {
         console.log("Invalid turret type");
         return;
     }
 
+    turrets.push(newTurret);
+
     updateTurretMenuText();
-    document.getElementById("buyText").textContent = "Drag turret out of map to cancel";
+    updateInfo(); // Update money and other info in the UI
+    buyTextElement.textContent = "Drag turret out of map to cancel";
 }
+
 function mouseDragged() {
     let turret = getTurretBeingPlaced();
     if (turret && !turret.placed) {
