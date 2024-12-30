@@ -503,7 +503,7 @@ class WizardTurret extends Turret {
             let xSpeed = this.projectileSpeed * cos(this.lookAngle);
             let ySpeed = this.projectileSpeed * sin(this.lookAngle);
     
-            projectiles.push(new Projectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 10));
+            projectiles.push(new PiercingProjectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 40));
         }
     }
     

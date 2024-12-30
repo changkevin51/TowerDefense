@@ -273,40 +273,49 @@ function checkCollision() {
     }
 }
 
-
 function mousePressed() {
+    // Check if the click is inside the game canvas
+    if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
+        let turret = getTurretBeingPlaced();
 
-    let turret = getTurretBeingPlaced();
-    if (turret != null) {
-        if (turret.isValid()) {
-            turret.placed = true;
-
-            // Deduct money after placement
-            if (turret.type === 'shooter') {
-                money -= turretPrice;
-                turretPrice = Math.round(turretPrice * turretPriceIncreaseFactor);
-            } else if (turret.type === 'sniper') {
-                money -= turretPriceSniper;
-                turretPriceSniper = Math.round(turretPriceSniper * sniperPriceIncreaseFactor);
-            } else if (turret.type === 'wizard') {
-                money -= turretPriceWizard;
-                turretPriceWizard = Math.round(turretPriceWizard * wizardPriceIncreaseFactor);
-            }
-
-            updateInfo();
-            updateTurretMenuText(); 
-
-            document.getElementById("buyTurretText").textContent = "Select a turret to buy";
-        } else {
-            cancelTurretSelection(turret);
-        }
-    } else {
-        turret = getTurretBeingClicked();
         if (turret != null) {
-            turret.selected = true;
+            // Handle turret placement logic
+            if (turret.isValid()) {
+                turret.placed = true;
+
+                // Deduct money after placement
+                if (turret.type === 'shooter') {
+                    money -= turretPrice;
+                    turretPrice = Math.round(turretPrice * turretPriceIncreaseFactor);
+                } else if (turret.type === 'sniper') {
+                    money -= turretPriceSniper;
+                    turretPriceSniper = Math.round(turretPriceSniper * sniperPriceIncreaseFactor);
+                } else if (turret.type === 'wizard') {
+                    money -= turretPriceWizard;
+                    turretPriceWizard = Math.round(turretPriceWizard * wizardPriceIncreaseFactor);
+                }
+
+                updateInfo();
+                updateTurretMenuText(); 
+                document.getElementById("buyText").textContent = "Buy a Turret";
+            } else {
+                cancelTurretSelection(turret);
+            }
+        } else {
+            turret = getTurretBeingClicked();
+
+            if (turret != null) {
+                // Select the turret that was clicked
+                turret.selected = true;
+            } else {
+                // Clicked on an empty space, unselect all turrets
+                turrets.forEach(t => t.selected = false);
+                console.log("All turret selections canceled.");
+            }
         }
     }
 }
+
 
 
 function keyPressed() {
@@ -384,14 +393,12 @@ function buyTurret(type) {
 
     unselectAllTurrets();
 
-    // Check if there is an unplaced turret
     const unplacedTurretExists = turrets.some(turret => !turret.placed);
     if (unplacedTurretExists) {
         console.log("You must place the current turret before buying another.");
         return;
     }
 
-    // Set up new turret without deducting money
     let newTurret = null;
     if (type === 'shooter') {
         newTurret = new Turret(path.roads);
