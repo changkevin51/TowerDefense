@@ -274,16 +274,13 @@ function checkCollision() {
 }
 
 function mousePressed() {
-    // Check if the click is inside the game canvas
     if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
         let turret = getTurretBeingPlaced();
 
         if (turret != null) {
-            // Handle turret placement logic
             if (turret.isValid()) {
                 turret.placed = true;
 
-                // Deduct money after placement
                 if (turret.type === 'shooter') {
                     money -= turretPrice;
                     turretPrice = Math.round(turretPrice * turretPriceIncreaseFactor);
@@ -305,6 +302,7 @@ function mousePressed() {
             turret = getTurretBeingClicked();
 
             if (turret != null) {
+                turrets.forEach(t => t.selected = false);
                 turret.selected = true;
             } else {
                 turrets.forEach(t => t.selected = false);
