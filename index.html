@@ -23,6 +23,7 @@
 
     <div id="container">
       <div id="gameCanvas"></div>
+      <img id="garbage" src="images/garbage.png" alt="Garbage Can">
       <div id="gameMenu">
         <div id="menuInfo">
           <div title="Money">
@@ -39,7 +40,7 @@
           </div>
         </div>
         <div id="menuButtons">
-          <button class="hoverButton" onclick="showTurretMenu()" onmouseover="checkTurret()">
+          <button class="hoverButton" id="buyText" onclick="showTurretMenu()">
             Buy a Turret
             <span class="hoverText" id="buyTurretText">Select a turret to buy</span>
           </button>
@@ -53,6 +54,10 @@
               <span>Buy Sniper - $300</span>
               <img src="images/sniper_icon.png" alt="Sniper Icon">
             </button>
+            <button onclick="buyTurret('wizard')">
+              <span>Buy Wizard - $300</span>
+            </button>
+          
           </div>
           
 
@@ -75,6 +80,7 @@
             <span class="hoverText" id="targetModeText">Mode: 0 (Closest)</span>
           </button>
         </div>
+
       </div>
     </div>
   </div>
