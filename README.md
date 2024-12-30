@@ -4,7 +4,7 @@ NOTE: THIS GAME IS DESIGNED TO BE HARD. STRATEGY IS REQUIRED TO GET THROUGH FURT
 
 A fun tower defense game made with JavaScript and p5.js. Players defend their base by placing turrets, earning money, and surviving waves of enemies.
 
-Personal Record: Wave 40
+Record: Wave: 120 (Daniel Xu)
 
 ---
 
@@ -38,6 +38,8 @@ Personal Record: Wave 40
      - **Mode 0**: Targets the closest enemy.
      - **Mode 1**: Targets the strongest enemy.
      - **Mode 2**: Targets the first enemy.
+     - **Mode 3**: Targets the last enemy.
+
 5. **Start Waves**:
    - Click "Start Wave" when the current wave is ready.
    - Defeat enemies before they deplete your health.
@@ -48,9 +50,9 @@ Personal Record: Wave 40
 ---
 
 ## Key Stats
-- **Money**: Starts at 1000 and increases by 100 every wave. Used to buy and upgrade turrets.
-- **Health**: Starts at 100 and increases by 20 every wave. The game is over when health reaches 0.
-- **Turret Prices**: Starts at $150, increases with each turret bought.
+- **Money**: Starts at 1000 and increases by 150 every wave. Used to buy and upgrade turrets.
+- **Health**: Starts at 100 and increases by an increasing amount every wave. The game is over when health reaches 0.
+- **Turret Prices**: Increases with each turret bought.
 - **Wave Number**: Tracks your progress through enemy waves.
 
 ---
@@ -59,6 +61,7 @@ Personal Record: Wave 40
 - **Mouse**:
   - Click to place turrets.
   - Click on turrets to select them for upgrades or targeting changes.
+  - Drag to garbage bin to cancel turet selection
 - **Keyboard**:
   - Left/Right Arrow: Change targeting mode of the selected turret.
 - **Buttons**:
