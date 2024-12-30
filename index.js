@@ -305,10 +305,8 @@ function mousePressed() {
             turret = getTurretBeingClicked();
 
             if (turret != null) {
-                // Select the turret that was clicked
                 turret.selected = true;
             } else {
-                // Clicked on an empty space, unselect all turrets
                 turrets.forEach(t => t.selected = false);
                 console.log("All turret selections canceled.");
             }

@@ -149,10 +149,23 @@ body {
     background-color: #005f99;
 }
 
+.popupMessage {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.3s, opacity 0.3s ease;
+    z-index: 10;
+}
+
 #healthPopup {
     position: absolute;
-    top: 39%;
-    right: 10%;
+    top: 120px;
+    right: -40px;
     transform: translate(-50%, -50%);
     background-color: red;
     color: white;
@@ -174,8 +187,8 @@ body {
 
 #moneypopup {
     position: absolute;
-    top: 29%;
-    right: 13%;
+    top: 50px;
+    right: 0px;
     transform: translate(-50%, -50%);
     background-color: #FFDF00;
     color: white;
@@ -197,14 +210,14 @@ body {
 
 #bossWarningPopup {
     position: absolute;
-    top: 49%;
-    right: 2%;
+    top: 190px;
+    right: -105px;
     transform: translate(-50%, -50%);
     background-color: rgb(29, 13, 122);
     color: white;
     padding: 10px 20px;
     border-radius: 10px;
-    font-size: 18px;
+    font-size: 15px;
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
