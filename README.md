@@ -85,6 +85,7 @@ or use Live Preview extension in VS Code
 - ✅ <del>Auto start waves
 - Add more turret types with unique abilities.
   - ✅ Sniper
+  - ✅ Wizard
 - Introduce different enemy types.
 - Implement animations and sound effects.
   - ✅ Sniper hit effect
