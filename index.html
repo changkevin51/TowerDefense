@@ -12,9 +12,136 @@
     <header id="header">
       Tower Defense Game
     </header>
-    <h4 id="message">This tower defense game is designed to push your strategic skills to the limit. Pay close attention to turret placement, mode selection, and resource management.</h4>
-    <h4 id="message">It's OK to lose some health at the start. You'll get them back eventually!</h4>
+    <img id="turret" src="images/turret.png" alt="Turret">
+    <h4 id="message">This tower defense game is designed to push your strategic skills to the limit. It's OK to lose some health at the start, you'll get them back eventually!</h4>
 
+    <div id="popup" class="popup">
+      <div class="popup-header">
+        <button class="tab-button active" onclick="showTab('tutorial')">Tutorial</button>
+        <button class="tab-button" onclick="showTab('stats')">Stats</button>
+        <button class="tab-button" onclick="showTab('tips')">Tips</button>
+        <button class="close-popup" onclick="closePopup()">×</button>
+      </div>
+      <div class="popup-content">
+        <div id="tutorial" class="tab-content active">
+          <h1>Tutorial</h1>
+          <h3>Place Turrets:</h3>
+          <ul>
+            <li>Click <strong>"Buy Turret"</strong> to purchase a turret (requires money).</li>
+            <li>Place the turret on valid spots in the game area (strategic placement is key).</li>
+            <li>Drag to the garbage bin to cancel turret selection.</li>
+          </ul>
+          <h3>Upgrade Turrets:</h3>
+          <ul>
+            <li>Select a turret and click <strong>"Upgrade"</strong> to enhance its stats.</li>
+            <li>Each upgrade increases damage, range, shooting speed, and sometimes projectile speed.</li>
+            <li>Check <strong>"Stats"</strong> tab for more information.</li>
+          </ul>
+          <h3>Switch Target Modes:</h3>
+          <p>Use arrow keys or the <strong>"Change Target Mode"</strong> button to switch turret targeting modes:</p>
+          <ul>
+            <li>Mode 0: Targets the closest enemy.</li>
+            <li>Mode 1: Targets the strongest enemy.</li>
+            <li>Mode 2: Targets the first/furthest enemy.</li>
+            <li>Mode 3: Targets the last enemy.</li>
+          </ul>
+          <h3>Waves:</h3>
+          <p>Click <strong>"Start Wave"</strong> when the wave is ready. Defeat enemies before they reach the end of the path.</p>
+          </ul>
+            <li><strong>*NEW*:</strong> Waves will <strong>auto start</strong> by default when "Start Wave" is clicked. You can disable this by clicking the button again while wave is active.</li>
+            <li><strong>Boss waves</strong> occur every <strong>8</strong> waves. There are less enemies but they are much stronger and require more strategic planning.</li>
+          </ul>
+          <h3>Adjust Game Speed:</h3>
+          <p>Use the <strong>"Toggle Speed"</strong> button to switch between 1x, 1.5x, and 2x speed. (There is a slight cooldown)</p>
+          <h3>Important things to note:</h3>
+          </ul>
+            <li>You start with $1200. It increases by $150 every wave.</li>
+            <li>Your health starts at 100 and increases by an increasing amount every wave so it's OK to lose some health. The game is over when health reaches 0.</li>
+            <li>Turret prices increases with each turret bought.</li>
+          <h2>Good luck and have fun!</h2>
+        </div>
+    
+        <div id="stats" class="tab-content">
+          <h1>Stats</h1>
+          <div id="stats-sections"></div> 
+          <br>
+          <p>*Shoot cooldown is in Frames. The FPS is set to 60 for this game.</p>
+        </div>
+                
+        
+          <div id="tips" class="tab-content">
+            <h1>Tips</h1>
+          
+            <h3>Placement</h3>
+            <ul>
+              <li>
+                <strong>Take projectile speed into account!</strong> (Except snipers cuz they are just too good.)
+              </li>
+              <li>
+                Place turrets near paths to increase the chance of hitting enemies.
+                <ul>
+                  <p>
+                    <strong>Example of bad shooter placement:</strong>
+                    <button class="dropdown-toggle" onclick="toggleDropdown('bad-placement')">Show/Hide Example</button>
+                    <div id="bad-placement" class="dropdown-content">
+                      <img src="images/badPlacement.jpeg" alt="Bad Placement Example" class="tip-image">
+                    </div>
+                  </p>
+                </ul>
+              </li>
+              <li>
+                The more path coverage a turret has, the better.
+              </li>
+              <li>
+                Turrets with special abilities may benefit from strategic placement:
+                <ul>
+                  <p>
+                    <strong>Example of ideal wizard placement:</strong>
+                    <button class="dropdown-toggle" onclick="toggleDropdown('wizard-placement')">Show/Hide Example</button>
+                    <div id="wizard-placement" class="dropdown-content">
+                      <img src="images/wizardPlacement.jpeg" alt="Wizard Placement Example" class="tip-image">
+                    </div>
+                  </p>
+                </ul>
+              </li>
+            </ul>
+          
+          
+          
+        
+          <h3>Target Modes</h3>
+          <ul>
+            <li>Target modes are critical for maximizing turret efficiency.</li>
+            <li>Adjust target modes based on turret type and placement:
+              <ul>
+                <li>Snipers are best set to "Strong" to maximize their heavy damage. Alternatively, use "First" for general defense.</li>
+                <li><strong>Wizards should almost ALWAYS be set to "Last"</strong> when placed at the end of a straight path. This ensures their piercing ability is fully utilized.</li>
+              </ul>
+            </li>
+          </ul>
+        
+          <h3>Other Tips</h3>
+          <ul>
+            <li>Focus on upgrades rather than adding more turrets. Upgrading is often the better choice when it costs less.</li>
+            <li>Use a mix of turrets to cover weaknesses:
+              <ul>
+                <li>Shooter turrets: All-rounders but don't excel in any area.</li>
+                <li>Snipers: Great for single-target damage and boss waves due to their range and power.</li>
+                <li>Wizards: Reduce health of multiple enemies at once but are less effective against bosses.</li>
+              </ul>
+            </li>
+          </ul>
+          
+        </div>
+        
+      </div>
+    </div>
+    
+    
+    <button id="openTutorialButton" onclick="toggleTutorialPopup()">
+      <img src="images/tutorial.png" alt="Tutorial Icon" class="tutorialIcon">Tutorial
+    </button>
+    
     <div id="container">
       <div id="gameCanvas"></div>
       <img id="garbage" src="images/garbage.png" alt="Garbage Can">
@@ -81,6 +208,7 @@
         <div id="bossWarningPopup" class="popupMessage">Boss Wave Incoming!</div>
       </div>
     </div>
+    <br
   </div>
 
 
@@ -93,6 +221,7 @@
   <script src="turret.js"></script>
   <script src="projectile.js"></script>
   <script src="wave.js"></script>
-  <script src="index.js"></script>
+  <script src="index.js" defer></script>
+  <script src="tutorial.js" defer></script>
 </body>
 </html>

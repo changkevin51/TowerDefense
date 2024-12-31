@@ -1,10 +1,10 @@
 body {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
-    background: linear-gradient(45deg, #1a2a6c, #b21f1f, #fdbb2d);
-    background-size: 400% 400%;
-    animation: gradientShift 10s ease infinite;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(90deg, rgba(151, 77, 252, 0.75), rgba(51, 203, 255, 0.75)), url("images/background.jpg") no-repeat center center fixed;
+    background-size: cover;
+    backdrop-filter: blur(6px);
+    animation: none; /* Remove old gradient animation */
+    overflow-x: hidden;
 }
 
 @keyframes gradientShift {
@@ -19,38 +19,58 @@ body {
     }
 }
 
+#turret {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 150px;
+    z-index: 100;
+    opacity: 0.9;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+#turret:hover {
+    transform: scale(1.1);
+    opacity: 1;
+}
+
 #wrapper {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    min-height: calc(100vh - 50px); /* Adjusted to account for footer height */
+    min-height: calc(100vh - 50px);
     width: 100%;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    background: none; /* Keep the wrapper transparent */
+    background: none;
 }
-
 
 #container {
     position: relative;
     display: flex;
-    width: 1000px;
+    width: 990px;
     height: 700px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    margin-top: 0px;
-    justify-content: center;
+    margin-top: 10px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    overflow: hidden;
 }
 
 #header {
     text-align: center;
-    font-size: 36px;
+    font-size: 44px;
     font-weight: bold;
     color: #fff;
-    background: linear-gradient(90deg, #007acc, #36a370);
-    padding: 20px;
-    border-radius: 10px 10px 0 0;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(8px);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    padding: 30px;
+    margin-bottom: 20px;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
     width: 100%;
@@ -59,27 +79,40 @@ body {
 
 #gameCanvas {
     flex: 1;
-    border: 2px solid #333;
-    margin-right: 10px;
     width: 100%;
     height: 100%;
+    margin: 0;
+    background: linear-gradient(135deg, #1e90ff, #87cefa);
+    border-radius: inherit;
+    box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
 }
 
 #gameMenu {
-    width: 250px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    padding: 20px;
+    position: absolute;
+    top: 0;
+    right: 0px;
+    width: 290px;
+    height: 100%;
+    background: rgba(33, 33, 33, 0.5);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    border-radius: 0 15px 15px 0;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    z-index: 10;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding: 20px;
+    box-sizing: border-box;
 }
+
 
 #menuInfo {
     display: flex;
     flex-direction: column;
     gap: 15px;
+    color:#ddd;
 }
 
 #menuInfo img {
@@ -94,11 +127,28 @@ body {
     padding-left: 25px;
 }
 
+#Money, #Health, #Wave {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+}
+
 #menuButtons button {
     float: left;
     height: 75px;
     width: 250px;
-    font-size: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 5px 0;
+    border: 2px solid #fff;
+    background: transparent;
+    transition: all 0.3s;
+    border-radius: 30px;
+}
+
+#menuButtons button:hover {
+    color: #007acc;
+    background: #fff;
 }
 
 #menuButtons {
@@ -115,9 +165,9 @@ body {
 
 .hoverButton {
     position: relative;
-    background-color: #007acc;
+    background-color: transparent;
     color: white;
-    border: none;
+    border: 2px solid #007acc;
     padding: 10px 20px;
     font-size: 18px;
     border-radius: 5px;
@@ -151,11 +201,11 @@ body {
 
 .popupMessage {
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.7);
     color: white;
     padding: 10px 20px;
     border-radius: 5px;
-    font-size: 16px;
+    font-size: 18px;
     visibility: hidden;
     opacity: 0;
     transition: visibility 0.3s, opacity 0.3s ease;
@@ -233,9 +283,10 @@ body {
 
 #footer {
     text-align: center;
-    font-size: 14px;
+    font-size: 16px;
     color: #ffffff;
-    background-color: #333333;
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(4px);
     padding: 10px;
     width: 100%;
     position: relative; 
@@ -253,7 +304,7 @@ body {
 .popupMenu {
     position: absolute;
     top: 50%;
-    left: 57%;
+    right: 55%;
     transform: translate(-50%, -50%);
     background: rgba(20, 20, 20, 0.95);
     color: #fff;
@@ -263,9 +314,10 @@ body {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
     width: 200px;
     text-align: center;
+    
 }
 
 .popupMenu button {
@@ -282,7 +334,7 @@ body {
     transition: transform 0.3s, background-color 0.3s;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     gap: 10px;
-    margin: 3px;
+    margin: 2px;
 }
 
 .popupMenu button:hover {
@@ -314,5 +366,241 @@ body {
     z-index: 10; 
     pointer-events: none; 
   }
-  
 
+
+  #openTutorialButton {
+    position: fixed;
+    bottom: 50px;
+    right: 50px;
+    padding: 15px 25px;
+    background: linear-gradient(135deg, #ffa726, #fb8c00);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+/* Add hover effect for tutorial button */
+#openTutorialButton:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(135deg, #fb8c00, #f57c00);
+}
+
+/* Icon styling for tutorial button */
+.tutorialIcon {
+    width: 25px;
+    height: 25px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+
+.popup {
+    width: 80%;
+    max-width: 800px;
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 6px 6px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -55%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(90deg, #007bff, #004080);
+    padding: 10px 15px;
+    color: #fff;
+}
+
+.tab-button {
+    flex: 1;
+    padding: 10px;
+    background: transparent;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background 0.3s ease, transform 0.2s ease;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+.tab-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.05);
+}
+
+.tab-button.active {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.close-popup {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    color: #fff;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-popup:hover {
+    color: #ffdddd;
+}
+
+.popup-content {
+    padding: 25px; /* Slightly increased padding for comfort */
+    max-height: 500px; /* Increased height for more visible content */
+    overflow-y: auto;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    line-height: 1.6;
+}
+
+.tab-content {
+    display: none;
+    animation: slideDown 0.3s ease-out;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    margin: 8px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+ul li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    color: #007bff;
+    font-size: 1.2rem;
+    transform: translateY(-2px);
+}
+
+h1, h2, h3 {
+    font-weight: bold;
+    color: #004080;
+    margin-bottom: 10px;
+}
+
+.tip-image {
+    width: 100%;
+    border-radius: 8px;
+    margin-top: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+}
+
+table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    color: #333;
+}
+
+table td {
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+
+#stats-table th {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.tip-image {
+    width: 100%;
+    max-width: 400px; 
+    height: auto;
+    border-radius: 8px;
+    margin-top: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-content {
+    display: none; 
+    margin-top: 10px;
+    transition: all 0.3s ease-in-out;
+}
+
+.dropdown-toggle {
+    margin-top: 5px;
+    padding: 8px 12px;
+    background: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background 0.3s ease;
+}
+
+.dropdown-toggle:hover {
+    background: #0056b3;
+}
+
+#wizard-placement {
+    width: 120px;
+}
+
+#bad-placement {
+    width: 220px;
+}

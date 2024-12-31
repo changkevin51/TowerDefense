@@ -43,6 +43,7 @@ var levelOneNodes = [
 }
 
 
+
  function setup() {
     createCanvas(700, 700).parent("gameCanvas");
     frameRate(frameRateBase); 
@@ -300,7 +301,7 @@ function mousePressed() {
                         turretPriceSniper = Math.round(turretPriceSniper * sniperPriceIncreaseFactor);
                     } else if (turret.type === 'wizard') {
                         money -= turretPriceWizard;
-                        turretPriceWizard = Math.round(turretPriceWizard * wizardPriceIncreaseFactor);
+                        turretPriceWizard = Math.round(turretPriceWizard * wizardPriceIncreaseFactor) + 500;
                     }
 
                     updateInfo();

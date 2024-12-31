@@ -90,8 +90,9 @@ or use Live Preview extension in VS Code
   - ✅ Sniper
   - ✅ Wizard
 - Introduce different enemy types.
-- Implement animations and sound effects.
+- Implement animations and effects.
   - ✅ Sniper hit effect
+  - ✅ Wizard projectile
 - Add maps and levels
 - Increase max upgrade level
 - Add Tutorial

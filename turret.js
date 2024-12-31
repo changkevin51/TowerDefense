@@ -363,7 +363,7 @@ class SniperTurret extends Turret {
             updateInfo();
             this.upgrades++;
             this.shootCooldown -= 8;
-            this.projectileStrength += (5 + this.upgrades);
+            this.projectileStrength += (4 + this.upgrades);
             this.range += 50;
         }
     }
