@@ -27,7 +27,7 @@ Record: Wave: 120 (Daniel Xu)
 
 ## How to Play
 1. **Start the Game**:
-   - You begin with $1000, 100 health, and a free turret :)
+   - You begin with $1200 and 100 health.
 2. **Place Turrets**:
    - Click "Buy Turret" to purchase a turret (requires money).
    - Place the turret on valid spots in the game area (Think about strategic placements).
@@ -95,7 +95,7 @@ or use Live Preview extension in VS Code
   - ✅ Wizard projectile
 - Add maps and levels
 - Increase max upgrade level
-- Add Tutorial
+- ✅ <del>Add Tutorial
 
 
 
