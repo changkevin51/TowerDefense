@@ -373,7 +373,7 @@ body {
     bottom: 50px;
     right: 50px;
     padding: 15px 25px;
-    background: linear-gradient(135deg, #ffa726, #fb8c00);
+    background: linear-gradient(135deg, #ffd726, #fb8c00);
     color: white;
     border: none;
     border-radius: 50px;
@@ -385,16 +385,25 @@ body {
     gap: 10px;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
+    z-index: 100;
 }
 
-/* Add hover effect for tutorial button */
+
+
 #openTutorialButton:hover {
     transform: translateY(-5px);
     box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
     background: linear-gradient(135deg, #fb8c00, #f57c00);
 }
 
-/* Icon styling for tutorial button */
+#openTutorialButton:active {
+    transform: scale(0.95); 
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, #e65100, #fb8c00);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+
 .tutorialIcon {
     width: 25px;
     height: 25px;
