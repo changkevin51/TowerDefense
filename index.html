@@ -19,6 +19,7 @@
       <div class="popup-header">
         <button class="tab-button active" onclick="showTab('tutorial')">Tutorial</button>
         <button class="tab-button" onclick="showTab('stats')">Stats</button>
+        <button class="tab-button" onclick="showTab('enemies')">Enemies</button>
         <button class="tab-button" onclick="showTab('tips')">Tips</button>
         <button class="close-popup" onclick="closePopup()">×</button>
       </div>
@@ -67,45 +68,50 @@
           <br>
           <p>*Shoot cooldown is in Frames. The FPS is set to 60 for this game.</p>
         </div>
-                
+               
+        <div id="enemies" class="tab-content">
+          <h1>Enemies</h1>
+          <div id="enemies-container" class="enemies-container">
+          </div>
+        </div>
         
-          <div id="tips" class="tab-content">
-            <h1>Tips</h1>
-          
-            <h3>Placement</h3>
-            <ul>
-              <li>
-                <strong>Take projectile speed into account!</strong> (Except snipers cuz they are just too good.)
-              </li>
-              <li>
-                Place turrets near paths to increase the chance of hitting enemies.
-                <ul>
-                  <p>
-                    <strong>Example of bad shooter placement:</strong>
-                    <button class="dropdown-toggle" onclick="toggleDropdown('bad-placement')">Show/Hide Example</button>
-                    <div id="bad-placement" class="dropdown-content">
-                      <img src="images/badPlacement.jpeg" alt="Bad Placement Example" class="tip-image">
-                    </div>
-                  </p>
-                </ul>
-              </li>
-              <li>
-                The more path coverage a turret has, the better.
-              </li>
-              <li>
-                Turrets with special abilities may benefit from strategic placement:
-                <ul>
-                  <p>
-                    <strong>Example of ideal wizard placement:</strong>
-                    <button class="dropdown-toggle" onclick="toggleDropdown('wizard-placement')">Show/Hide Example</button>
-                    <div id="wizard-placement" class="dropdown-content">
-                      <img src="images/wizardPlacement.jpeg" alt="Wizard Placement Example" class="tip-image">
-                    </div>
-                  </p>
-                </ul>
-              </li>
-            </ul>
-          
+        <div id="tips" class="tab-content">
+          <h1>Tips</h1>
+        
+          <h3>Placement</h3>
+          <ul>
+            <li>
+              <strong>Take projectile speed into account!</strong> (Except snipers cuz they are just too good.)
+            </li>
+            <li>
+              Place turrets near paths to increase the chance of hitting enemies.
+              <ul>
+                <p>
+                  <strong>Example of bad shooter placement:</strong>
+                  <button class="dropdown-toggle" onclick="toggleDropdown('bad-placement')">Show/Hide Example</button>
+                  <div id="bad-placement" class="dropdown-content">
+                    <img src="images/badPlacement.jpeg" alt="Bad Placement Example" class="tip-image">
+                  </div>
+                </p>
+              </ul>
+            </li>
+            <li>
+              The more path coverage a turret has, the better.
+            </li>
+            <li>
+              Turrets with special abilities may benefit from strategic placement:
+              <ul>
+                <p>
+                  <strong>Example of ideal wizard placement:</strong>
+                  <button class="dropdown-toggle" onclick="toggleDropdown('wizard-placement')">Show/Hide Example</button>
+                  <div id="wizard-placement" class="dropdown-content">
+                    <img src="images/wizardPlacement.jpeg" alt="Wizard Placement Example" class="tip-image">
+                  </div>
+                </p>
+              </ul>
+            </li>
+          </ul>
+        
           
           
         

@@ -58,10 +58,15 @@ class PiercingProjectile extends Projectile {
         if (!this.inWorld()) return;
         for (let enemy of enemies) {
             if (!this.hitEnemies.has(enemy) && CircleInCircle(this, enemy)) {
+                
                 enemy.strength -= this.strength;
+                if (enemy.strength <= 0 && !enemy.isExploding) {
+                    enemy.strength = 0; // Ensure it's not negative
+                    enemy.explode(); // Trigger the explosion
+                }
+                
                 money += Math.round(this.strength * 0.5);
                 updateInfo();
-
                 this.hitEnemies.add(enemy);
             }
         }

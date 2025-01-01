@@ -613,3 +613,36 @@ table td {
 #bad-placement {
     width: 220px;
 }
+
+
+.enemies-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: space-around;
+  }
+  
+  .enemy-card {
+    width: 200px;
+    border: 2px solid #333;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    background-color: #f9f9f9;
+  }
+  
+  .enemy-card img {
+    width: 100px;
+    height: auto;
+    border-radius: 5px;
+  }
+  
+  .enemy-card h3 {
+    margin: 10px 0;
+  }
+  
+  .enemy-card p {
+    font-size: 14px;
+    color: #666;
+  }
+  

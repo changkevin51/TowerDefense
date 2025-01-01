@@ -18,6 +18,14 @@ var levelOneNodes = [
  var enemies;
  var powImage;
  var orbImage;
+ var enemyImg
+ var bombImg, stunImg;
+ let normalEnemyImages = [];
+ let heavyEnemyImage;
+ let fastEnemyImage;
+ let bossEnemyImage;
+ let bombEnemyImage;
+ let explosionImage;
  var turrets;
  var projectiles;
  var money = 1200;
@@ -40,6 +48,17 @@ var levelOneNodes = [
  function preload() {
     orbImage = loadImage('images/OrbProjectile.gif');
     powImage = loadImage('images/pow.png'); 
+    bombImg = loadImage('images/enemies/bomb.png');
+    stunImg = loadImage('images/stun.png');
+
+    for (let i = 1; i <= 3; i++) {
+        normalEnemyImages.push(loadImage(`images/enemies/normal${i}.png`));
+    }
+    heavyEnemyImage = loadImage('images/enemies/heavy1.png');
+    fastEnemyImage = loadImage('images/enemies/fast1.png');
+    bossEnemyImage = loadImage('images/enemies/boss1.png');
+    bombEnemyImage = loadImage('images/enemies/bomb.png');
+    explosionImage = loadImage('images/explosion.png');
 }
 
 
@@ -54,6 +73,7 @@ var levelOneNodes = [
     projectiles = [];
     wave = new Wave();
     updateInfo();
+
 }
 
 function draw() {
@@ -186,9 +206,6 @@ function toggleAutoStart() {
 
     wave.start();
     updateInfo();
-
-    console.log(`AutoStart: ${autoStart}, Wave Active: ${wave.active}, Enemies Remaining: ${enemies.length}, Cooldown: ${isWaveCooldown}`);
-
     
 
     if (wave.number % 8 === 0) {
@@ -239,6 +256,7 @@ function showBossWarning(amount) {
         popup.classList.remove('show');
     }, 1000); 
 }
+
 function checkCollision() {
     for (var enemy of enemies) {
         for (var projectile of projectiles) {
@@ -253,9 +271,10 @@ function checkCollision() {
 
                         projectile.hitEnemies.add(enemy);
 
-                        if (enemy.strength <= 0) {
-                            enemies.splice(enemies.indexOf(enemy), 1);
+                        if (enemy.strength <= 0 && !enemy.isExploding) {
+                            enemy.explode(); // Trigger explosion
                         }
+
                     }
                 } else {
                     const damage = Math.min(enemy.strength, projectile.strength);
@@ -265,12 +284,10 @@ function checkCollision() {
                     money += Math.round(damage * 0.5);
                     updateInfo();
 
-                    // Remove defeated enemies
-                    if (enemy.strength <= 0) {
-                        enemies.splice(enemies.indexOf(enemy), 1);
+                    if (enemy.strength <= 0 && !enemy.isExploding) {
+                        enemy.explode(); // Trigger explosion
                     }
 
-                    // Remove projectiles with no strength left
                     if (projectile.strength <= 0) {
                         projectiles.splice(projectiles.indexOf(projectile), 1);
                     }
@@ -279,6 +296,7 @@ function checkCollision() {
         }
     }
 }
+
 
 function mousePressed() {
     if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
@@ -462,7 +480,7 @@ function buyTurret(type) {
 
     updateTurretMenuText();
     updateInfo(); // Update money and other info in the UI
-    buyTextElement.textContent = "Drag turret out of map to cancel";
+    buyTextElement.textContent = "Drag turret to garbage bin to cancel";
 }
 
 function mouseDragged() {

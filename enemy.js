@@ -1,6 +1,6 @@
 class Enemy {
-    constructor(strength, speed, nodes, maxHealth) {
-        this.strength = maxHealth;
+    constructor(strength, speed, nodes, maxHealth, type) {
+        this.strength = Math.round(strength);
         this.speed = speed;
         this.nodes = nodes;
         this.x = nodes[0].x;
@@ -10,65 +10,124 @@ class Enemy {
         this.size = 30;
         this.targetNode = 0;
         this.finished = false;
-        this.maxHealth = maxHealth; 
+        this.maxHealth = Math.round(maxHealth);
         this.gameSpeed = gameSpeed;
+        this.type = type;
+        this.isExploding = false;
+        this.explosionFrameCount = 0;
+
+        // Assign preloaded images
+        switch (type) {
+            case 'normal':
+                this.img = normalEnemyImages[Math.floor(Math.random() * normalEnemyImages.length)];
+                break;
+            case 'heavy':
+                this.img = heavyEnemyImage;
+                break;
+            case 'fast':
+                this.img = fastEnemyImage;
+                break;
+            case 'boss':
+                this.img = bossEnemyImage;
+                break;
+            case 'bomb':
+                this.img = bombEnemyImage;
+                this.explosionImg = explosionImage;
+                break;
+            default:
+                console.error(`Unknown enemy type: ${type}`);
+        }
+
     }
 
     draw() {
-        fill('red');
-        ellipse(this.x, this.y, this.size, this.size);
         
-        fill(255, 0, 0); 
-        rect(this.x - 15, this.y - 25, 30, 5); 
-        
-
-        fill(0, 255, 0); 
-        let healthWidth = (this.strength / this.maxHealth) * 30;
-        rect(this.x - 15, this.y - 25, healthWidth, 5);
-
-        fill('black');
-        textAlign(CENTER, CENTER);
-        textSize(15);
-        text(floor(this.strength), this.x, this.y);
-
-    }
+        if (this.isExploding) {
+            if (this.explosionFrameCount < 60) {
+                if (this.explosionImg) {
+                    const explosionRadius = 175 * 2;
+                    image(this.explosionImg, this.x - explosionRadius / 2, this.y - explosionRadius / 2, explosionRadius, explosionRadius);
+                }
+                this.explosionFrameCount++;
+                return;
+            } else {
+                // Remove enemy after 60 frames
+                const index = enemies.indexOf(this);
+                if (index > -1) enemies.splice(index, 1);
+                return;
+            }
+        }
     
+        // Draw enemy normally if not exploding
+        if (this.img) {
+            const adjustedX = this.x - this.size * (this.type === 'normal' || this.type === 'heavy' ? 0.75 : 1.15);
+            const adjustedY = this.y - this.size * 0.75;
+            const width = this.size * (this.type === 'normal' || this.type === 'heavy' ? 1.5 : 3);
+            const height = this.size * 1.5;
+    
+            image(this.img, adjustedX, adjustedY, width, height);
+        } else {
+            console.error("Image not loaded for enemy type:", this.type);
+        }
+    
+        // Health bar
+        fill(255, 0, 0);
+        rect(this.x - 25, this.y - 35, 50, 10);
+    
+        fill(4, 128, 49);
+        const healthWidth = (this.strength / this.maxHealth) * 50;
+        rect(this.x - 25, this.y - 35, healthWidth, 10);
+    
+        fill('white');
+        textAlign(CENTER, CENTER);
+        textSize(12);
+        textStyle(BOLD);
+        text(Math.floor(this.strength), this.x, this.y - 31);
+    }
+
     move() {
-        this.x += this.xSpeed * this.gameSpeed;
-        this.y += this.ySpeed * this.gameSpeed; 
+        if (!this.isExploding) {
+            this.x += this.xSpeed * this.gameSpeed;
+            this.y += this.ySpeed * this.gameSpeed;
+        }
     }
 
     findTarget() {
         if (this.xSpeed === 0 && this.ySpeed === 0) {
             this.targetNode++;
-            if (this.targetNode >= this.nodes.length) {
-                return; 
-            }
-            let target = this.nodes[this.targetNode];
-            let xDifference = target.x - this.x;
-            let yDifference = target.y - this.y;
-            let angle = atan2(yDifference, xDifference);
+            if (this.targetNode >= this.nodes.length) return;
+
+            const target = this.nodes[this.targetNode];
+            const xDifference = target.x - this.x;
+            const yDifference = target.y - this.y;
+            const angle = atan2(yDifference, xDifference);
             this.xSpeed = this.speed * cos(angle);
             this.ySpeed = this.speed * sin(angle);
         }
     }
 
     checkTarget() {
-        let target = this.nodes[this.targetNode];
-        let distance = dist(this.x, this.y, target.x, target.y);
-        if (distance < this.speed) {
+        const target = this.nodes[this.targetNode];
+        const distance = dist(this.x, this.y, target.x, target.y);
+        if (distance < this.speed * this.gameSpeed) {
             this.xSpeed = 0;
             this.ySpeed = 0;
 
             if (this.targetNode === this.nodes.length - 1) {
                 this.finished = true;
-                health -= round(this.strength);
+                health -= Math.round(this.strength);
                 if (health <= 0) {
                     health = 0;
                     playing = false;
                 }
                 updateInfo();
             }
+        }
+        if (distance < this.speed * this.gameSpeed) {
+            this.x = target.x;
+            this.y = target.y;
+            this.xSpeed = 0;
+            this.ySpeed = 0;
         }
     }
 
@@ -90,7 +149,41 @@ class Enemy {
         this.gameSpeed = newGameSpeed;
     }
 
+    explode() {
+        const EXPLOSION_RADIUS = 185;
+        if (this.type === 'bomb') { // Ensure only bomb enemies trigger this
+            this.isExploding = true;
+            this.explosionStartTime = millis();
+            if (this.isExploding && this.explosionImg) {
+                const explosionDiameter = EXPLOSION_RADIUS * 2;
+                image(this.explosionImg, this.x - explosionDiameter / 2, this.y - explosionDiameter / 2, explosionDiameter, explosionDiameter);
+            }   if (!this.explosionImg) console.error("Explosion image not loaded.");
+            // Stun nearby turrets
+            turrets.forEach(turret => {
+                const distance = dist(this.x, this.y, turret.x, turret.y);
+                if (distance <= EXPLOSION_RADIUS) { 
+                    turret.stun(2500 / this.gameSpeed); 
+                }
+            });
+    
+        } else {
+            // For non-bomb enemies, just remove them
+            const index = enemies.indexOf(this);
+            if (index > -1) enemies.splice(index, 1);
+        }
+    }
+
     update() {
+        if (this.isExploding) {
+            this.draw(); // Only draw the explosion during the explosion phase
+            return; // Stop further processing
+        }
+
+        if (this.strength <= 0 && !this.isExploding) {
+            this.explode(); // Trigger explosion if health is depleted
+            return; // Prevent further updates
+        }
+    
         this.findTarget();
         this.move();
         this.draw();

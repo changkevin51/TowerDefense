@@ -89,10 +89,17 @@ or use Live Preview extension in VS Code
 - Add more turret types with unique abilities.
   - ✅ Sniper
   - ✅ Wizard
+  - [In progress] Laser turret
 - Introduce different enemy types.
+  - ✅ Fast
+  - ✅ Heavy  
+  - ✅ Boss
+  - ✅ Bomber
 - Implement animations and effects.
   - ✅ Sniper hit effect
   - ✅ Wizard projectile
+  - ✅ Bomber explosion effect
+  - ✅ Turret stun effect
 - Add maps and levels
 - Increase max upgrade level
 - ✅ <del>Add Tutorial
