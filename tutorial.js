@@ -76,7 +76,7 @@ function populateStats() {
       for (let level = 1; level <= 4; level++) {
         const range = turret.baseRange + (level - 1) * (turret.name === "Wizard" ? 30 : 50);
         const strength = turret.baseStrength + (level - 1) * (turret.name === "Sniper" ? (4 + level) : turret.name === "Wizard" ? (2 + level) : 1);
-        const cooldown = turret.baseCooldown - (level - 1) * (turret.name === "Sniper" ? 8 : turret.name === "Wizard" ? 5 : 5);
+        const cooldown = turret.baseCooldown - (level - 1) * (turret.name === "Sniper" ? 8 : turret.name === "Wizard" ? 5 : 3);
         const upgradeCost = level < 4 ? `$${turret.upgradeCost(level)}` : "Max";
   
         const row = document.createElement("tr");
@@ -132,7 +132,7 @@ function populateEnemies() {
       waves: "Every odd-numbered wave (Starting on wave 7)",
     },
     {
-      type: "Boss1",
+      type: "Boss",
       image: "images/enemies/boss1.png",
       abilities: "Extremely high health and powerful",
       waves: "Boss waves (every 8th wave)",

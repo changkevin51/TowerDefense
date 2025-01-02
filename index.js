@@ -50,6 +50,7 @@ var levelOneNodes = [
     powImage = loadImage('images/pow.png'); 
     bombImg = loadImage('images/enemies/bomb.png');
     stunImg = loadImage('images/stun.png');
+    sandImg = loadImage("images/sand.jpg");
 
     for (let i = 1; i <= 3; i++) {
         normalEnemyImages.push(loadImage(`images/enemies/normal${i}.png`));
@@ -66,7 +67,6 @@ var levelOneNodes = [
  function setup() {
     createCanvas(700, 700).parent("gameCanvas");
     frameRate(frameRateBase); 
-    sandImg = loadImage("images/sand.jpg");
     path = new Path(levelOneNodes);
     enemies = [];
     turrets = [];
