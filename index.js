@@ -197,13 +197,6 @@ function toggleAutoStart() {
     }, 1500);
   
 
-    waveNumber += 1
-    showMoneyPopup(150);
-    let healthIncrease = 2*wave.number;  
-    health += healthIncrease;
-    showHealthPopup(healthIncrease);
-    money += 150;  
-
     wave.start();
     updateInfo();
     
@@ -520,7 +513,7 @@ function checkTargetMode() {
     if (turret) {
         if (turret.targetMode === 0) text += "Closest";
         else if (turret.targetMode === 1) text += "Strongest";
-        else if (turret.targetMode === 2) text += "Farthest";
+        else if (turret.targetMode === 2) text += "First";
         else if (turret.targetMode === 3) text += "Last";
     } else {
         text += "None";

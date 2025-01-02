@@ -14,6 +14,7 @@ class Wave {
         this.healthIncreasePerWave = 1.1;
         this.gameSpeed = gameSpeed;
         this.isBossWave = false;
+        this.bonusGiven = false; // New flag
     }
 
     updateDifficulty() {
@@ -31,6 +32,7 @@ class Wave {
     start() {
         if (!this.active && enemies.length === 0) {
             this.number++;
+            waveNumber = this.number; // keep waveNumber in sync
             this.active = true;
             this.timer = 0;
             this.currentGroup = 0;
@@ -38,6 +40,7 @@ class Wave {
             this.isBossWave = this.number % 8 === 0;
 
             this.groupAmount = this.isBossWave ? 1 : 10;
+            this.bonusGiven = false; // Reset flag
 
             this.updateDifficulty();
             checkWave();
@@ -110,6 +113,17 @@ class Wave {
             this.spawnEnemies();
             this.timer += 1 * this.gameSpeed;
             
+        }
+        // Give bonus after last enemy is destroyed
+        else if (!this.active && enemies.length === 0 && !this.bonusGiven) {
+            let rewardCash = 150;
+            let healthIncrease = 2 * this.number;
+            money += rewardCash;
+            health += healthIncrease;
+            showMoneyPopup(rewardCash);
+            showHealthPopup(healthIncrease);
+            updateInfo();
+            this.bonusGiven = true;
         }
     }
 }
