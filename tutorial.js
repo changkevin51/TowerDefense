@@ -105,7 +105,11 @@ function populateEnemies() {
   const enemies = [
     {
       type: "Normal",
-      image: "images/enemies/normal1.png",
+      images: [
+        "images/enemies/normal1.png",
+        "images/enemies/normal2.png",
+        "images/enemies/normal3.png"
+      ],
       abilities: "None",
       waves: "Every wave",
     },
@@ -136,17 +140,26 @@ function populateEnemies() {
   ];
 
   const container = document.getElementById("enemies-container");
+
   enemies.forEach((enemy) => {
     const card = document.createElement("div");
     card.className = "enemy-card";
 
+    let imagesHTML = "";
+
+    // Show multiple images if present; otherwise fall back to single image
+    if (enemy.images) {
+      imagesHTML = enemy.images.map(imgSrc => `<img src="${imgSrc}" alt="${enemy.type}">`).join("");
+    } else {
+      imagesHTML = `<img src="${enemy.image}" alt="${enemy.type}">`;
+    }
+
     card.innerHTML = `
-      <img src="${enemy.image}" alt="${enemy.type}">
+      ${imagesHTML}
       <h3>${enemy.type}</h3>
       <p><strong>Abilities:</strong> ${enemy.abilities}</p>
       <p><strong>Appears on:</strong> ${enemy.waves}</p>
     `;
-
     container.appendChild(card);
   });
 }
