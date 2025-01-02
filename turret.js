@@ -29,7 +29,7 @@ class Turret {
             money -= upgradePrice;
             updateInfo();
             this.upgrades ++;
-            this.shootCooldown -= 5;
+            this.shootCooldown -= 3;
             this.projectileStrength += 1;
             this.range += 50;
         }
@@ -62,7 +62,6 @@ class Turret {
 
         text("level " + (this.upgrades+1), this.x, this.y - this.size / 2 - 10);
 
-        // If stunned, overlay stun icon
         if (this.isStunned) {
             image(this.stunImg, this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
         }
@@ -253,17 +252,17 @@ class Turret {
     
         this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
     
-        if (this.shootingTimer >= this.shootCooldown) {
+        if (this.shootingTimer >= this.shootCooldown / this.gameSpeed) {
             this.shootProjectile();
-            this.shootingTimer = 0; 
+            this.shootingTimer = 0;
         } else {
-            this.shootingTimer += 1; 
+            this.shootingTimer += 1;
         }
     }
     
     stun(duration) {
         this.isStunned = true;
-        this.stunEndTime = millis() + duration; // Duration passed dynamically
+        this.stunEndTime = millis() + duration; 
     }
     
     update() {
