@@ -149,8 +149,37 @@
     </button>
     
     <div id="container">
-      <div id="gameCanvas"></div>
+      <div id="gameCanvas">
+
+        
+      </div>
       <img id="garbage" src="images/garbage.png" alt="Garbage Can">
+      
+          <div id="turretInfo" class="turret-info">
+            <button id="sellButton">Sell</button>
+            <h3 id="turretDetailsHeader">Turret Details</h3>
+            
+            <div class="info-container">
+              <div id="turretCurrentStats">
+                Level: 2<br>
+                Range: 150<br>
+                Damage: 30<br>
+                Cooldown: 5s
+              </div>
+              
+              <div id="turretNextStats">
+                Next Level:<br>
+                Range: 180<br>
+                Damage: 35<br>
+                Cooldown: 4s
+              </div>
+              
+              <div class="upgrade-section">
+                <button id="upgradeButton" class="blue">Upgrade</button>
+              </div>
+            </div>
+          </div>
+
       <div id="gameMenu">
         <div id="menuInfo">
           <div title="Money">
@@ -190,10 +219,6 @@
           </div>
           
 
-          <button class="hoverButton" onclick="upgradeTurret()" onmouseover="checkUpgrade()">
-            Upgrade Turret
-            <span class="hoverText" id="upgradeTurretText">Price: $200</span>
-          </button>
           <button id="startWaveButton" class="hoverButton" onclick="toggleAutoStart()" onmouseover="checkWave()">
             Start Wave 
             <span class="autoStartToggle">Auto Start Toggle: False</span>
