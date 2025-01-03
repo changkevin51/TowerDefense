@@ -1,5 +1,6 @@
 var playing = true;
 
+
 var sangImg;
 
 var levelOneNodes = [
@@ -13,7 +14,7 @@ var levelOneNodes = [
     {x: 600, y: 80},
     {x: 600, y: 800},
 ];
-
+ var canvas;
  var path;
  var enemies;
  var powImage;
@@ -28,7 +29,7 @@ var levelOneNodes = [
  let explosionImage;
  var turrets;
  var projectiles;
- var money = 1200;
+ var money = 1050;
  var health = 100;
  var wave;
  var waveNumber = 1;
@@ -44,6 +45,7 @@ var levelOneNodes = [
  var showStartArrow = true; 
  var turretPriceSniper = 300;
  var turretPriceWizard = 400;
+ let isPopupActive = false;
  
  function preload() {
     orbImage = loadImage('images/OrbProjectile.gif');
@@ -65,7 +67,7 @@ var levelOneNodes = [
 
 
  function setup() {
-    createCanvas(700, 700).parent("gameCanvas");
+    canvas = createCanvas(700, 700).parent("gameCanvas");
     frameRate(frameRateBase); 
     path = new Path(levelOneNodes);
     enemies = [];
@@ -73,6 +75,9 @@ var levelOneNodes = [
     projectiles = [];
     wave = new Wave();
     updateInfo();
+
+    document.getElementById('turretInfo').style.display = 'none';
+    isPopupActive = false;
 
 }
 
@@ -292,11 +297,26 @@ function checkCollision() {
 
 
 function mousePressed() {
+    if (isPopupActive) {
+        if (mouseY < 560) {
+            let turret = getTurretBeingClicked();
+            if (turret) {
+                turrets.forEach(t => t.selected = false);
+                turret.selected = true;
+                showSelectedTurretInfo(turret);
+            } else {
+                turrets.forEach(t => t.selected = false);
+                showSelectedTurretInfo(null);
+                console.log("All turret selections canceled (clicked above popup).");
+            }
+        }
+        return; 
+    }
+
     if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
         let turret = getTurretBeingPlaced();
 
         if (turret != null) {
-            // Check if the player has enough money
             if ((turret.type === 'shooter' && money >= turretPrice) ||
                 (turret.type === 'sniper' && money >= turretPriceSniper) ||
                 (turret.type === 'wizard' && money >= turretPriceWizard)) {
@@ -327,20 +347,18 @@ function mousePressed() {
             }
         } else {
             turret = getTurretBeingClicked();
-
             if (turret != null) {
                 turrets.forEach(t => t.selected = false);
                 turret.selected = true;
+                showSelectedTurretInfo(turret);
             } else {
                 turrets.forEach(t => t.selected = false);
+                showSelectedTurretInfo(null);
                 console.log("All turret selections canceled.");
             }
         }
     }
 }
-
-
-
 
 function keyPressed() {
     let turret = getTurretBeingSelected();
@@ -401,10 +419,8 @@ function updateSpeedText() {
     speedText.textContent = `Current Speed: ${gameSpeed}x`;
 }
 function unselectAllTurrets() {
-    // Filter out unplaced turrets from the array
     turrets = turrets.filter(turret => turret.placed);
 
-    // Update UI or take other necessary actions
     updateInfo();
     document.getElementById("buyText").textContent = "Buy a Turret";
     console.log("Unplaced turrets removed.");
@@ -472,14 +488,19 @@ function buyTurret(type) {
     turrets.push(newTurret);
 
     updateTurretMenuText();
-    updateInfo(); // Update money and other info in the UI
+    updateInfo();
     buyTextElement.textContent = "Drag turret to garbage bin to cancel";
 }
 
+
+
 function mouseDragged() {
+    console.log('mouseDragged called');
     let turret = getTurretBeingPlaced();
-    if (turret && !turret.placed) {
+    if (turret && !turret.placed && !isPopupActive) { 
+        console.log('Checking turret cancellation conditions');
         if (mouseX < 0 || mouseY < 0 || mouseX > width || mouseY > height) {
+            console.log('Cancelling turret selection');
             cancelTurretSelection(turret);
         }
     }
@@ -492,6 +513,10 @@ function cancelTurretSelection(turret) {
         updateInfo();
         document.getElementById("buyText").textContent = "Buy a Turret";
         console.log("Turret selection canceled as it was dragged outside the map.");
+
+        const infoDiv = document.getElementById('turretInfo');
+        infoDiv.style.display = 'none';
+        isPopupActive = false;
     }
 }
 
@@ -528,3 +553,159 @@ function showTurretMenu() {
 }
 
 
+function showSelectedTurretInfo(turret) {
+    const infoDiv = document.getElementById('turretInfo');
+    const header = document.getElementById('turretDetailsHeader');
+    if (!turret) {
+        infoDiv.style.display = 'none';
+        isPopupActive = false;
+        return;
+    }
+    infoDiv.style.display = 'flex';
+    isPopupActive = true;
+    header.textContent = `${turret.type.charAt(0).toUpperCase() + turret.type.slice(1)} Details`;
+    const stats = populateStats(); 
+    const turretStats = stats.find(s => s.name.toLowerCase() === turret.type);
+    if (!turretStats) {
+        console.error("No stats found for turret type:", turret.type);
+        return;
+    }
+
+    const level = turret.upgrades + 1;
+    const range = turretStats.baseRange + (level - 1) * (turret.type === "wizard" ? 30 : 50);
+    const strength = turretStats.baseStrength + (level - 1) *
+        (turret.type === "sniper" ? (4 + level) : turret.type === "wizard" ? (2 + level) : 1);
+    const cooldown = turretStats.baseCooldown - (level - 1) *
+        (turret.type === "sniper" ? 8 : turret.type === "wizard" ? 5 : 3);
+
+    document.getElementById('turretCurrentStats').innerHTML = `
+        Level: ${level}<br>
+        Range: ${range}<br>
+        Damage: ${strength}<br>
+        Cooldown: ${cooldown}<br>
+        Special Ability: ${turretStats.ability}
+    `;
+
+    let nextText = "Maxed Out";
+    if (level < 4) {
+        const nextRange = range + (turret.type === "wizard" ? 30 : 50);
+        const nextStrength = strength + (turret.type === "sniper" ? (4 + level + 1) : turret.type === "wizard" ? (2 + level + 1) : 1);
+        const nextCooldown = cooldown - (turret.type === "sniper" ? 8 : turret.type === "wizard" ? 5 : 3);
+        nextText = `
+            Next Level:<br>
+            → Range: ${nextRange}<br>
+            → Damage: ${nextStrength}<br>
+            → Cooldown: ${nextCooldown}
+        `;
+    }
+    document.getElementById('turretNextStats').innerHTML = nextText;
+
+    const upgradeCostLabel = document.getElementById('upgradeButton');
+    const upgradeCost = (level < 4) ? turretStats.upgradeCost(level) : "Maxed";
+    upgradeCostLabel.textContent = (upgradeCost === "Maxed")
+        ? "No further upgrades"
+        : `Upgrade ($${upgradeCost})`;
+
+    const upgradeButton = document.getElementById('upgradeButton');
+    if (typeof upgradeCost === 'number' && money >= upgradeCost && level < 4) {
+        upgradeButton.classList.remove('red');
+        upgradeButton.classList.add('blue');
+        upgradeButton.disabled = false;
+    } else {
+        upgradeButton.classList.remove('blue');
+        upgradeButton.classList.add('red');
+        upgradeButton.disabled = true;
+    }
+
+    const sellButton = document.getElementById('sellButton');
+    const initialPrice = turret.type === 'sniper' ? 300 : turret.type === 'wizard' ? 400 : 150;
+    const totalSpent = initialPrice + turret.upgrades * (turret.type === 'sniper' || turret.type === 'wizard' ? 250 : 120);
+    const sellPrice = Math.round(totalSpent * 0.8);
+    sellButton.textContent = `Sell for $${sellPrice}`;
+}
+
+function sellTurret() {
+    const turret = getTurretBeingSelected();
+    if (!turret) return;
+
+    const initialPrice = turret.type === 'sniper'
+        ? 300
+        : turret.type === 'wizard'
+            ? 400
+            : 150;
+    const upgradeCost = (turret.type === 'sniper' || turret.type === 'wizard') ? 250 : 120;
+    const totalSpent = initialPrice + turret.upgrades * upgradeCost;
+
+    const sellPrice = Math.round(totalSpent * 0.8);
+    money += sellPrice;
+
+    const turretIndex = turrets.indexOf(turret);
+    if (turretIndex > -1) {
+        turrets.splice(turretIndex, 1);
+    }
+
+    if (turret.type === 'shooter') {
+        turretPrice = Math.round(turretPrice / turretPriceIncreaseFactor);
+    } else if (turret.type === 'sniper') {
+        turretPriceSniper = Math.round(turretPriceSniper / sniperPriceIncreaseFactor);
+    } else if (turret.type === 'wizard') {
+        turretPriceWizard = Math.round(turretPriceWizard / wizardPriceIncreaseFactor);
+    }
+
+    updateInfo();
+    updateTurretMenuText();
+    showSelectedTurretInfo(null);
+}
+
+
+
+function upgradeTurret() {
+    const turret = getTurretBeingSelected();
+    if (!turret) return;
+
+    let cost;
+    if (turret.type === 'sniper' || turret.type === 'wizard') {
+        cost = (turret.upgrades + 2) * 250;
+    } else {
+        cost = (turret.upgrades + 2) * 120;
+    }
+
+    if (money >= cost && turret.upgrades < turret.maxUpgrades) {
+        money -= cost;
+        turret.upgrades += 1;
+        turret.range += 30;
+        turret.damage += 1;
+        turret.cooldown -= 3;
+        updateInfo();
+    }
+
+    showSelectedTurretInfo(turret);
+}
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    const upgradeButton = document.getElementById('upgradeButton');
+    const sellButton = document.getElementById('sellButton');
+    const turretInfo = document.getElementById('turretInfo');
+
+    turretInfo.addEventListener('click', (event) => {
+        console.log('Popup clicked');
+        event.stopPropagation();
+    });
+    
+    upgradeButton.addEventListener('click', (event) => {
+        console.log('Upgrade button clicked');
+        event.preventDefault();
+        upgradeTurret();
+    });
+    
+    sellButton.addEventListener('click', (event) => {
+        console.log('Sell button clicked');
+        event.preventDefault();
+        sellTurret();
+    });
+});
