@@ -189,6 +189,10 @@ function toggleAutoStart() {
     document.getElementById("Money").innerHTML = money;
     document.getElementById("Wave").innerHTML = wave.number;
     document.getElementById("Health").innerHTML = health;
+    const turret = getTurretBeingSelected();
+    if (turret) {
+        showSelectedTurretInfo(turret);
+    }
  }
 
  function startWave() {
@@ -298,7 +302,7 @@ function checkCollision() {
 
 function mousePressed() {
     if (isPopupActive) {
-        if (mouseY < 560) {
+        if (mouseY < 560 && mouseX < 700) {
             let turret = getTurretBeingClicked();
             if (turret) {
                 turrets.forEach(t => t.selected = false);
@@ -498,7 +502,6 @@ function mouseDragged() {
     console.log('mouseDragged called');
     let turret = getTurretBeingPlaced();
     if (turret && !turret.placed && !isPopupActive) { 
-        console.log('Checking turret cancellation conditions');
         if (mouseX < 0 || mouseY < 0 || mouseX > width || mouseY > height) {
             console.log('Cancelling turret selection');
             cancelTurretSelection(turret);
