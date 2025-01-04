@@ -649,7 +649,7 @@ function sellTurret() {
     } else if (turret.type === 'sniper') {
         turretPriceSniper = Math.round(turretPriceSniper / sniperPriceIncreaseFactor);
     } else if (turret.type === 'wizard') {
-        turretPriceWizard = Math.round(turretPriceWizard / wizardPriceIncreaseFactor);
+        turretPriceWizard = Math.round((turretPriceWizard - 500)/ wizardPriceIncreaseFactor);
     }
 
     updateInfo();
