@@ -130,12 +130,12 @@ function checkUpgrade() {
         if (turret.upgrades >= turret.maxUpgrades) {
             text = "Max Upgrade!";
         } else {
-            text = "Price: $";
+            text = "UPGRADE $";
             if (turret instanceof SniperTurret) {
                 text += (turret.upgrades + 2) * 250; 
             }
             else if (turret instanceof WizardTurret) {
-                text += (turret.upgrades + 2) * 250;
+                text += (turret.upgrades + 2) * 260;
             } else {
                 text += (turret.upgrades + 2) * 120; 
             }
@@ -144,7 +144,19 @@ function checkUpgrade() {
         text = "No Turret Selected!";
     }
 
-    document.getElementById("upgradeTurretText").textContent = text;
+    const upgradeButton = document.getElementById("upgradeButton");
+    upgradeButton.textContent = text;
+
+    const upgradeCost = (turret.upgrades + 2) * (turret instanceof SniperTurret ? 250 : turret instanceof WizardTurret ? 260 : 120);
+    if (turret.upgrades >= turret.maxUpgrades || money < upgradeCost) {
+        upgradeButton.classList.remove('blue');
+        upgradeButton.classList.add('red');
+        upgradeButton.disabled = true;
+    } else {
+        upgradeButton.classList.remove('red');
+        upgradeButton.classList.add('blue');
+        upgradeButton.disabled = false;
+    }
 }
 
 
@@ -603,13 +615,10 @@ function showSelectedTurretInfo(turret) {
     }
     document.getElementById('turretNextStats').innerHTML = nextText;
 
-    const upgradeCostLabel = document.getElementById('upgradeButton');
-    const upgradeCost = (level < 4) ? turretStats.upgradeCost(level) : "Maxed";
-    upgradeCostLabel.textContent = (upgradeCost === "Maxed")
-        ? "No further upgrades"
-        : `Upgrade ($${upgradeCost})`;
+    checkUpgrade();
 
     const upgradeButton = document.getElementById('upgradeButton');
+    const upgradeCost = (level < 4) ? turretStats.upgradeCost(level) : "Maxed";
     if (typeof upgradeCost === 'number' && money >= upgradeCost && level < 4) {
         upgradeButton.classList.remove('red');
         upgradeButton.classList.add('blue');
@@ -659,32 +668,6 @@ function sellTurret() {
     updateTurretMenuText();
     showSelectedTurretInfo(null);
 }
-
-
-
-function upgradeTurret() {
-    const turret = getTurretBeingSelected();
-    if (!turret) return;
-
-    let cost;
-    if (turret.type === 'sniper' || turret.type === 'wizard') {
-        cost = (turret.upgrades + 2) * 250;
-    } else {
-        cost = (turret.upgrades + 2) * 120;
-    }
-
-    if (money >= cost && turret.upgrades < turret.maxUpgrades) {
-        money -= cost;
-        turret.upgrades += 1;
-        turret.range += 30;
-        turret.damage += 1;
-        turret.cooldown -= 3;
-        updateInfo();
-    }
-
-    showSelectedTurretInfo(turret);
-}
-
 
 
 
