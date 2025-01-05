@@ -29,8 +29,8 @@ var levelOneNodes = [
  let explosionImage;
  var turrets;
  var projectiles;
- var money = 1050;
- var health = 100;
+ var money = 10500;
+ var health = 1000;
  var wave;
  var waveNumber = 1;
  var gameSpeed = 1; 
@@ -587,18 +587,19 @@ function showSelectedTurretInfo(turret) {
     }
 
     const level = turret.upgrades + 1;
-    const range = turretStats.baseRange + (level - 1) * (turret.type === "wizard" ? 30 : 50);
-    const strength = turretStats.baseStrength + (level - 1) *
+    const range = turretStats.baseRange + turret.upgrades * (turret.type === "wizard" ? 30 : 50);
+    const strength = turretStats.baseStrength + turret.upgrades *
         (turret.type === "sniper" ? (4 + level) : turret.type === "wizard" ? (2 + level) : 1);
-    const cooldown = turretStats.baseCooldown - (level - 1) *
+    const cooldown = turretStats.baseCooldown - turret.upgrades *
         (turret.type === "sniper" ? 8 : turret.type === "wizard" ? 5 : 3);
+    const specialAbility = turret.type === "wizard" && turret.upgrades >= 2 ? "+ Immune to Stun" : turretStats.ability;
 
     document.getElementById('turretCurrentStats').innerHTML = `
         Level: ${level}<br>
         Range: ${range}<br>
         Damage: ${strength}<br>
         Cooldown: ${cooldown}<br>
-        Special Ability: ${turretStats.ability}
+        Special Ability: ${specialAbility}
     `;
 
     let nextText = "Maxed Out";
@@ -606,11 +607,16 @@ function showSelectedTurretInfo(turret) {
         const nextRange = range + (turret.type === "wizard" ? 30 : 50);
         const nextStrength = strength + (turret.type === "sniper" ? (4 + level + 1) : turret.type === "wizard" ? (2 + level + 1) : 1);
         const nextCooldown = cooldown - (turret.type === "sniper" ? 8 : turret.type === "wizard" ? 5 : 3);
+        let nextSpecialAbility = turretStats.ability;
+        if (turret.type === "wizard" && level === 2) {
+            nextSpecialAbility = "+ Immune to Stun";
+        }
         nextText = `
             Next Level:<br>
             → Range: ${nextRange}<br>
             → Damage: ${nextStrength}<br>
-            → Cooldown: ${nextCooldown}
+            → Cooldown: ${nextCooldown}<br>
+            → Special Ability: ${nextSpecialAbility}
         `;
     }
     document.getElementById('turretNextStats').innerHTML = nextText;
@@ -687,6 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Upgrade button clicked');
         event.preventDefault();
         upgradeTurret();
+        updateInfo();
     });
     
     sellButton.addEventListener('click', (event) => {

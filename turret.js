@@ -28,7 +28,7 @@ class Turret {
         if(this.upgrades < this.maxUpgrades && money >= upgradePrice) {
             money -= upgradePrice;
             updateInfo();
-            this.upgrades ++;
+            this.upgrades += 1;
             this.shootCooldown -= 3;
             this.projectileStrength += 1;
             this.range += 50;
@@ -564,6 +564,7 @@ class WizardTurret extends Turret {
         this.projectileStrength = 3; 
         this.projectileSpeed = 2; 
         this.cost = 400; 
+        this.immuneToStun = false; 
     }
 
     upgrade() {
@@ -575,6 +576,16 @@ class WizardTurret extends Turret {
             this.shootCooldown -= 5;
             this.projectileStrength += (2 + this.upgrades);
             this.range += 15;
+            if (this.upgrades >= 2) {
+                this.immuneToStun = true;
+            }
+        }
+    }
+
+    stun(duration) {
+        if (!this.immuneToStun) {
+            this.isStunned = true;
+            this.stunEndTime = millis() + duration;
         }
     }
 
@@ -594,7 +605,11 @@ class WizardTurret extends Turret {
     
             // Check immediately if the enemy is a bomb and its health is zero
             if (enemy.type === 'bomb' && enemy.strength <= 0 && !enemy.isExploding) {
-                enemy.explode(); // Trigger the explosion
+                if (this.type === 'wizard' && (this.upgrades + 1) >= 3) {
+                    enemy.isExploding = true;
+                } else {
+                    enemy.explode();
+                }
             }
         }
     }
