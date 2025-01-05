@@ -38,21 +38,25 @@ var levelOneNodes = [
  let isWaveCooldown = false;
  var frameRateBase = 60; 
  var turretPrice = 150; 
+ var turretPriceSniper = 300;
+ var turretPriceWizard = 400;
+ var turretPriceFroster = 350;
  const turretPriceIncreaseFactor = 1.4; 
  const sniperPriceIncreaseFactor = 1.65; 
  const wizardPriceIncreaseFactor = 4;
+ const frosterPriceIncreaseFactor = 2.5;
  var autoStart = false;
  var showStartArrow = true; 
- var turretPriceSniper = 300;
- var turretPriceWizard = 400;
+
  let isPopupActive = false;
  
  function preload() {
     orbImage = loadImage('images/OrbProjectile.gif');
     powImage = loadImage('images/pow.png'); 
     bombImg = loadImage('images/enemies/bomb.png');
-    stunImg = loadImage('images/stun.png');
+    stunImg = loadImage('images/stun2.png');
     sandImg = loadImage("images/sand.jpg");
+    snowballImg = loadImage('images/snowball.png');
 
     for (let i = 1; i <= 3; i++) {
         normalEnemyImages.push(loadImage(`images/enemies/normal${i}.png`));
@@ -133,9 +137,10 @@ function checkUpgrade() {
             text = "UPGRADE $";
             if (turret instanceof SniperTurret) {
                 text += (turret.upgrades + 2) * 250; 
-            }
-            else if (turret instanceof WizardTurret) {
+            } else if (turret instanceof WizardTurret) {
                 text += (turret.upgrades + 2) * 260;
+            } else if (turret instanceof FrosterTurret) {
+                text += (turret.upgrades + 2) * 270;
             } else {
                 text += (turret.upgrades + 2) * 120; 
             }
@@ -335,7 +340,8 @@ function mousePressed() {
         if (turret != null) {
             if ((turret.type === 'shooter' && money >= turretPrice) ||
                 (turret.type === 'sniper' && money >= turretPriceSniper) ||
-                (turret.type === 'wizard' && money >= turretPriceWizard)) {
+                (turret.type === 'wizard' && money >= turretPriceWizard) ||
+                (turret.type === 'froster' && money >= turretPriceFroster)) {
                 
                 if (turret.isValid()) {
                     turret.placed = true;
@@ -349,6 +355,9 @@ function mousePressed() {
                     } else if (turret.type === 'wizard') {
                         money -= turretPriceWizard;
                         turretPriceWizard = Math.round(turretPriceWizard * wizardPriceIncreaseFactor) + 500;
+                    } else if (turret.type === 'froster') {
+                        money -= turretPriceFroster;
+                        turretPriceFroster = Math.round(turretPriceFroster * frosterPriceIncreaseFactor) + 500;
                     }
 
                     updateInfo();
@@ -496,6 +505,18 @@ function buyTurret(type) {
         }
         newTurret = new WizardTurret(path.roads);
         newTurret.type = 'wizard';
+    } else if (type === 'froster') {
+        price = turretPriceFroster;
+        if (money < price) {
+            console.log("Not enough money to buy Froster Turret!");
+            buyTextElement.textContent = "Not enough money!";
+            setTimeout(() => {
+                buyTextElement.textContent = "Buy a Turret";
+            }, 1000);
+            return;
+        }
+        newTurret = new FrosterTurret(path.roads); 
+        newTurret.type = 'froster';
     } else {
         console.log("Invalid turret type");
         return;
@@ -589,10 +610,12 @@ function showSelectedTurretInfo(turret) {
     const level = turret.upgrades + 1;
     const range = turretStats.baseRange + turret.upgrades * (turret.type === "wizard" ? 30 : 50);
     const strength = turretStats.baseStrength + turret.upgrades *
-        (turret.type === "sniper" ? (4 + level) : turret.type === "wizard" ? (2 + level) : 1);
+        (turret.type === "sniper" ? (4 + level) : turret.type === "wizard" ? (2 + level) : turret.type === "froster" ? 1 : 1);
     const cooldown = turretStats.baseCooldown - turret.upgrades *
-        (turret.type === "sniper" ? 8 : turret.type === "wizard" ? 5 : 3);
-    const specialAbility = turret.type === "wizard" && turret.upgrades >= 2 ? "+ Immune to Stun" : turretStats.ability;
+        (turret.type === "sniper" ? 8 : turret.type === "wizard" ? 5 : turret.type === "froster" ? 8 : 3);
+    const specialAbility = (turret.type === "wizard" && turret.upgrades >= 2) ? "+ Immune to Stun" :
+                           (turret.type === "froster" && turret.upgrades >= 2) ? "+ Stun Enemies" :
+                           turretStats.ability;
 
     document.getElementById('turretCurrentStats').innerHTML = `
         Level: ${level}<br>
@@ -604,12 +627,14 @@ function showSelectedTurretInfo(turret) {
 
     let nextText = "Maxed Out";
     if (level < 4) {
-        const nextRange = range + (turret.type === "wizard" ? 30 : 50);
-        const nextStrength = strength + (turret.type === "sniper" ? (4 + level + 1) : turret.type === "wizard" ? (2 + level + 1) : 1);
-        const nextCooldown = cooldown - (turret.type === "sniper" ? 8 : turret.type === "wizard" ? 5 : 3);
+        const nextRange = range + (turret.type === "wizard" ? 30 : turret.type === "froster" ? 10 : 50);
+        const nextStrength = strength + (turret.type === "sniper" ? (4 + level + 1) : turret.type === "wizard" ? (2 + level + 1) : turret.type === "froster" ? 1 : 1);
+        const nextCooldown = cooldown - (turret.type === "sniper" ? 8 : turret.type === "wizard" ? 5 : turret.type === "froster" ? 8 : 3);
         let nextSpecialAbility = turretStats.ability;
         if (turret.type === "wizard" && level === 2) {
             nextSpecialAbility = "+ Immune to Stun";
+        } else if (turret.type === "froster" && level === 2) {
+            nextSpecialAbility = "+ Stun and Slow Enemies";
         }
         nextText = `
             Next Level:<br>
@@ -636,8 +661,8 @@ function showSelectedTurretInfo(turret) {
     }
 
     const sellButton = document.getElementById('sellButton');
-    const initialPrice = turret.type === 'sniper' ? 300 : turret.type === 'wizard' ? 400 : 150;
-    const totalSpent = initialPrice + turret.upgrades * (turret.type === 'sniper' || turret.type === 'wizard' ? 250 : 120);
+    const initialPrice = turret.type === 'sniper' ? 300 : turret.type === 'wizard' ? 400 : turret.type === 'frost' ? 350 : 150;
+    const totalSpent = initialPrice + turret.upgrades * (turret.type === 'sniper' || turret.type === 'wizard' || turret.type === 'frost' ? 250 : 120);
     const sellPrice = Math.round(totalSpent * 0.8);
     sellButton.textContent = `Sell for $${sellPrice}`;
 }
@@ -650,8 +675,10 @@ function sellTurret() {
         ? 300
         : turret.type === 'wizard'
             ? 400
-            : 150;
-    const upgradeCost = (turret.type === 'sniper' || turret.type === 'wizard') ? 250 : 120;
+            : turret.type === 'frost'
+                ? 350
+                : 150;
+    const upgradeCost = (turret.type === 'sniper' || turret.type === 'wizard' || turret.type === 'frost') ? 250 : 120;
     const totalSpent = initialPrice + turret.upgrades * upgradeCost;
 
     const sellPrice = Math.round(totalSpent * 0.8);
@@ -668,6 +695,8 @@ function sellTurret() {
         turretPriceSniper = Math.round(turretPriceSniper / sniperPriceIncreaseFactor);
     } else if (turret.type === 'wizard') {
         turretPriceWizard = Math.round((turretPriceWizard - 500)/ wizardPriceIncreaseFactor);
+    } else if (turret.type === 'frost') {
+        turretPriceFrost = Math.round((turretPriceFrost - 500)/ frostPriceIncreaseFactor);
     }
 
     updateInfo();
@@ -675,6 +704,42 @@ function sellTurret() {
     showSelectedTurretInfo(null);
 }
 
+function sellTurret() {
+    const turret = getTurretBeingSelected();
+    if (!turret) return;
+
+    const initialPrice = turret.type === 'sniper'
+        ? 300
+        : turret.type === 'wizard'
+            ? 400
+            : turret.type === 'froster'
+                ? 350
+                : 150;
+    const upgradeCost = (turret.type === 'sniper' || turret.type === 'wizard' || turret.type === 'froster') ? 250 : 120;
+    const totalSpent = initialPrice + turret.upgrades * upgradeCost;
+
+    const sellPrice = Math.round(totalSpent * 0.8);
+    money += sellPrice;
+
+    const turretIndex = turrets.indexOf(turret);
+    if (turretIndex > -1) {
+        turrets.splice(turretIndex, 1);
+    }
+
+    if (turret.type === 'shooter') {
+        turretPrice = Math.round(turretPrice / turretPriceIncreaseFactor);
+    } else if (turret.type === 'sniper') {
+        turretPriceSniper = Math.round(turretPriceSniper / sniperPriceIncreaseFactor);
+    } else if (turret.type === 'wizard') {
+        turretPriceWizard = Math.round((turretPriceWizard - 500)/ wizardPriceIncreaseFactor);
+    } else if (turret.type === 'froster') {
+        turretPriceFroster = Math.round((turretPriceFroster - 500)/ frosterPriceIncreaseFactor);
+    }
+
+    updateInfo();
+    updateTurretMenuText();
+    showSelectedTurretInfo(null);
+}
 
 
 

@@ -60,7 +60,7 @@ class Wave {
     spawnEnemies() {
         // bomb
         if (
-            this.number >= 7 && // Start at wave 7
+            this.number >= 1 && // Start at wave 7
             this.number % 2 === 1 && // Every 2 waves
             [2, 5, 8].includes(this.currentGroup) && // Groups 2, 5, 8
             this.currentMember === 0 

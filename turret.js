@@ -19,7 +19,7 @@ class Turret {
         this.gameSpeed = gameSpeed; 
         this.isStunned = false;
         this.stunEndTime = 0;
-        this.stunImg = loadImage('images/stun.png'); 
+        this.stunImg = loadImage('images/stun2.png'); 
     }
     
 
@@ -617,7 +617,6 @@ class WizardTurret extends Turret {
     targetEnemy() {
         let enemy = null;
     
-        // Determine target based on targeting mode
         if (this.targetMode === 0) {
             enemy = this.getEnemyClosestToTurret();
         } else if (this.targetMode === 1) {
@@ -628,14 +627,13 @@ class WizardTurret extends Turret {
             enemy = this.getLastEnemyInRange(); // Add support for "Last"
         }
     
-        // Shoot if a valid target exists
         if (enemy) {
             this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
             if (this.shootingTimer >= this.shootCooldown / this.gameSpeed) {
-                this.shootProjectile(enemy); // Use the updated target
+                this.shootProjectile(enemy); 
                 this.shootingTimer = 0;
             } else {
-                this.shootingTimer += this.gameSpeed; // Increment timer
+                this.shootingTimer += this.gameSpeed; 
             }
         }
     }
@@ -670,7 +668,6 @@ class WizardTurret extends Turret {
     
         text("level " + (this.upgrades + 1), this.x, this.y - this.size / 2 - 10);
 
-        // If stunned, overlay stun icon
         if (this.isStunned) {
             image(this.stunImg, this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
         }
@@ -685,6 +682,143 @@ class WizardTurret extends Turret {
         } else {
             return "red";
         }
+    }
+
+    update() {
+        if (this.isStunned && millis() >= this.stunEndTime) {
+            this.isStunned = false;
+        }
+        if (!this.isStunned) {
+            if (!this.placed) {
+                this.followMouse();
+            } else {
+                this.targetEnemy();
+            }
+        }
+        this.draw();
+    }
+}
+
+
+class FrosterTurret extends Turret {
+    constructor(roads) {
+        super(roads);
+        this.range = 300;
+        this.size = 60;
+        this.gunSize = 45;
+        this.shootCooldown = 100;
+        this.projectileStrength = 2;
+        this.projectileSpeed = 6.5;
+        this.upgrades = 0;
+        this.maxUpgrades = 3;
+        this.slowDurationBase = 1500;
+        this.slowDurationUpgraded = 2000;
+        this.stunDuration = 700;
+    }
+
+    upgrade() {
+        let upgradePrice = (this.upgrades + 2) * 270; 
+        if (this.upgrades < this.maxUpgrades && money >= upgradePrice) {
+            money -= upgradePrice;
+            updateInfo();
+            this.upgrades++;
+            this.shootCooldown -= 8;
+            this.projectileStrength += 1;
+            this.range += 10;
+        }
+    }
+
+    shootProjectile(enemy) {
+        if (enemy) {
+            this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
+            const x = this.x + this.gunSize * cos(this.lookAngle);
+            const y = this.y + this.gunSize * sin(this.lookAngle);
+            const xSpeed = this.projectileSpeed * cos(this.lookAngle);
+            const ySpeed = this.projectileSpeed * sin(this.lookAngle);
+
+            const level = this.upgrades + 1;
+            const slowTime = (level >= 3) ? this.slowDurationUpgraded : this.slowDurationBase;
+            const applyStun = (level >= 3);
+
+            let snowball = new SnowballProjectile(
+                x, y,
+                xSpeed, ySpeed,
+                this.projectileStrength,
+                this.gameSpeed,
+                30,
+                slowTime,
+                applyStun ? this.stunDuration : 0
+            );
+            projectiles.push(snowball);
+            this.shootingTimer = 0;
+        }
+    }
+
+    draw() {
+        if (!this.placed || this.selected) {
+            strokeWeight(1);
+            stroke('black');
+            fill(150, 200, 255, 50);
+            ellipse(this.x, this.y, this.range * 2, this.range * 2);
+        }
+    
+        let gunX = this.gunSize * cos(this.lookAngle);
+        let gunY = this.gunSize * sin(this.lookAngle);
+        let sideAngle = this.lookAngle + HALF_PI;
+        let offset = 4;
+        let offsetX = offset * cos(sideAngle);
+        let offsetY = offset * sin(sideAngle);
+    
+        strokeWeight(6);
+        stroke('blue');
+        // Left barrel
+        line(this.x + offsetX, this.y + offsetY, this.x + gunX + offsetX, this.y + gunY + offsetY);
+        // Right barrel
+        line(this.x - offsetX, this.y - offsetY, this.x + gunX - offsetX, this.y + gunY - offsetY);
+    
+        strokeWeight(1);
+        stroke('black');
+        fill(this.chooseColor());
+        ellipse(this.x, this.y, this.size, this.size);
+    
+        fill('yellow');
+        textSize(12);
+        textAlign(CENTER, CENTER);
+        text("level " + (this.upgrades + 1), this.x, this.y - this.size / 2 - 10);
+    
+        if (this.isStunned) {
+            image(this.stunImg, this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+        }
+    }
+
+    targetEnemy() {
+        let enemy = null;
+    
+        if (this.targetMode === 0) {
+            enemy = this.getEnemyClosestToTurret();
+        } else if (this.targetMode === 1) {
+            enemy = this.getStrongestEnemy();
+        } else if (this.targetMode === 2) {
+            enemy = this.getEnemyFarthestFromStart();
+        } else if (this.targetMode === 3) {
+            enemy = this.getLastEnemyInRange(); 
+        }
+    
+        if (enemy) {
+            this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
+            if (this.shootingTimer >= this.shootCooldown / this.gameSpeed) {
+                this.shootProjectile(enemy); 
+                this.shootingTimer = 0;
+            } else {
+                this.shootingTimer += this.gameSpeed;
+            }
+        }
+    }
+
+    chooseColor() {
+        if (this.selected) return "blue";
+        if (this.placed || this.isValid()) return "cyan";
+        return "red";
     }
 
     update() {
