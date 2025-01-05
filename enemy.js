@@ -16,6 +16,12 @@ class Enemy {
         this.isExploding = false;
         this.explosionFrameCount = 0;
 
+        this.isSlowed = false;
+        this.slowEndTime = 0;
+        this.slowFactor = 1;
+        this.isStunned = false;
+        this.stunEndTime = 0;
+
         // Assign preloaded images
         switch (type) {
             case 'normal':
@@ -57,7 +63,12 @@ class Enemy {
                 return;
             }
         }
-    
+        if (this.isSlowed) {
+            tint(89, 192, 225); 
+        } else {
+            noTint();
+        }
+
         // Draw enemy normally if not exploding
         if (this.img) {
             const adjustedX = this.x - this.size * (this.type === 'normal' || this.type === 'heavy' ? 0.75 : 1.15);
@@ -70,7 +81,6 @@ class Enemy {
             console.error("Image not loaded for enemy type:", this.type);
         }
     
-        // Health bar
         fill(255, 0, 0);
         rect(this.x - 25, this.y - 35, 50, 10);
     
@@ -87,8 +97,11 @@ class Enemy {
 
     move() {
         if (!this.isExploding) {
-            this.x += this.xSpeed * this.gameSpeed;
-            this.y += this.ySpeed * this.gameSpeed;
+            if (!this.isStunned) {
+                let factor = this.isSlowed ? this.slowFactor : 1;
+                this.x += this.xSpeed * this.gameSpeed * factor;
+                this.y += this.ySpeed * this.gameSpeed * factor;
+            }
         }
     }
 
@@ -175,13 +188,23 @@ class Enemy {
 
     update() {
         if (this.isExploding) {
-            this.draw(); // Only draw the explosion during the explosion phase
-            return; // Stop further processing
+            this.draw();
+            return;
         }
-
+        
+        // Remove if health is depleted
         if (this.strength <= 0 && !this.isExploding) {
-            this.explode(); // Trigger explosion if health is depleted
-            return; // Prevent further updates
+            this.explode();
+            return;
+        }
+    
+        // Check if slow or stun has ended
+        if (this.isSlowed && millis() >= this.slowEndTime) {
+            this.isSlowed = false;
+            this.slowFactor = 1;
+        }
+        if (this.isStunned && millis() >= this.stunEndTime) {
+            this.isStunned = false;
         }
     
         this.findTarget();

@@ -41,8 +41,18 @@ function populateStats() {
         upgradeCost: (level) => (level + 1) * 260,
         ability: "Piercing Projectiles",
       },
+      {
+        name: "Froster",
+        baseRange: 300,
+        baseStrength: 2,
+        baseCooldown: 100,
+        upgradeCost: (level) => (level + 1) * 270,
+        ability: "Slow Enemies",
+      },
     ];
   }
+
+
   
   function populateStatsTable() {
     const stats = populateStats();

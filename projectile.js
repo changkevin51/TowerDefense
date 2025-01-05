@@ -7,6 +7,7 @@ class Projectile {
         this.strength = strength;
         this.size = size;
         this.gameSpeed = gameSpeed;
+    
     }
 
     draw() {
@@ -68,6 +69,56 @@ class PiercingProjectile extends Projectile {
                 money += Math.round(this.strength * 0.5);
                 updateInfo();
                 this.hitEnemies.add(enemy);
+            }
+        }
+    }
+}
+
+class SnowballProjectile extends Projectile {
+    constructor(x, y, xSpeed, ySpeed, strength, gameSpeed, size, slowDuration, stunDuration) {
+        super(x, y, xSpeed, ySpeed, strength, gameSpeed, size);
+        this.slowDuration = slowDuration;
+        this.stunDuration = stunDuration;
+    }
+
+    draw() {
+        push();
+        imageMode(CENTER);
+        if (snowballImg) {
+            image(snowballImg, this.x, this.y, this.size, this.size);
+        } else {
+            fill(200, 255, 255);
+            ellipse(this.x, this.y, this.size, this.size);
+        }
+        pop();
+    }
+
+    update() {
+        this.move();
+        this.draw();
+        if (!this.inWorld()) return;
+
+        for (let enemy of enemies) {
+            if (CircleInCircle(this, enemy)) {
+                enemy.strength -= this.strength;
+                money += Math.round(this.strength * 0.5);
+                updateInfo();
+
+                enemy.isSlowed = true;
+                enemy.slowEndTime = millis() + this.slowDuration;
+                enemy.slowFactor = 0.6;
+
+                if (this.stunDuration > 0) {
+                    enemy.isStunned = true;
+                    enemy.stunEndTime = millis() + this.stunDuration;
+                }
+
+                if (enemy.strength <= 0 && !enemy.isExploding) {
+                    enemy.strength = 0;
+                    enemy.explode();
+                }
+                projectiles.splice(projectiles.indexOf(this), 1);
+                break;
             }
         }
     }
