@@ -78,21 +78,26 @@ function populateStats() {
         const strength = turret.baseStrength + (level - 1) * (turret.name === "Sniper" ? (4 + level) : turret.name === "Wizard" ? (2 + level) : 1);
         const cooldown = turret.baseCooldown - (level - 1) * (turret.name === "Sniper" ? 8 : turret.name === "Wizard" ? 5 : 3);
         const upgradeCost = level < 4 ? `$${turret.upgradeCost(level)}` : "Max";
-  
+        let specialAbility = turret.ability;
+    
+        if (turret.name === "Wizard" && level >= 3) {
+            specialAbility = "Piercing Projectiles + Immune to Stun";
+        }
+    
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${level}</td>
-          <td>${range}</td>
-          <td>${strength}</td>
-          <td>${cooldown}</td>
-          <td>${upgradeCost}</td>
-          <td>${turret.ability}</td>
+            <td>${level}</td>
+            <td>${range}</td>
+            <td>${strength}</td>
+            <td>${cooldown}</td>
+            <td>${upgradeCost}</td>
+            <td>${specialAbility}</td>
         `;
         tbody.appendChild(row);
-      }
-  
-      section.appendChild(table);
-      statsSections.appendChild(section);
+    }
+    
+    section.appendChild(table);
+    statsSections.appendChild(section);
     });
   }
   
