@@ -6,7 +6,7 @@ class Wave {
         this.groupSize = 1;
         this.timer = 0;
         this.groupDelay = 60;
-        this.memberDelay = 30; // Increase spacing between enemies
+        this.memberDelay = 30; 
         this.currentGroup = 0;
         this.currentMember = 0;
         this.enemyStrength = 1;
@@ -14,7 +14,7 @@ class Wave {
         this.healthIncreasePerWave = 1.1;
         this.gameSpeed = gameSpeed;
         this.isBossWave = false;
-        this.bonusGiven = false; // New flag
+        this.bonusGiven = false; 
     }
 
     updateDifficulty() {
@@ -32,7 +32,7 @@ class Wave {
     start() {
         if (!this.active && enemies.length === 0) {
             this.number++;
-            waveNumber = this.number; // keep waveNumber in sync
+            waveNumber = this.number; 
             this.active = true;
             this.timer = 0;
             this.currentGroup = 0;

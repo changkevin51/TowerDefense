@@ -29,8 +29,8 @@ var levelOneNodes = [
  let explosionImage;
  var turrets;
  var projectiles;
- var money = 10500;
- var health = 1000;
+ var money = 1050;
+ var health = 100;
  var wave;
  var waveNumber = 1;
  var gameSpeed = 1; 
