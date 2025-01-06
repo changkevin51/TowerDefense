@@ -11,7 +11,7 @@ class Wave {
         this.currentMember = 0;
         this.enemyStrength = 1;
         this.enemyMaxHealth = 8;
-        this.healthIncreasePerWave = 1.1;
+        this.healthIncreasePerWave = 0.9;
         this.gameSpeed = gameSpeed;
         this.isBossWave = false;
         this.bonusGiven = false; 
@@ -19,7 +19,7 @@ class Wave {
 
     updateDifficulty() {
         this.groupSize = Math.ceil(this.number / 5);
-        this.enemyMaxHealth = Math.round((Math.pow(this.number, 1.4) * this.healthIncreasePerWave) / (this.groupSize * 0.75)) + 1;
+        this.enemyMaxHealth = Math.round((Math.pow(this.number, 1.42) * this.healthIncreasePerWave) / (this.groupSize * 0.75)) + 1;
     }
 
     determineEnemyType() {
@@ -58,11 +58,40 @@ class Wave {
     }
 
     spawnEnemies() {
+        // Handle boss waves
+        if (this.isBossWave && this.currentGroup === 0) {
+            const bossCount = Math.floor(this.number / 8); 
+            const bossHealthMultiplier = bossCount === 1 
+                ? this.number / 2 
+                : this.number / (2.6 + bossCount * 0.8);
+
+            if (this.timeToSpawn(this.currentGroup, this.currentMember) && this.currentMember < bossCount) {
+                let health = this.enemyMaxHealth * bossHealthMultiplier;
+                
+                if (isEasyMode) {
+                    health = Math.ceil(health * 0.8);
+                } else if (isHardMode) {
+                    health = Math.ceil(health * 1.1);
+                }
+
+                enemies.push(new Enemy(health, 2.8, levelOneNodes, health, 'boss'));
+                this.currentMember++;
+
+                if (this.currentMember >= bossCount) {
+                    this.currentGroup++;
+                    this.currentMember = 0;
+                    this.active = false;
+                }
+                return;
+            }
+        }
+
         // bomb
+        const bombGroups = isEasyMode ? [4] : isHardMode ? [2, 5, 8] : [2, 7];
         if (
-            this.number >= 1 && // Start at wave 7
+            this.number >= 7 && // Start at wave 7
             this.number % 2 === 1 && // Every 2 waves
-            [2, 5, 8].includes(this.currentGroup) && // Groups 2, 5, 8
+            bombGroups.includes(this.currentGroup) && // Groups 2, 5, 8
             this.currentMember === 0 
         ) {
             enemies.push(new Enemy(this.enemyMaxHealth, 3.2, levelOneNodes, this.enemyMaxHealth, 'bomb'));
@@ -73,7 +102,7 @@ class Wave {
         // normal
         if (this.timeToSpawn(this.currentGroup, this.currentMember)) {
             const type = this.determineEnemyType();
-            let speed = 2.5;
+            let speed = isEasyMode ? 2.1 : isHardMode ? 2.55 : 2.4;
             let health = this.enemyMaxHealth;
     
             switch (type) {
@@ -86,8 +115,14 @@ class Wave {
                     health *= 0.5;
                     break;
                 case 'boss':
-                    health *= this.number;
+                    health *= (this.number*this.bossHealthMultiplyer);
                     break;
+            }
+    
+            if (isEasyMode) {
+                health = Math.ceil(health * 0.8);
+            } else if (isHardMode) {
+                health = Math.ceil(health * 1.15);
             }
     
             const newEnemy = new Enemy(health, speed, levelOneNodes, health, type);
@@ -116,8 +151,8 @@ class Wave {
         }
         // Give bonus after last enemy is destroyed
         else if (!this.active && enemies.length === 0 && !this.bonusGiven) {
-            let rewardCash = 150;
-            let healthIncrease = 2 * this.number;
+            let rewardCash = isEasyMode ? 200 : isHardMode ? 135 : 150;
+            let healthIncrease = isHardMode ? this.number : 2 * this.number;
             money += rewardCash;
             health += healthIncrease;
             showMoneyPopup(rewardCash);

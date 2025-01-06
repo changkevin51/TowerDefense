@@ -20,6 +20,7 @@ class Turret {
         this.isStunned = false;
         this.stunEndTime = 0;
         this.stunImg = loadImage('images/stun2.png'); 
+        this.totalDamage = 0;
     }
     
 
@@ -157,6 +158,7 @@ class Turret {
     
             projectiles.push(new Projectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 10));
             this.shootingTimer = 0; 
+            this.totalDamage += this.projectileStrength;
         }
     }
     
@@ -440,7 +442,7 @@ function unselectAllTurrets() {
         if (enemy) {
             let damage = Math.min(enemy.strength, this.projectileStrength);
             enemy.strength -= damage;
-    
+            this.totalDamage += damage;
             money += Math.round(damage * 0.5);
             updateInfo();
     
@@ -556,7 +558,7 @@ function unselectAllTurrets() {
 class WizardTurret extends Turret {
     constructor(roads) {
         super(roads);
-        this.range = 470; 
+        this.range = 465; 
         this.size = 65; 
         this.handOffset = 35; 
         this.gunSize = 50;
@@ -575,7 +577,7 @@ class WizardTurret extends Turret {
             this.upgrades++;
             this.shootCooldown -= 5;
             this.projectileStrength += (2 + this.upgrades);
-            this.range += 15;
+            this.range += 12;
             if (this.upgrades >= 2) {
                 this.immuneToStun = true;
             }
@@ -592,18 +594,26 @@ class WizardTurret extends Turret {
     shootProjectile(enemy) {
         if (enemy) {
             this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
-    
+
             let x = this.x + this.gunSize * cos(this.lookAngle);
             let y = this.y + this.gunSize * sin(this.lookAngle);
-    
+
             let xSpeed = this.projectileSpeed * cos(this.lookAngle);
             let ySpeed = this.projectileSpeed * sin(this.lookAngle);
-    
-            // Create a piercing projectile
-            let newProjectile = new PiercingProjectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 50);
+
+            // Create a piercing projectile and pass reference to this turret
+            const newProjectile = new PiercingProjectile(
+                x, 
+                y, 
+                xSpeed, 
+                ySpeed, 
+                this.projectileStrength, 
+                this.gameSpeed,
+                50,
+                this
+            );
             projectiles.push(newProjectile);
-    
-            // Check immediately if the enemy is a bomb and its health is zero
+
             if (enemy.type === 'bomb' && enemy.strength <= 0 && !enemy.isExploding) {
                 if (this.type === 'wizard' && (this.upgrades + 1) >= 3) {
                     enemy.isExploding = true;
@@ -633,7 +643,7 @@ class WizardTurret extends Turret {
                 this.shootProjectile(enemy); 
                 this.shootingTimer = 0;
             } else {
-                this.shootingTimer += this.gameSpeed; 
+                this.shootingTimer += 1; 
             }
         }
     }
@@ -751,6 +761,7 @@ class FrosterTurret extends Turret {
             );
             projectiles.push(snowball);
             this.shootingTimer = 0;
+            this.totalDamage += this.projectileStrength;
         }
     }
 

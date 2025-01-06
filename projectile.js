@@ -26,16 +26,18 @@ class Projectile {
     }
 
     inWorld() {
-        let outside = 500;
-        return this.x > -outside && this.x < 700 + outside
-            && this.y > -outside && this.y < 700 + outside;
+        let outside = 5;
+        return this.x > outside && this.x < 690 + outside
+            && this.y > outside && this.y < 690 + outside;
     }
 }
 
 class PiercingProjectile extends Projectile {
-    constructor(x, y, xSpeed, ySpeed, strength, gameSpeed, size) {
+    constructor(x, y, xSpeed, ySpeed, strength, gameSpeed, size, parentTurret) {
         super(x, y, xSpeed, ySpeed, strength, gameSpeed, size);
         this.hitEnemies = new Set();
+        this.totalDamageDealt = 0;
+        this.parentTurret = parentTurret; // Assign parent turret
     }
 
     draw() {
@@ -57,17 +59,31 @@ class PiercingProjectile extends Projectile {
         this.move();
         this.draw();
         if (!this.inWorld()) return;
+
         for (let enemy of enemies) {
             if (!this.hitEnemies.has(enemy) && CircleInCircle(this, enemy)) {
-                
+                // Reduce enemy's strength
                 enemy.strength -= this.strength;
+
+                // Add to total damage dealt
+                this.totalDamageDealt += this.strength;
+
+                // Update turret's damage counter
+                if (this.parentTurret) {
+                    this.parentTurret.totalDamage += this.strength;
+                }
+
+                // Handle enemy death
                 if (enemy.strength <= 0 && !enemy.isExploding) {
-                    enemy.strength = 0; // Ensure it's not negative
+                    enemy.strength = 0; // Ensure it doesn't go negative
                     enemy.explode(); // Trigger the explosion
                 }
-                
+
+                // Award money and update UI
                 money += Math.round(this.strength * 0.5);
                 updateInfo();
+
+                // Mark this enemy as hit
                 this.hitEnemies.add(enemy);
             }
         }
@@ -82,7 +98,7 @@ class SnowballProjectile extends Projectile {
     }
 
     draw() {
-        push();
+        push(); 
         imageMode(CENTER);
         if (snowballImg) {
             image(snowballImg, this.x, this.y, this.size, this.size);
@@ -90,13 +106,14 @@ class SnowballProjectile extends Projectile {
             fill(200, 255, 255);
             ellipse(this.x, this.y, this.size, this.size);
         }
-        pop();
+        pop(); 
     }
 
     update() {
         this.move();
-        this.draw();
         if (!this.inWorld()) return;
+
+        this.draw();
 
         for (let enemy of enemies) {
             if (CircleInCircle(this, enemy)) {

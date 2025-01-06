@@ -14,6 +14,8 @@ var levelOneNodes = [
     {x: 600, y: 80},
     {x: 600, y: 800},
 ];
+ let isEasyMode = false;
+ let isHardMode = false;
  var canvas;
  var path;
  var enemies;
@@ -30,7 +32,7 @@ var levelOneNodes = [
  var turrets;
  var projectiles;
  var money = 1050;
- var health = 100;
+ var health = isEasyMode ? 200 : isHardMode ? 75 : 100;
  var wave;
  var waveNumber = 1;
  var gameSpeed = 1; 
@@ -49,7 +51,7 @@ var levelOneNodes = [
  var showStartArrow = true; 
 
  let isPopupActive = false;
- 
+
  function preload() {
     orbImage = loadImage('images/OrbProjectile.gif');
     powImage = loadImage('images/pow.png'); 
@@ -285,7 +287,13 @@ function checkCollision() {
                         const damage = Math.min(enemy.strength, projectile.strength);
 
                         enemy.strength -= damage;
-                        money += Math.round(damage * 0.5);
+                        if (isEasyMode) {
+                            money += Math.round(damage * 0.7);
+                        } else if (isHardMode) {
+                            money += Math.round(damage * 0.4);
+                        } else {
+                            money += Math.round(damage * 0.5);
+                        }
                         updateInfo();
 
                         projectile.hitEnemies.add(enemy);
@@ -561,10 +569,13 @@ function updateTurretMenuText() {
     const shooterButton = document.querySelector("#turretMenu button:nth-child(1) span");
     const sniperButton = document.querySelector("#turretMenu button:nth-child(2) span");
     const wizardButton = document.querySelector("#turretMenu button:nth-child(3) span"); 
+    const frosterButton = document.querySelector("#turretMenu button:nth-child(4) span"); 
+
 
     shooterButton.textContent = `Buy Shooter - $${turretPrice}`;
     sniperButton.textContent = `Buy Sniper - $${turretPriceSniper}`;
     wizardButton.textContent = `Buy Wizard - $${turretPriceWizard}`; 
+    frosterButton.textContent = `Buy Froster - $${turretPriceFroster}`; 
 }
 
 function checkTargetMode() {
@@ -634,7 +645,7 @@ function showSelectedTurretInfo(turret) {
         if (turret.type === "wizard" && level === 2) {
             nextSpecialAbility = "+ Immune to Stun";
         } else if (turret.type === "froster" && level === 2) {
-            nextSpecialAbility = "+ Stun and Slow Enemies";
+            nextSpecialAbility = "+ Freeze and Slow Enemies";
         }
         nextText = `
             Next Level:<br>
@@ -665,6 +676,11 @@ function showSelectedTurretInfo(turret) {
     const totalSpent = initialPrice + turret.upgrades * (turret.type === 'sniper' || turret.type === 'wizard' || turret.type === 'frost' ? 250 : 120);
     const sellPrice = Math.round(totalSpent * 0.8);
     sellButton.textContent = `Sell for $${sellPrice}`;
+
+    const damageCounter = document.querySelector('.damage-counter');
+    if (damageCounter) {
+        damageCounter.textContent = `Damage: ${Math.round(turret.totalDamage)}`;
+    }
 }
 
 function sellTurret() {
@@ -696,7 +712,7 @@ function sellTurret() {
     } else if (turret.type === 'wizard') {
         turretPriceWizard = Math.round((turretPriceWizard - 500)/ wizardPriceIncreaseFactor);
     } else if (turret.type === 'frost') {
-        turretPriceFrost = Math.round((turretPriceFrost - 500)/ frostPriceIncreaseFactor);
+        turretPriceFroster = Math.round((turretPriceFroster - 500)/ frostPriceIncreaseFactor);
     }
 
     updateInfo();
@@ -748,6 +764,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const upgradeButton = document.getElementById('upgradeButton');
     const sellButton = document.getElementById('sellButton');
     const turretInfo = document.getElementById('turretInfo');
+    const difficultyScreen = document.getElementById('difficultyScreen');
+    const easyButton = document.getElementById('easyButton');
+    const normalButton = document.getElementById('normalButton');
+    const hardButton = document.getElementById('hardButton');
+
+  
+    easyButton.addEventListener('click', () => {
+      isEasyMode = true;
+      health = 200;
+      difficultyScreen.style.display = 'none';
+      updateInfo();
+    });
+  
+    normalButton.addEventListener('click', () => {
+      isEasyMode = false;
+      difficultyScreen.style.display = 'none';
+      updateInfo();
+    });
+
+    hardButton.addEventListener('click', () => {
+        isHardMode = true;
+        isEasyMode = false;
+        health = 75;
+        difficultyScreen.style.display = 'none';
+        updateInfo();
+    });
 
     turretInfo.addEventListener('click', (event) => {
         console.log('Popup clicked');

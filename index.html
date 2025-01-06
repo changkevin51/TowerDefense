@@ -151,14 +151,61 @@
     
     <div id="container">
       <div id="gameCanvas">
-
-        
+      </div>
+      <div id="difficultyScreen" class="difficulty-screen">
+          <h1 class="title">SELECT DIFFICULTY</h1>
+          <div class="button-container">
+              <div class="tooltip-container">
+                  <button id="easyButton" class="difficulty-btn easy">EASY</button>
+                  <div class="tooltip easy-tooltip">
+                      <h3>Easy Mode</h3>
+                      <p>Perfect for newcomers to tower defense games</p>
+                      <ul>
+                          <li>💰 200 gold per wave</li>
+                          <li>🤕 Enemies have 20% less health and are 15% slower</li>
+                          <li>🪙 40% more gold per damage</li>
+                          <li>❤️ Start with 200 health</li>
+                          <li>💣 1 bomb enemy on bomb waves</li>
+                      </ul>
+                  </div>
+              </div>
+              <div class="tooltip-container">
+                  <button id="normalButton" class="difficulty-btn normal">NORMAL</button>
+                  <div class="tooltip normal-tooltip">
+                      <h3>Normal Mode</h3>
+                      <p>The classic tower defense experience</p>
+                      <ul>
+                          <li>💰 150 gold per wave</li>
+                          <li>😐 Standard enemy health</li>
+                          <li>❤️ Start with 100 health</li>
+                          <li>💣 2 bomb enemy on bomb waves</li>
+                      </ul>
+                  </div>
+              </div>
+              <div class="tooltip-container">
+                  <button id="hardButton" class="difficulty-btn hard">HARD</button>
+                  <div class="tooltip hard-tooltip">
+                      <h3>Hard Mode</h3>
+                      <p>For experienced players seeking a challenge</p>
+                      <ul>
+                          <li>💰 135 gold per wave</li>
+                          <li>💪 Enemies have 15% more health and are 7% faster</li>
+                          <li>🪙 20% less gold per damage</li>
+                          <li>❤️ Start with 75 health</li>
+                          <li>💔 Health gain per wave halved</li>
+                          <li>💣 3 bomb enemy on bomb waves</li>
+                      </ul>
+                  </div>
+              </div>   
+          </div>
+          <div class="help-text">Hover on a difficulty for more information</div>
       </div>
       <img id="garbage" src="images/garbage.png" alt="Garbage Can">
       
           <div id="turretInfo" class="turret-info">
             <button id="sellButton">Sell</button>
             <h3 id="turretDetailsHeader">Turret Details</h3>
+            <div class="damage-counter">Damage: 0</div>
             
             <div class="info-container">
               <div id="turretCurrentStats">
@@ -174,7 +221,7 @@
                 Damage: 35<br>
                 Cooldown: 4s
               </div>
-              
+
               <div class="upgrade-section">
                 <button id="upgradeButton" class="blue">Upgrade</button>
               </div>
