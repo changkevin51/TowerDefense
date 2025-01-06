@@ -720,6 +720,26 @@ table td {
   gap: 10px; 
 }
 
+.damage-counter {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    padding: 5px 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    font-size: 14px;
+    color: #ffd700;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.damage-counter::before {
+    content: "⚔️";
+    font-size: 16px;
+}
+
 #upgradeButton {
     position: absolute;
     padding: 20px 40px; 
@@ -734,7 +754,7 @@ table td {
     font-weight: 700;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
     transition: transform 0.1s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-    top: 50px;
+    top: 55px;
     right: 20px;
     display: flex;
     align-items: center;
@@ -782,4 +802,155 @@ table td {
 #upgradeButton.red:hover {
   background-color: #e53935;
   transform: translateY(-2px);
+}
+
+
+.difficulty-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(20,20,40,0.95) 100%);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+}
+
+.difficulty-screen .title {
+  font-family: 'Arial Black', sans-serif;
+  font-size: 3rem;
+  letter-spacing: 4px;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+  margin-bottom: 2rem;
+}
+
+.button-container {
+  display: flex;
+  gap: 2rem;
+}
+
+.difficulty-btn {
+  padding: 1rem 3rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.difficulty-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+.difficulty-btn.easy {
+  background: linear-gradient(45deg, #4CAF50, #45a049);
+}
+
+.difficulty-btn.normal {
+  background: linear-gradient(45deg, #ff9800, #f57c00);
+}
+
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip {
+    position: absolute;
+    bottom: 120%; /* Position above button */
+    left: 50%;
+    transform: translateX(-50%); /* Center horizontally */
+    width: 300px;
+    padding: 20px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.tooltip:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid rgba(255, 255, 255, 0.1);
+}
+
+
+.tooltip h3 {
+    color: #fff;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.tooltip p {
+    color: #ddd;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
+
+.tooltip ul {
+    list-style: none;
+    padding: 0;
+}
+
+.tooltip li {
+    color: #fff;
+    margin: 8px 0;
+    font-size: 0.9em;
+}
+
+.tooltip-container:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+.easy-tooltip {
+    border-color: rgba(100, 255, 100, 0.3);
+}
+
+.normal-tooltip {
+    border-color: rgba(255, 200, 100, 0.3);
+}
+
+
+.hard-tooltip {
+    border-color: rgba(255, 100, 100, 0.3);
+}
+
+.difficulty-btn.hard {
+    background: linear-gradient(45deg, #8b0000, #ff0000);
+    color: white;
+}
+
+.difficulty-btn.hard:hover {
+    background: linear-gradient(45deg, #ff0000, #8b0000);
+}
+
+.help-text {
+    position: absolute;
+    bottom: 20%;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9em;
+    text-align: center;
+    margin-top: 20px;
+    font-style: italic;
 }

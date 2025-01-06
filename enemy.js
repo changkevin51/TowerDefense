@@ -47,7 +47,6 @@ class Enemy {
     }
 
     draw() {
-        
         if (this.isExploding) {
             if (this.explosionFrameCount < 60) {
                 if (this.explosionImg) {
@@ -57,19 +56,18 @@ class Enemy {
                 this.explosionFrameCount++;
                 return;
             } else {
-                // Remove enemy after 60 frames
                 const index = enemies.indexOf(this);
                 if (index > -1) enemies.splice(index, 1);
                 return;
             }
         }
+    
         if (this.isSlowed) {
             tint(89, 192, 225); 
         } else {
-            noTint();
+            noTint(); 
         }
-
-        // Draw enemy normally if not exploding
+    
         if (this.img) {
             const adjustedX = this.x - this.size * (this.type === 'normal' || this.type === 'heavy' ? 0.75 : 1.15);
             const adjustedY = this.y - this.size * 0.75;
@@ -80,6 +78,8 @@ class Enemy {
         } else {
             console.error("Image not loaded for enemy type:", this.type);
         }
+    
+        noTint();
     
         fill(255, 0, 0);
         rect(this.x - 25, this.y - 35, 50, 10);
@@ -94,6 +94,7 @@ class Enemy {
         textStyle(BOLD);
         text(Math.floor(this.strength), this.x, this.y - 31);
     }
+    
 
     move() {
         if (!this.isExploding) {
@@ -171,7 +172,6 @@ class Enemy {
                 const explosionDiameter = EXPLOSION_RADIUS * 2;
                 image(this.explosionImg, this.x - explosionDiameter / 2, this.y - explosionDiameter / 2, explosionDiameter, explosionDiameter);
             }   if (!this.explosionImg) console.error("Explosion image not loaded.");
-            // Stun nearby turrets
             turrets.forEach(turret => {
                 const distance = dist(this.x, this.y, turret.x, turret.y);
                 if (distance <= EXPLOSION_RADIUS) { 
@@ -180,7 +180,6 @@ class Enemy {
             });
     
         } else {
-            // For non-bomb enemies, just remove them
             const index = enemies.indexOf(this);
             if (index > -1) enemies.splice(index, 1);
         }
@@ -192,13 +191,11 @@ class Enemy {
             return;
         }
         
-        // Remove if health is depleted
         if (this.strength <= 0 && !this.isExploding) {
             this.explode();
             return;
         }
     
-        // Check if slow or stun has ended
         if (this.isSlowed && millis() >= this.slowEndTime) {
             this.isSlowed = false;
             this.slowFactor = 1;

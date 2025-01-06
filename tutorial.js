@@ -93,6 +93,9 @@ function populateStats() {
         if (turret.name === "Wizard" && level >= 3) {
             specialAbility = "Piercing Projectiles + Immune to Stun";
         }
+        if (turret.name === "Froster" && level >= 3) {
+          specialAbility = "Freeze + Slow Enemies";
+      }
     
         const row = document.createElement("tr");
         row.innerHTML = `
