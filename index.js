@@ -53,7 +53,6 @@ var levelOneNodes = [
  let isPopupActive = false;
 
  function preload() {
-    orbImage = loadImage('images/OrbProjectile.gif');
     powImage = loadImage('images/pow.png'); 
     bombImg = loadImage('images/enemies/bomb.png');
     stunImg = loadImage('images/stun2.png');
@@ -70,7 +69,7 @@ var levelOneNodes = [
     bombEnemyImage = loadImage('images/enemies/bomb.png');
     explosionImage = loadImage('images/explosion.png');
 
-    turretHolderImg = loadImage('images/shooter/turretHolder.png');
+    turretHolderImg = loadImage('images/shooter/greenHolder.png');
     for (let i = 1; i <= 7; i++) {
         turretFrames.push(loadImage(`images/shooter/tile00${i}.png`));
     }
@@ -87,6 +86,11 @@ var levelOneNodes = [
     wizardHolderImg = loadImage('images/wizard/purpleHolder.png');
     wizardProjectileImage = loadImage('images/wizard/wizardProjectile.png');
 
+    for (let i = 0; i < 11; i++) {
+        let filename = `images/froster/tile00${i}.png`;
+        frosterFrames[i] = loadImage(filename);
+    }
+    frosterHolderImg = loadImage('images/froster/blueHolder.png');
 
 }
 

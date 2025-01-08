@@ -16,7 +16,7 @@ class Projectile {
     draw() {
         push();
         translate(this.x, this.y);
-        rotate(this.angle + PI/2); // Add 90 degrees since image points down
+        rotate(this.angle); // Add 90 degrees since image points down
         imageMode(CENTER);
         image(projectileImg, 0, 0, this.size*2.4, this.size*3);
         pop();
