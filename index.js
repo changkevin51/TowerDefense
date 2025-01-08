@@ -59,7 +59,7 @@ var levelOneNodes = [
     stunImg = loadImage('images/stun2.png');
     sandImg = loadImage("images/sand.jpg");
     snowballImg = loadImage('images/snowball.png');
-    projectileImg = loadImage('images/Shooterprojectile.png');
+    projectileImg = loadImage('images/shooter/shooterProjectile.png');
 
     for (let i = 1; i <= 3; i++) {
         normalEnemyImages.push(loadImage(`images/enemies/normal${i}.png`));
@@ -79,6 +79,14 @@ var levelOneNodes = [
         let filename = `images/sniper/tile00${i}.png`;
         sniperFrames[i] = loadImage(filename);
     }
+
+    for (let i = 0; i < 11; i++) {
+        let filename = `images/wizard/tile00${i}.png`;
+        wizardFrames[i] = loadImage(filename);
+    }
+    wizardHolderImg = loadImage('images/wizard/purpleHolder.png');
+    wizardProjectileImage = loadImage('images/wizard/wizardProjectile.png');
+
 
 }
 

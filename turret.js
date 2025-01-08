@@ -1,6 +1,8 @@
 let turretHolderImg;
 let turretFrames = [];
 let sniperFrames = [];
+let wizardFrames = [];
+let wizardHolderImg;
 
 class Turret {
     constructor(roads) {
@@ -57,6 +59,9 @@ class Turret {
     
         push();
         imageMode(CENTER);
+        if (!this.placed && !this.isValid()) {
+            tint(238, 75, 43); 
+        }
         image(turretHolderImg, this.x, this.y, this.size, this.size);
     
         push();
@@ -419,6 +424,9 @@ function unselectAllTurrets() {
     
         push();
         imageMode(CENTER);
+        if (!this.placed && !this.isValid()) {
+            tint(238, 75, 43); 
+        }
         image(turretHolderImg, this.x, this.y, this.size, this.size);
         pop();
     
@@ -454,12 +462,12 @@ function unselectAllTurrets() {
 
     chooseColor() {
         if (this.selected) {
-            return "blue"; // Blue when selected
+            return "blue"; 
         }
         if (this.placed || this.isValid()) {
-            return "darkblue"; // Dark blue when placed or valid placement
+            return "darkblue"; 
         } else {
-            return "red"; // Red when invalid placement
+            return "red";
         }
     }
 
@@ -581,9 +589,7 @@ function unselectAllTurrets() {
             if (millis() >= this.stunEndTime) {
                 this.isStunned = false;
             } else {
-                // Render stun effect
                 image(this.stunImg, this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
-                // Removed the return so we still draw the turret body
             }
         }
         if (!this.placed) {
@@ -608,6 +614,13 @@ class WizardTurret extends Turret {
         this.projectileSpeed = 2; 
         this.cost = 400; 
         this.immuneToStun = false; 
+        this.frameNumber = 0;
+        this.isAnimating = false;
+        this.animationSpeed = 6;
+        this.lastAngle = 0;
+        this.idleFrame = loadImage('images/wizard/tile000.png');
+        this.animationEndTime = 0;
+        this.animationDelay = 500; 
     }
 
     upgrade() {
@@ -634,6 +647,9 @@ class WizardTurret extends Turret {
 
     shootProjectile(enemy) {
         if (enemy) {
+            this.isAnimating = true;
+            this.frameNumber = 0;
+            this.animationEndTime = millis() + this.animationDelay;
             this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
 
             let x = this.x + this.gunSize * cos(this.lookAngle);
@@ -665,6 +681,7 @@ class WizardTurret extends Turret {
         }
     }
 
+
     targetEnemy() {
         let enemy = null;
     
@@ -692,31 +709,43 @@ class WizardTurret extends Turret {
 
     draw() {
         if (!this.placed || this.selected) {
+            push();
             strokeWeight(1);
             stroke('black');
             fill(255, 255, 0, 50);
             ellipse(this.x, this.y, this.range * 2, this.range * 2);
+            pop();
         }
-    
-        strokeWeight(1);
-        stroke('black');
-        let leftHandX = this.x + this.handOffset * cos(this.lookAngle - HALF_PI);
-        let leftHandY = this.y + this.handOffset * sin(this.lookAngle - HALF_PI);
-    
-        let rightHandX = this.x + this.handOffset * cos(this.lookAngle + HALF_PI);
-        let rightHandY = this.y + this.handOffset * sin(this.lookAngle + HALF_PI);
-    
-        fill('black');
-        ellipse(leftHandX, leftHandY, 15, 15); 
-        ellipse(rightHandX, rightHandY, 15, 15); 
-    
-        fill(this.chooseColor());
-        ellipse(this.x, this.y, this.size, this.size);
-    
+
+        push();
+        imageMode(CENTER);
+        if (!this.placed && !this.isValid()) {
+            tint(238, 75, 43); 
+        }
+        image(wizardHolderImg, this.x, this.y, this.size, this.size);
+        pop();
+
+        push();
+        imageMode(CENTER);
+        translate(this.x, this.y);
+        rotate(this.lookAngle + PI/2);
+        
+        let wizardSize = this.size * 2;
+        if (this.isAnimating) {
+            image(wizardFrames[Math.floor(this.frameNumber)], 0, 0, wizardSize, wizardSize);
+            this.frameNumber += this.animationSpeed / this.gameSpeed;
+            if (this.frameNumber >= wizardFrames.length) {
+                this.frameNumber = 0;
+                this.isAnimating = false;
+            }
+        } else {
+            image(this.idleFrame, 0, 0, wizardSize, wizardSize);
+        }
+        pop();
+
         fill('yellow');
         textSize(12);
         textAlign(CENTER, CENTER);
-    
         text("level " + (this.upgrades + 1), this.x, this.y - this.size / 2 - 10);
 
         if (this.isStunned) {
@@ -743,7 +772,10 @@ class WizardTurret extends Turret {
             if (!this.placed) {
                 this.followMouse();
             } else {
-                this.targetEnemy();
+                // Only target new enemy if animation is complete
+                if (millis() >= this.animationEndTime) {
+                    this.targetEnemy();
+                }
             }
         }
         this.draw();

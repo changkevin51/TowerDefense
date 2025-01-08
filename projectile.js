@@ -1,4 +1,5 @@
 let projectileImg;
+let wizardProjectileImage;
 
 class Projectile {
     constructor(x, y, xSpeed, ySpeed, strength, gameSpeed, size) {
@@ -44,20 +45,31 @@ class PiercingProjectile extends Projectile {
         super(x, y, xSpeed, ySpeed, strength, gameSpeed, size);
         this.hitEnemies = new Set();
         this.totalDamageDealt = 0;
-        this.parentTurret = parentTurret; // Assign parent turret
+        this.parentTurret = parentTurret;
+        this.angle = atan2(ySpeed, xSpeed);
+        this.speedMultiplier = 1.0;
+        this.speedIncrement = 0.05; // Increase speed by 5% each frame
+    }
+    move() {
+        this.speedMultiplier += this.speedIncrement;
+        this.x += this.xSpeed * this.speedMultiplier * this.gameSpeed;
+        this.y += this.ySpeed * this.speedMultiplier * this.gameSpeed;
     }
 
     draw() {
         push();
+        translate(this.x, this.y);
+        rotate(this.angle);
         
-        if (orbImage) {
+        if (wizardProjectileImage) {
             imageMode(CENTER);
-            image(orbImage, this.x, this.y, this.size, this.size);
+            image(wizardProjectileImage, 0, 0, this.size, this.size);
         } else {
+            // Fallback if image not loaded
             fill(0, 255, 0);
-            ellipse(this.x, this.y, this.size, this.size);
+            ellipse(0, 0, this.size, this.size);
         }
-    
+        
         pop();
     }
     
