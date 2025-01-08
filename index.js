@@ -75,7 +75,11 @@ var levelOneNodes = [
         turretFrames.push(loadImage(`images/shooter/tile00${i}.png`));
     }
 
-    
+    for (let i = 0; i < 11; i++) {
+        let filename = `images/sniper/tile00${i}.png`;
+        sniperFrames[i] = loadImage(filename);
+    }
+
 }
 
 
