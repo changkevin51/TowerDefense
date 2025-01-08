@@ -3,6 +3,8 @@ let turretFrames = [];
 let sniperFrames = [];
 let wizardFrames = [];
 let wizardHolderImg;
+let frosterFrames = [];
+let frosterHolderImg;
 
 class Turret {
     constructor(roads) {
@@ -797,6 +799,14 @@ class FrosterTurret extends Turret {
         this.slowDurationBase = 1500;
         this.slowDurationUpgraded = 2000;
         this.stunDuration = 700;
+        // Animation properties
+        this.frameNumber = 0;
+        this.isAnimating = false;
+        this.animationSpeed = 1.5;
+        this.lastAngle = 0;
+        this.idleFrame = loadImage('images/froster/tile000.png');
+        this.animationEndTime = 0;
+        this.animationDelay = 400;
     }
 
     upgrade() {
@@ -813,7 +823,10 @@ class FrosterTurret extends Turret {
 
     shootProjectile(enemy) {
         if (enemy) {
+            this.isAnimating = true;
+            this.frameNumber = 0;
             this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
+            
             const x = this.x + this.gunSize * cos(this.lookAngle);
             const y = this.y + this.gunSize * sin(this.lookAngle);
             const xSpeed = this.projectileSpeed * cos(this.lookAngle);
@@ -840,38 +853,49 @@ class FrosterTurret extends Turret {
 
     draw() {
         if (!this.placed || this.selected) {
+            push();
             strokeWeight(1);
             stroke('black');
             fill(150, 200, 255, 50);
             ellipse(this.x, this.y, this.range * 2, this.range * 2);
+            pop();
         }
-    
-        let gunX = this.gunSize * cos(this.lookAngle);
-        let gunY = this.gunSize * sin(this.lookAngle);
-        let sideAngle = this.lookAngle + HALF_PI;
-        let offset = 4;
-        let offsetX = offset * cos(sideAngle);
-        let offsetY = offset * sin(sideAngle);
-    
-        strokeWeight(6);
-        stroke('blue');
-        // Left barrel
-        line(this.x + offsetX, this.y + offsetY, this.x + gunX + offsetX, this.y + gunY + offsetY);
-        // Right barrel
-        line(this.x - offsetX, this.y - offsetY, this.x + gunX - offsetX, this.y + gunY - offsetY);
-    
-        strokeWeight(1);
-        stroke('black');
-        fill(this.chooseColor());
-        ellipse(this.x, this.y, this.size, this.size);
-    
+
+        // Draw static holder
+        push();
+        imageMode(CENTER);
+        if (!this.placed && !this.isValid()) {
+            tint(238, 75, 43); 
+        }
+        image(frosterHolderImg, this.x, this.y, this.size, this.size);
+        pop();
+
+        // Draw animated turret
+        push();
+        imageMode(CENTER);
+        translate(this.x, this.y);
+        rotate(this.lookAngle + PI/2);
+        
+        let frosterSize = this.size * 2;
+        if (this.isAnimating) {
+            image(frosterFrames[Math.floor(this.frameNumber)], 0, 0, frosterSize, frosterSize);
+            this.frameNumber += this.animationSpeed / this.gameSpeed;
+            if (this.frameNumber >= frosterFrames.length) {
+                this.frameNumber = 0;
+                this.isAnimating = false;
+            }
+        } else {
+            image(this.idleFrame, 0, 0, frosterSize, frosterSize);
+        }
+        pop();
+
         fill('yellow');
         textSize(12);
         textAlign(CENTER, CENTER);
         text("level " + (this.upgrades + 1), this.x, this.y - this.size / 2 - 10);
-    
+
         if (this.isStunned) {
-            image(this.stunImg, this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+            image(this.stunImg, this.x - this.size/2, this.y - this.size/2, this.size, this.size);
         }
     }
 
@@ -889,10 +913,15 @@ class FrosterTurret extends Turret {
         }
     
         if (enemy) {
-            this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
+            // Only update angle if animation is complete
+            if (millis() >= this.animationEndTime) {
+                this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
+            }
+            
             if (this.shootingTimer >= this.shootCooldown / this.gameSpeed) {
-                this.shootProjectile(enemy); 
+                this.shootProjectile(enemy);
                 this.shootingTimer = 0;
+                this.animationEndTime = millis() + this.animationDelay/this.gameSpeed;
             } else {
                 this.shootingTimer += this.gameSpeed;
             }
