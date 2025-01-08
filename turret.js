@@ -1,5 +1,6 @@
 let turretHolderImg;
 let turretFrames = [];
+let sniperFrames = [];
 
 class Turret {
     constructor(roads) {
@@ -12,7 +13,7 @@ class Turret {
         this.lookAngle = 0;
         this.placed = false;
         this.selected = false;
-        this.projectileSpeed = 6.5; 
+        this.projectileSpeed = 8.5; 
         this.projectileStrength = 1;
         this.shootCooldown = 30;
         this.shootingTimer = 30;
@@ -399,44 +400,55 @@ function unselectAllTurrets() {
         this.targetMode = 2;
         this.upgrades = 0;
         this.currentTarget = null;
+        this.frameNumber = 0;
+        this.isAnimating = false;
+        this.animationSpeed = 1.5;
+        this.lastAngle = 0;
+        this.idleFrame = loadImage('images/sniper/tile000.png');
     }
 
     draw() {
         if (!this.placed || this.selected) {
+            push();
             strokeWeight(1);
             stroke('black');
-            fill(100, 200, 255, 50); // Light blue to indicate sniper's long range
+            fill(100, 200, 255, 50);
             ellipse(this.x, this.y, this.range * 2, this.range * 2);
+            pop();
         }
     
-        strokeWeight(6);
-        stroke('darkgray');
-        let gunX = this.gunSize * cos(this.lookAngle);
-        let gunY = this.gunSize * sin(this.lookAngle);
-        line(this.x, this.y, this.x + gunX, this.y + gunY);
+        push();
+        imageMode(CENTER);
+        image(turretHolderImg, this.x, this.y, this.size, this.size);
+        pop();
     
-        // Choose color based on turret's placement status
-        let turretColor = this.chooseColor();
+        push();
+        imageMode(CENTER);
+        translate(this.x, this.y);
+        rotate(this.lookAngle + PI/2);
+        
+        let sniperSize = this.size * 2;
+        if (this.isAnimating) {
+            image(sniperFrames[this.frameNumber], 0, 0, sniperSize, sniperSize);
+            if (frameCount % Math.floor(this.animationSpeed / this.gameSpeed) === 0) {
+                this.frameNumber++;
+                if (this.frameNumber >= sniperFrames.length) {
+                    this.frameNumber = 0;
+                    this.isAnimating = false;
+                }
+            }
+        } else {
+            image(this.idleFrame, 0, 0, sniperSize, sniperSize);
+        }
+        pop();
     
-        // Draw the base of the turret with dynamic color (red for invalid placement)
-        strokeWeight(1);
-        stroke('black');
-        fill(turretColor); // Use the color returned by chooseColor()
-        ellipse(this.x, this.y, this.size, this.size);
-    
-        // Draw a scope for a sniper look
-        fill('red');
-        ellipse(this.x + gunX, this.y + gunY, 10, 10); // Small circle at the barrel's end
-    
-        // Display upgrade level
         fill('yellow');
         textSize(12);
         textAlign(CENTER, CENTER);
         text("level " + (this.upgrades + 1), this.x, this.y - this.size / 2 - 10);
     
-        // Display stun effect if stunned (overlaying on top of the turret body)
         if (this.isStunned) {
-            image(this.stunImg, this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+            image(this.stunImg, this.x - this.size/2, this.y - this.size/2, this.size, this.size);
         }
     }
 
@@ -468,6 +480,9 @@ function unselectAllTurrets() {
 
     shootEnemy(enemy) {
         if (enemy) {
+            this.isAnimating = true;
+            this.frameNumber = 0;
+            
             let damage = Math.min(enemy.strength, this.projectileStrength);
             enemy.strength -= damage;
             this.totalDamage += damage;
@@ -476,13 +491,11 @@ function unselectAllTurrets() {
     
             if (enemy.strength <= 0) {
                 enemy.strength = 0;
-                
                 if (enemy.type === 'bomb' && !enemy.isExploding) {
-                    enemy.explode(); // Trigger the explosion
-                    return; 
+                    enemy.explode();
+                    return;
                 }
             }
-    
             this.displayHitEffect(enemy);
         }
     }
