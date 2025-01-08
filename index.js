@@ -59,6 +59,7 @@ var levelOneNodes = [
     stunImg = loadImage('images/stun2.png');
     sandImg = loadImage("images/sand.jpg");
     snowballImg = loadImage('images/snowball.png');
+    projectileImg = loadImage('images/Shooterprojectile.png');
 
     for (let i = 1; i <= 3; i++) {
         normalEnemyImages.push(loadImage(`images/enemies/normal${i}.png`));
@@ -68,6 +69,13 @@ var levelOneNodes = [
     bossEnemyImage = loadImage('images/enemies/boss1.png');
     bombEnemyImage = loadImage('images/enemies/bomb.png');
     explosionImage = loadImage('images/explosion.png');
+
+    turretHolderImg = loadImage('images/shooter/turretHolder.png');
+    for (let i = 1; i <= 7; i++) {
+        turretFrames.push(loadImage(`images/shooter/tile00${i}.png`));
+    }
+
+    
 }
 
 
