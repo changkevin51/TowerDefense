@@ -1,3 +1,5 @@
+let projectileImg;
+
 class Projectile {
     constructor(x, y, xSpeed, ySpeed, strength, gameSpeed, size) {
         this.x = x;
@@ -7,13 +9,18 @@ class Projectile {
         this.strength = strength;
         this.size = size;
         this.gameSpeed = gameSpeed;
-    
+        this.angle = atan2(ySpeed, xSpeed);
     }
 
     draw() {
-        fill(0, 255, 0);
-        ellipse(this.x, this.y, this.size, this.size);
+        push();
+        translate(this.x, this.y);
+        rotate(this.angle + PI/2); // Add 90 degrees since image points down
+        imageMode(CENTER);
+        image(projectileImg, 0, 0, this.size*2.4, this.size*3);
+        pop();
     }
+
 
     move() {
         this.x += this.xSpeed * this.gameSpeed; 

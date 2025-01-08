@@ -1,3 +1,6 @@
+let turretHolderImg;
+let turretFrames = [];
+
 class Turret {
     constructor(roads) {
         this.roads = roads;
@@ -21,6 +24,11 @@ class Turret {
         this.stunEndTime = 0;
         this.stunImg = loadImage('images/stun2.png'); 
         this.totalDamage = 0;
+        this.frameNumber = 0;
+        this.isAnimating = false;
+        this.animationSpeed = 8;
+        this.lastAngle = 0;
+        this.idleFrame = loadImage('images/shooter/tile000.png');
     }
     
 
@@ -37,36 +45,51 @@ class Turret {
     }
 
     draw() {
-        if(!this.placed || this.selected) {
+        if (!this.placed || this.selected) {
+            push();
             strokeWeight(1);
             stroke('black');
             fill(255, 255, 0, 50);
             ellipse(this.x, this.y, this.range * 2, this.range * 2);
+            pop();
         }
     
-        strokeWeight(5);
-        stroke(this.chooseColor());
-        stroke("white");
-        var x = this.gunSize * cos(this.lookAngle);
-        var y = this.gunSize * sin(this.lookAngle);
-        line(this.x, this.y, this.x + x, this.y + y);
+        push();
+        imageMode(CENTER);
+        image(turretHolderImg, this.x, this.y, this.size, this.size);
     
-        strokeWeight(1);
-        stroke('black');
-        fill(this.chooseColor());
-        ellipse(this.x, this.y, this.size, this.size);
+        push();
+        translate(this.x, this.y);
+        rotate(this.lookAngle + PI/2);
+        
+        let turretBodySize = this.size * 2;
+        if (this.isAnimating) {
+            image(turretFrames[this.frameNumber], 0, 0, turretBodySize, turretBodySize);
+            if (frameCount % Math.floor(this.animationSpeed / this.gameSpeed) === 0) {
+                this.frameNumber++;
+                if (this.frameNumber >= turretFrames.length) {
+                    this.frameNumber = 0;
+                    this.isAnimating = false;
+                }
+            }
+        } else {
+            image(this.idleFrame, 0, 0, turretBodySize, turretBodySize);  // Changed this line
+        }
+        pop();
+        pop();
     
+        push();
         fill('yellow');
         textSize(12);
         textAlign(CENTER, CENTER);
-        
-
         text("level " + (this.upgrades+1), this.x, this.y - this.size / 2 - 10);
-
+        pop();
+    
         if (this.isStunned) {
             image(this.stunImg, this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
         }
     }
+    
     
     chooseColor() {
         if(this.selected) {
@@ -149,15 +172,21 @@ class Turret {
     
         if (enemy) {
             this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
-    
+            
+            // Start animation when angle changes significantly or shooting
+            if (abs(this.lookAngle - this.lastAngle) > 0.1 || !this.isAnimating) {
+                this.isAnimating = true;
+                this.frameNumber = 0;
+            }
+            this.lastAngle = this.lookAngle;
+
             let x = this.x + (this.gunSize * cos(this.lookAngle));
             let y = this.y + (this.gunSize * sin(this.lookAngle));
-    
             let xSpeed = this.projectileSpeed * cos(this.lookAngle) * this.gameSpeed;
             let ySpeed = this.projectileSpeed * sin(this.lookAngle) * this.gameSpeed;
     
             projectiles.push(new Projectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 10));
-            this.shootingTimer = 0; 
+            this.shootingTimer = 0;
             this.totalDamage += this.projectileStrength;
         }
     }
@@ -252,7 +281,6 @@ class Turret {
             return;
         }
     
-        this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
     
         if (this.shootingTimer >= this.shootCooldown / this.gameSpeed) {
             this.shootProjectile();
