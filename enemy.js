@@ -47,6 +47,7 @@ class Enemy {
     }
 
     draw() {
+        strokeWeight(2);
         if (this.isExploding) {
             if (this.explosionFrameCount < 60) {
                 if (this.explosionImg) {
