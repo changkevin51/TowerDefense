@@ -152,12 +152,16 @@ class Turret {
             return false; 
         }
     
+        if (onDecoration(this.x, this.y)) {
+            return false;
+        }
+    
         if (this.onRoad()) {
             return false; 
         }
     
         if (this.onTurret()) {
-            return false; 
+            return false;
         }
     
         return true; 

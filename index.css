@@ -79,6 +79,7 @@ body {
 }
 
 #gameCanvas {
+    position: relative;
     width: 700px; 
     height: 700px; 
     background: linear-gradient(135deg, #1e90ff, #87cefa);
@@ -211,73 +212,74 @@ body {
     z-index: 10;
 }
 
-#healthPopup {
-    position: absolute;
-    top: 120px;
-    right: -40px;
-    transform: translate(-50%, -50%);
-    background-color: red;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
+#healthPopup, #moneypopup, #bossWarningPopup {
+    position: fixed;
+    left: 55%;
+    padding: 11px 12px;
+    width: 90px;
+    border-radius: 15px;
     font-size: 18px;
+    font-weight: bold;
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     z-index: 100;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+    transform: translateX(-50%) translateY(20px);
 }
 
-#healthPopup.show {
-    visibility: visible;
-    opacity: 0.7;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+
+#healthPopup {
+    top: 95px;
+    background: linear-gradient(45deg, #eb6685, #f05d44);
+    color: white;
 }
 
 #moneypopup {
-    position: absolute;
-    top: 50px;
-    right: 0px;
-    transform: translate(-50%, -50%);
-    background-color: #FFDF00;
+    top: 30px; 
+    background: linear-gradient(45deg, #eed12c, #FFA500);
     color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-size: 18px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
-    z-index: 100;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-#moneypopup.show {
-    visibility: visible;
-    opacity: 0.7;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
 
 #bossWarningPopup {
-    position: absolute;
-    top: 190px;
-    right: -105px;
-    transform: translate(-50%, -50%);
-    background-color: rgb(29, 13, 122);
+    top: 160px;
+    left: 50%;
+    width:100px;
+    background: linear-gradient(45deg, #100846, #262ba8);
     color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-size: 15px;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
-    z-index: 100;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    font-size: 16px;
 }
 
+#healthPopup.show, 
+#moneypopup.show, 
 #bossWarningPopup.show {
     visibility: visible;
-    opacity: 0.7;
-    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+    opacity: 1;
+    transform: translateY(0);
+    animation: popup 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes popup {
+    0% {
+        transform: scale(0.3) translateY(20px);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.1) translateY(-5px);
+    }
+    100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
+}
+
+#healthPopup:hover,
+#moneypopup:hover,
+#bossWarningPopup:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
 }
 
 #footer {

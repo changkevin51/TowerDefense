@@ -1,17 +1,14 @@
 var playing = true;
-
-
-var sangImg;
-
+var sandImg
 var levelOneNodes = [
     {x: -100, y: 50},
     {x: 100, y: 50},
     {x: 100, y: 500},
     {x: 400, y: 500},
     {x: 400, y: 200},
-    {x: 220, y: 200},
-    {x: 220, y: 80},
-    {x: 600, y: 80},
+    {x: 250, y: 200},
+    {x: 250, y: 50},
+    {x: 600, y: 50},
     {x: 600, y: 800},
 ];
  let isEasyMode = false;
@@ -49,10 +46,13 @@ var levelOneNodes = [
  const frosterPriceIncreaseFactor = 2.5;
  var autoStart = false;
  var showStartArrow = true; 
-
  let isPopupActive = false;
 
+
+
  function preload() {
+    backgroundTile = loadImage('images/map/tile2.png');
+    pathTile = loadImage('images/map/pathTile.png');
     powImage = loadImage('images/pow.png'); 
     bombImg = loadImage('images/enemies/bomb.png');
     stunImg = loadImage('images/stun2.png');
@@ -92,6 +92,11 @@ var levelOneNodes = [
     }
     frosterHolderImg = loadImage('images/froster/blueHolder.png');
 
+    water = loadImage('images/map/water.png');
+    rocks = loadImage('images/map/rocks.png');
+    cactus = loadImage('images/map/cactus.png');
+    sign = loadImage('images/map/sign.png');
+    bigRock = loadImage('images/map/bigRock.png');
 }
 
 
@@ -99,7 +104,7 @@ var levelOneNodes = [
  function setup() {
     canvas = createCanvas(700, 700).parent("gameCanvas");
     frameRate(frameRateBase); 
-    path = new Path(levelOneNodes);
+    path = new Path(levelOneNodes, pathTile);
     enemies = [];
     turrets = [];
     projectiles = [];
@@ -111,10 +116,79 @@ var levelOneNodes = [
 
 }
 
+function drawBackground() {
+    const tileSize = 50; 
+    const tilesX = Math.ceil(width / tileSize);
+    const tilesY = Math.ceil(height / tileSize);
+    
+    for (let x = 0; x < tilesX; x++) {
+        for (let y = 0; y < tilesY; y++) {
+            let tileWidth = (x === tilesX - 1) ? width - x * tileSize : tileSize;
+            let tileHeight = (y === tilesY - 1) ? height - y * tileSize : tileSize;
+            
+            image(backgroundTile, 
+                  x * tileSize, y * tileSize,
+                  tileWidth, tileHeight,
+                  0, 0,
+                  tileWidth, tileHeight);
+        }
+    }
+    
+}
+
+function drawDecorations() {
+    push(); 
+    translate(300 + water.width / 2, 590 + water.height / 2); 
+    image(water, -water.width / 2, -water.height / 2); 
+    pop(); 
+
+    push();
+    translate(280 + rocks.width / 2, 580 + water.height + rocks.height / 2); 
+    image(rocks, -rocks.width / 2, -rocks.height / 2);
+    pop();
+
+    push();
+    translate(460, 250); 
+    image(cactus, 0, 0, cactus.width*0.9, cactus.height*0.9);
+    pop();
+
+    push();
+    translate(275, 80); 
+    image(sign, 0, 0, sign.width*0.7, sign.height*0.7);
+    pop();
+
+    push();
+    translate(200, 320); 
+    image(bigRock, 0, 0, bigRock.width*0.8, bigRock.height*0.8);
+    pop();
+}
+
+function getDecorationBounds() {
+    return [
+        { x: 300, y: 590, width: water.width, height: water.height },
+        { x: 280, y: 580 + water.height, width: rocks.width, height: rocks.height },
+        { x: 460, y: 250, width: cactus.width*0.9, height: cactus.height*0.9 },
+        { x: 275, y: 80, width: sign.width * 0.7, height: sign.height * 0.7 },
+        { x: 200, y: 320, width: bigRock.width * 0.8, height: bigRock.height * 0.8 },
+    ];
+}
+
+function onDecoration(x, y) {
+    for (const deco of getDecorationBounds()) {
+        if (x >= deco.x && x <= deco.x + deco.width &&
+            y >= deco.y && y <= deco.y + deco.height) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function draw() {
     if (playing) {
         background(0, 200, 0);
-        image(sandImg, 0, 0, 700, 700);
+        drawBackground();
+        drawDecorations();
+
         path.draw();
 
         if (showStartArrow) {

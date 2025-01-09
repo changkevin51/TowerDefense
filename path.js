@@ -1,33 +1,59 @@
 class Path {
-    constructor(nodes) {
+    constructor(nodes, texture = null) {
         this.nodes = nodes;
         this.size = 50;
-        this.color = '#4B2E2E';
+        this.texture = texture || pathTile; 
         this.arrowDrawn = false;
         this.createRoads();
     }
-
     draw() {
-        noStroke();
-        fill(this.color);
+        imageMode(CORNER);
 
+        this.drawBorders();
+
+        
         for (let road of this.roads) {
-            rect(road.x, road.y, road.w, road.h, this.size / 2);
+            let isHorizontal = road.w > road.h;
+            
+            let fullLength = isHorizontal ? road.w : road.h;
+            let fullTileCount = Math.floor(fullLength / this.size);
+            let remainingLength = fullLength % this.size;
+            
+            push();
+            translate(road.x, road.y);
+            
+            if (!isHorizontal) {
+                translate(this.size/2, this.size/2);
+                rotate(PI/2);
+                translate(-this.size/2, -this.size/2);
+            }
+            
+            for (let i = 0; i < fullTileCount; i++) {
+                image(this.texture, i * this.size, 0, this.size, this.size);
+            }
+            
+            if (remainingLength > 0) {
+                image(this.texture, 
+                    fullTileCount * this.size, 0, 
+                    remainingLength, this.size);
+            }
+            
+            pop();
         }
 
         for (let corner of this.corners) {
-            arc(
-                corner.x, corner.y,
-                this.size, this.size,
-                corner.startAngle, corner.endAngle
-            );
+            push();
+            translate(corner.x - this.size/2, corner.y - this.size/2);
+            image(this.texture, 0, 0, this.size, this.size);
+            pop();
         }
-
         if (!this.arrowDrawn) {
             this.drawStartArrow();
             this.arrowDrawn = true;
         }
     }
+
+    
 
     drawStartArrow() {
         let startNode = this.nodes[0];
@@ -97,5 +123,20 @@ class Path {
             startAngle,
             endAngle,
         });
+    }
+
+
+    drawBorders() {
+        stroke('black');
+        strokeWeight(5);
+        noFill();
+        for (let road of this.roads) {
+            rect(road.x, road.y, road.w, road.h);
+        }
+        for (let corner of this.corners) {
+            let cornerX = corner.x - this.size / 2;
+            let cornerY = corner.y - this.size / 2;
+            rect(cornerX, cornerY, this.size, this.size);
+        }
     }
 }

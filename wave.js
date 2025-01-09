@@ -11,7 +11,7 @@ class Wave {
         this.currentMember = 0;
         this.enemyStrength = 1;
         this.enemyMaxHealth = 8;
-        this.healthIncreasePerWave = 0.9;
+        this.healthIncreasePerWave = 0.8;
         this.gameSpeed = gameSpeed;
         this.isBossWave = false;
         this.bonusGiven = false; 
@@ -19,7 +19,7 @@ class Wave {
 
     updateDifficulty() {
         this.groupSize = Math.ceil(this.number / 5);
-        this.enemyMaxHealth = Math.round((Math.pow(this.number, 1.42) * this.healthIncreasePerWave) / (this.groupSize * 0.75)) + 1;
+        this.enemyMaxHealth = Math.round((Math.pow(this.number, 1.45) * this.healthIncreasePerWave) / (this.groupSize * 0.75)) + 1;
     }
 
     determineEnemyType() {
@@ -149,7 +149,6 @@ class Wave {
             this.timer += 1 * this.gameSpeed;
             
         }
-        // Give bonus after last enemy is destroyed
         else if (!this.active && enemies.length === 0 && !this.bonusGiven) {
             let rewardCash = isEasyMode ? 200 : isHardMode ? 135 : 150;
             let healthIncrease = isHardMode ? this.number : 2 * this.number;
