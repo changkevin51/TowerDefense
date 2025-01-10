@@ -46,9 +46,9 @@ class Wave {
                 this.memberDelay -= 0.15
                 this.groupDelay -= 0.2
                 this.movementSpeed += 0.005
-                console.log("Member Delay: ", memberDelay)
-                console.log("Group Delay: ", groupDelay)
-                console.log("movementSpeed: " movementSpeed)
+                console.log("this.memberDelay")
+                console.log("this.groupDelay")
+                console.log("this.movementSpeed")
             }
 
             this.groupAmount = this.isBossWave ? 1 : 10;
