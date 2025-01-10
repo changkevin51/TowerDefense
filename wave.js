@@ -8,7 +8,7 @@ class Wave {
         this.groupSize = 1;
         this.timer = 0;
         this.groupDelay = 60;
-        this.memberDelay = 22; 
+        this.memberDelay = 30; 
         this.currentGroup = 0;
         this.currentMember = 0;
         this.enemyStrength = 1;
@@ -17,6 +17,7 @@ class Wave {
         this.gameSpeed = gameSpeed;
         this.isBossWave = false;
         this.bonusGiven = false; 
+        this.movementSpeed = 2.4
     }
 
     updateDifficulty() {
@@ -41,11 +42,11 @@ class Wave {
             this.currentMember = 0;
             this.isBossWave = this.number % 8 === 0;
 
-            if (this.memberDelay > 22) {
+            if (this.memberDelay > 23) {
                 this.memberDelay -= 0.15
+                this.groupDelay -= 0.2
+                this.movementSpeed += 0.005
             }
-            
-            this.memberDelay = 
 
             this.groupAmount = this.isBossWave ? 1 : 10;
             this.bonusGiven = false; // Reset flag
@@ -110,7 +111,7 @@ class Wave {
         // normal
         if (this.timeToSpawn(this.currentGroup, this.currentMember)) {
             const type = this.determineEnemyType();
-            let speed = isEasyMode ? 2.1 : isHardMode ? 2.6 : 2.4;
+            let speed = isEasyMode ? this.movementSpeed-0.2 : isHardMode ? this.movementSpeed+0.15 : this.movementSpeed;
             let health = this.enemyMaxHealth;
     
             switch (type) {
