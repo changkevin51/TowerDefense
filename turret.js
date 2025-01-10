@@ -615,7 +615,7 @@ class WizardTurret extends Turret {
         this.size = 65; 
         this.handOffset = 35; 
         this.gunSize = 50;
-        this.shootCooldown = 380; 
+        this.shootCooldown = 370; 
         this.projectileStrength = 3; 
         this.projectileSpeed = 2; 
         this.cost = 400; 
