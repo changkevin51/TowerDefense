@@ -1,4 +1,4 @@
-# Decrease member delay as game progresses
+// Decrease member delay as game progresses
 
 class Wave {
     constructor() {
