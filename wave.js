@@ -8,7 +8,7 @@ class Wave {
         this.groupSize = 1;
         this.timer = 0;
         this.groupDelay = 60;
-        this.memberDelay = 30; 
+        this.memberDelay = 22; 
         this.currentGroup = 0;
         this.currentMember = 0;
         this.enemyStrength = 1;
