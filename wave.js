@@ -41,8 +41,8 @@ class Wave {
             this.currentMember = 0;
             this.isBossWave = this.number % 8 === 0;
 
-            if (this.memberDelay > 10) {
-                this.memberDelay -= 0.4
+            if (this.memberDelay > 22) {
+                this.memberDelay -= 0.15
             }
             
             this.memberDelay = 
