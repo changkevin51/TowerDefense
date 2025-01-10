@@ -45,7 +45,7 @@ class Wave {
             if (this.memberDelay > 23) {
                 this.memberDelay -= 0.15
                 this.groupDelay -= 0.2
-                this.movementSpeed += 0.005
+                this.movementSpeed += 0.01
                 console.log(this.memberDelay)
                 console.log(this.groupDelay)
                 console.log(this.movementSpeed)
