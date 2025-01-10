@@ -1,3 +1,5 @@
+# Decrease member delay as game progresses
+
 class Wave {
     constructor() {
         this.number = 0;
