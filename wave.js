@@ -21,7 +21,7 @@ class Wave {
 
     updateDifficulty() {
         this.groupSize = Math.ceil(this.number / 5);
-        this.enemyMaxHealth = Math.round((Math.pow(this.number, 1.53) * this.healthIncreasePerWave) / (this.groupSize * 0.75)) + 1;
+        this.enemyMaxHealth = Math.round((Math.pow(this.number, 1.54) * this.healthIncreasePerWave) / (this.groupSize * 0.75)) + 1;
     }
 
     determineEnemyType() {
@@ -40,6 +40,12 @@ class Wave {
             this.currentGroup = 0;
             this.currentMember = 0;
             this.isBossWave = this.number % 8 === 0;
+
+            if (this.memberDelay > 10) {
+                this.memberDelay -= 0.4
+            }
+            
+            this.memberDelay = 
 
             this.groupAmount = this.isBossWave ? 1 : 10;
             this.bonusGiven = false; // Reset flag
