@@ -110,7 +110,7 @@ class Wave {
         // normal
         if (this.timeToSpawn(this.currentGroup, this.currentMember)) {
             const type = this.determineEnemyType();
-            let speed = isEasyMode ? 2.1 : isHardMode ? 2.6 : 2.4;
+            let speed = isEasyMode ? 2.1 : isHardMode ? 12.6 : 2.4;
             let health = this.enemyMaxHealth;
     
             switch (type) {
