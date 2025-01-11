@@ -102,11 +102,12 @@ or use Live Preview extension in VS Code
   - ✅ Wizard projectile
   - ✅ Bomber explosion effect
   - ✅ Turret stun effect
-  - ✅ Shooter animation
+  - ✅ Animations for all turrets
 - Add maps and levels
 - Increase max upgrade level
 - ✅ <del>Add Tutorial
 - ✅ <del>Add Damage Count
 - Leaderboard
+- Settings
 
 

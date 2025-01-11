@@ -13,6 +13,9 @@ var levelOneNodes = [
 ];
  let isEasyMode = false;
  let isHardMode = false;
+ let settingsImg;
+ let resumeImg;
+ let isPaused = false;
  var canvas;
  var path;
  var enemies;
@@ -97,6 +100,9 @@ var levelOneNodes = [
     cactus = loadImage('images/map/cactus.png');
     sign = loadImage('images/map/sign.png');
     bigRock = loadImage('images/map/bigRock.png');
+
+    settingsImg = loadImage('images/pause.png');
+    resumeImg = loadImage('images/resume.png');
 }
 
 
@@ -184,40 +190,64 @@ function onDecoration(x, y) {
 }
 
 function draw() {
-    if (playing) {
-        background(0, 200, 0);
-        drawBackground();
-        drawDecorations();
+    // Draw base game elements always
+    drawBackground();
+    drawDecorations();
+    path.draw();
 
-        path.draw();
+    // Draw all game elements
+    if (showStartArrow) {
+        path.drawStartArrow();
+    }
 
-        if (showStartArrow) {
-            path.drawStartArrow();
-        }
+    for (var enemy of enemies) {
+        if (!isPaused) enemy.update();
+        else enemy.draw();
+    }
 
-        for (var enemy of enemies) {
-            enemy.update();
-        }
+    for (var turret of turrets) {
+        if (!isPaused) turret.update();
+        else turret.draw();
+    }
 
-        for (var turret of turrets) {
-            turret.update();
-        }
+    for (var projectile of projectiles) {
+        if (!isPaused) projectile.update();
+        else projectile.draw();
+    }
 
-        for (var projectile of projectiles) {
-            projectile.update();
-        }
+    // Check for game over
+    if (health <= 0) {
+        drawGameOver();
+        return;
+    }
 
+    // Handle pause state
+    if (isPaused) {
+        filter(BLUR, 3);
+        push();
+        imageMode(CENTER);
+        image(resumeImg, width/2, height/2, 100, 100);
+        pop();
+        return;
+    }
+
+    if (!isPaused) {
         filterArrays();
         checkCollision();
         wave.update();
 
         if (enemies.length > 0 || wave.active) {
-            showStartArrow = false; 
+            showStartArrow = false;
         }
-    } else {
-        drawGameOver();
+
+        // Draw pause button during normal gameplay
+        push();
+        imageMode(CORNER);
+        image(settingsImg, width - 60, 10, 60, 60);
+        pop();
     }
 }
+
 
 function filterArrays() {
     enemies = enemies.filter(e => e.finished == false && e.strength > 0);
@@ -424,7 +454,24 @@ function checkCollision() {
 
 
 function mousePressed() {
+    if (isPaused) {
+        // Check for large centered button click
+        if (dist(mouseX, mouseY, width/2, height/2) < 50) {
+            isPaused = false;
+            return;
+        }
+        return; // Block all other clicks while paused
+    }
+    
+    // Check corner button click
+    if (mouseX > width - 50 && mouseX < width - 10 && 
+        mouseY > 10 && mouseY < 50) {
+        isPaused = true;
+        return;
+    }
+
     if (isPopupActive) {
+
         if (mouseY < 560 && mouseX < 700) {
             let turret = getTurretBeingClicked();
             if (turret) {
@@ -492,6 +539,12 @@ function mousePressed() {
 }
 
 function keyPressed() {
+    if (keyCode === ESCAPE) {
+        isPaused = !isPaused;
+        return;
+    }
+    
+    if (isPaused) return; 
     let turret = getTurretBeingSelected();
     if (turret != null) {
         if (keyCode === LEFT_ARROW) {
