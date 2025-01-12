@@ -1,4 +1,3 @@
-
 class Wave {
     constructor() {
         this.number = 0;
@@ -21,8 +20,9 @@ class Wave {
 
     updateDifficulty() {
         this.groupSize = Math.ceil(this.number / 5);
-        this.enemyMaxHealth = Math.round((Math.pow(this.number, 1.54) * this.healthIncreasePerWave) / (this.groupSize * 0.75)) + 1;
-    }
+        this.enemyMaxHealth = Math.round((Math.pow(this.number, isHardMode ? 1.6 : 1.54) * 
+            (isHardMode ? this.healthIncreasePerWave - 0.05 : this.healthIncreasePerWave)) / 
+            (this.groupSize * 0.75)) + 1;    }
 
     determineEnemyType() {
         if (this.isBossWave) return 'boss';
@@ -41,10 +41,10 @@ class Wave {
             this.currentMember = 0;
             this.isBossWave = this.number % 8 === 0;
 
-            if (this.memberDelay > 23) {
-                this.memberDelay -= 0.15
+            if (this.memberDelay > 18) {
+                this.memberDelay -= 0.2
                 this.groupDelay -= 0.2
-                this.movementSpeed += 0.01
+                this.movementSpeed += 0.014
                 console.log(this.memberDelay)
                 console.log(this.groupDelay)
                 console.log(this.movementSpeed)
@@ -100,15 +100,31 @@ class Wave {
         // bomb
         const bombGroups = isEasyMode ? [4] : isHardMode ? [2, 5, 8] : [2, 7];
         if (
-            this.number >= 7 && // Start at wave 7
-            this.number % 2 === 1 && // Every 2 waves
-            bombGroups.includes(this.currentGroup) && // Groups 2, 5, 8
+            this.number >= 7 && 
+            this.number % 2 === 1 && 
+            bombGroups.includes(this.currentGroup) && 
             this.currentMember === 0 
         ) {
             enemies.push(new Enemy(this.enemyMaxHealth, 3.2, levelOneNodes, this.enemyMaxHealth, 'bomb'));
             this.currentMember++; 
             return;
         }
+        
+        // stealth
+        const stealthGroups = isEasyMode ? [3] : isHardMode ? [3, 6, 9] : [3, 6];
+        if (
+            this.number >= 4 && 
+            (this.number+2) % 3 === 0 && 
+            stealthGroups.includes(this.currentGroup) && 
+            this.currentMember === 0 
+        ) {
+            let stealthHealth = Math.ceil(this.enemyMaxHealth * 0.75);
+            enemies.push(new Enemy(stealthHealth, 2, levelOneNodes, stealthHealth, 'stealth'));
+            this.currentMember++; 
+            return;
+        }
+
+
         
         // normal
         if (this.timeToSpawn(this.currentGroup, this.currentMember)) {
@@ -151,6 +167,7 @@ class Wave {
             }
         }
     }
+
     
 
     update() {
