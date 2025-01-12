@@ -11,10 +11,11 @@ class Enemy {
         this.targetNode = 0;
         this.finished = false;
         this.maxHealth = Math.round(maxHealth);
+        this.strength = this.maxHealth;
         this.gameSpeed = gameSpeed;
         this.type = type;
         this.isExploding = false;
-        this.explosionFrameCount = 0;
+        this.explosionDuration = 500; 
 
         this.isSlowed = false;
         this.slowEndTime = 0;
@@ -25,25 +26,33 @@ class Enemy {
         this.healedAt = 0;  // Track when this enemy was last healed
 
         switch (type) {
-            case 'normal':
-                this.img = normalEnemyImages[Math.floor(Math.random() * normalEnemyImages.length)];
-                break;
             case 'heavy':
-                this.img = heavyEnemyImage;
+                this.frontFrames = heavyFrontFrames;
+                this.rightFrames = heavyRightFrames;
+                this.backFrames = heavyBackFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.currentFrameSet = this.frontFrames;
+                this.size = 48; // Adjust as needed
                 break;
             case 'fast':
-                this.img = fastEnemyImage;
-                break;
-            case 'boss':
-                this.img = bossEnemyImage;
-                break;
-            case 'bomb':
-                this.img = bombEnemyImage;
-                this.explosionImg = explosionImage;
+                this.frontFrames = fastFrontFrames;
+                this.rightFrames = fastRightFrames;
+                this.backFrames = fastBackFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.currentFrameSet = this.frontFrames;
+                this.size = 36;
                 break;
             case 'stealth':
-                this.img = stealthEnemyImage; 
-                this.speed *= 1.45;  
+                this.frontFrames = stealthFrontFrames;
+                this.rightFrames = stealthRightFrames;
+                this.backFrames = stealthBackFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.currentFrameSet = this.frontFrames;
+                this.size = 30;
+                this.speed *= 1.4;  
                 this.isStealth = false;
                 this.lastStealthToggle = millis();
                 this.stealthDuration = 2000;   
@@ -59,6 +68,89 @@ class Enemy {
                 this.healingRings = [];
                 this.lastRingTime = 0;
                 this.ringInterval = 500; // New ring every 500ms
+                this.speed *= 0.8; 
+                break;
+            case 'robo1':
+                this.frontFrames = robo1FrontFrames;
+                this.rightFrames = robo1RightFrames;
+                this.backFrames = robo1BackFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.currentFrameSet = this.frontFrames;
+                this.size = 45;
+                break;
+            case 'robo2':
+                this.frontFrames = robo2FrontFrames;
+                this.rightFrames = robo2RightFrames;
+                this.backFrames = robo2BackFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.currentFrameSet = this.frontFrames;
+                this.size = 45; 
+                break;
+            case 'robo3':
+                this.frontFrames = robo3FrontFrames;
+                this.rightFrames = robo3RightFrames;
+                this.backFrames = robo3BackFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.currentFrameSet = this.frontFrames;
+                this.size = 45;
+                break;
+            case 'boss':
+                this.frontFrames = bossFrontFrames;
+                this.rightFrames = bossRightFrames;
+                this.backFrames = bossBackFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.currentFrameSet = this.frontFrames;
+                this.size = 64;
+                this.maxHealth *= 3; 
+                this.strength = this.maxHealth;
+                this.speed *= 0.5;
+                break;
+            case 'miniboss1':
+                this.frontFrames = miniboss1FrontFrames;
+                this.rightFrames = miniboss1RightFrames;
+                this.backFrames = miniboss1BackFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.currentFrameSet = this.frontFrames;
+                this.size = 58;
+                this.maxHealth *= 1.7;
+                this.strength = this.maxHealth;
+                this.speed *= 0.8;
+                break;
+            case 'miniboss2':
+                this.frontFrames = miniboss2FrontFrames;
+                this.rightFrames = miniboss2RightFrames;
+                this.backFrames = miniboss2BackFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.currentFrameSet = this.frontFrames;
+                this.size = 58;
+                this.maxHealth *= 1.7;
+                this.strength = this.maxHealth;
+                this.speed *= 0.8;
+                break;
+            case 'miniboss3':
+                this.frontFrames = miniboss3FrontFrames;
+                this.rightFrames = miniboss3RightFrames;
+                this.backFrames = miniboss3BackFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.currentFrameSet = this.frontFrames;
+                this.size = 58;
+                this.maxHealth *= 1.7;
+                this.strength = this.maxHealth;
+                this.speed *= 0.8;
+                break;
+            case 'bomb':
+                this.frames = bombFrames;
+                this.explosionFrames = explosionFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.size = 48; 
                 break;
             default:
                 console.error(`Unknown enemy type: ${type}`);
@@ -101,22 +193,30 @@ class Enemy {
         noStroke();
         ellipse(this.x, this.y, this.healingRadius * 2);
     }
-
+    drawHealthBar() {
+        fill(255, 0, 0);
+        rect(this.x - 25, this.y - 35, 50, 10);
+    
+        fill(4, 128, 49);
+        const healthWidth = (this.strength / this.maxHealth) * 50;
+        rect(this.x - 25, this.y - 35, healthWidth, 10);
+    
+        fill('white');
+        textAlign(CENTER, CENTER);
+        textSize(12);
+        textStyle(BOLD);
+        text(Math.floor(this.strength), this.x, this.y - 31);
+    }
     draw() {
         strokeWeight(2);
         if (this.isExploding) {
-            if (this.explosionFrameCount < 60) {
-                if (this.explosionImg) {
-                    const explosionRadius = 175 * 2;
-                    image(this.explosionImg, this.x - explosionRadius / 2, this.y - explosionRadius / 2, explosionRadius, explosionRadius);
-                }
-                this.explosionFrameCount++;
-                return;
+            if (millis() - this.explosionStartTime < this.explosionDuration) {
+                image(explosionImage, this.x - this.size*4, this.y - this.size*3, this.size * 8, this.size * 8);
             } else {
                 const index = enemies.indexOf(this);
                 if (index > -1) enemies.splice(index, 1);
-                return;
             }
+            return;
         }
     
         if (this.isStealth) {
@@ -125,6 +225,49 @@ class Enemy {
             tint(89, 192, 225); 
         } else {
             noTint(); 
+        }
+    
+        if (this.type === 'robo1' || this.type === 'robo2' || this.type === 'robo3' || 
+            this.type === 'heavy' || this.type === 'fast' || this.type === 'stealth' ||
+            this.type === 'miniboss1' || this.type === 'miniboss2' || this.type === 'miniboss3' ||
+            this.type === 'boss' ) {
+            if (abs(this.xSpeed) > abs(this.ySpeed)) {
+                this.currentFrameSet = this.xSpeed > 0 ? this.rightFrames : this.rightFrames;
+            } else {
+                this.currentFrameSet = this.ySpeed < 0 ? this.backFrames : this.frontFrames;
+            }
+        
+            if (this.animationTimer % 12 === 0) {
+                if (!this.currentFrameSet || !this.currentFrameSet.length) {
+                    console.error(`No animation frames for enemy type: ${this.type}`);
+                    this.currentFrameSet = [this.img]; // Use default image as fallback
+                } else {
+                    this.animationIndex = (this.animationIndex + 1) % this.currentFrameSet.length;
+                }
+            }
+            this.animationTimer++;
+        
+            let floatOffset = sin(millis() / 250) * 3;
+            let roboImg = this.currentFrameSet[this.animationIndex];
+            image(roboImg, this.x - this.size, this.y - this.size + floatOffset, this.size*2, this.size*2);
+            this.drawHealthBar();
+            return;
+
+        } else if (this.type === 'bomb') {
+            if (this.animationTimer % 10 === 0) { // Faster animation for bomb
+                if (!this.frames || !this.frames.length) {
+                    console.error('No animation frames for bomb enemy');
+                    return;
+                }
+                this.animationIndex = (this.animationIndex + 1) % this.frames.length;
+            }
+            this.animationTimer++;
+        
+            let floatOffset = sin(millis() / 250) * 3;
+            let bombImg = this.frames[this.animationIndex];
+            image(bombImg, this.x - this.size, this.y - this.size + floatOffset, this.size*2, this.size*2);
+            this.drawHealthBar();
+            return;
         }
     
         if (this.img) {
@@ -242,17 +385,12 @@ class Enemy {
         if (this.type === 'bomb') { // Ensure only bomb enemies trigger this
             this.isExploding = true;
             this.explosionStartTime = millis();
-            if (this.isExploding && this.explosionImg) {
-                const explosionDiameter = EXPLOSION_RADIUS * 2;
-                image(this.explosionImg, this.x - explosionDiameter / 2, this.y - explosionDiameter / 2, explosionDiameter, explosionDiameter);
-            }   if (!this.explosionImg) console.error("Explosion image not loaded.");
             turrets.forEach(turret => {
                 const distance = dist(this.x, this.y, turret.x, turret.y);
                 if (distance <= EXPLOSION_RADIUS) { 
                     turret.stun(2500 / this.gameSpeed); 
                 }
             });
-    
         } else {
             const index = enemies.indexOf(this);
             if (index > -1) enemies.splice(index, 1);

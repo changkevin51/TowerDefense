@@ -121,82 +121,152 @@ function populateStats() {
     populateStatsTable();
   });
   
-
 function populateEnemies() {
   const enemies = [
     {
-      type: "Normal",
-      images: [
-        "images/enemies/normal1.png",
-        "images/enemies/normal2.png",
-        "images/enemies/normal3.png"
-      ],
-      abilities: "None",
-      waves: "Every wave",
+      type: "Robo",
+      frames: {
+        front: "images/enemies/robo1/front00",
+        right: "images/enemies/robo1/right00",
+        back: "images/enemies/robo1/back00"
+      },
+      frameCount: 3,
+      abilities: "Basic enemy type",
+      waves: "Every wave"
     },
     {
       type: "Heavy",
-      image: "images/enemies/heavy1.png",
-      abilities: "High health but slower speed",
-      waves: "Every 3 waves, starting on wave 3",
+      frames: {
+        front: "images/enemies/tank/front00",
+        right: "images/enemies/tank/right00", 
+        back: "images/enemies/tank/back00"
+      },
+      frameCount: 3,
+      abilities: "130% health, 50% movement speed",
+      waves: "Every 3rd wave"
     },
     {
       type: "Fast",
-      image: "images/enemies/fast1.png",
-      abilities: "Increased speed but lower health",
-      waves: "Every 3 waves, starting on wave 2",
+      frames: {
+        front: "images/enemies/fast/front00",
+        right: "images/enemies/fast/right00",
+        back: "images/enemies/fast/back00"
+      },
+      frameCount: 3,
+      abilities: "150% speed, 50% health", 
+      waves: "Every 3rd wave"
     },
     {
       type: "Bomb",
-      image: "images/enemies/bomb.png",
-      abilities: "Explodes on death, stunning nearby turrets",
-      waves: "Every odd-numbered wave (Starting on wave 7)",
+      frames: {
+        sprite: "images/enemies/bomb/frame"
+      },
+      frameCount: 6,
+      abilities: "Explodes on death stunning nearby turrets",
+      waves: "Every odd wave after wave 7"
     },
     {
       type: "Stealth",
-      image: "images/enemies/stealth.png",
-      abilities: "Turns invisible periodically, faster speed, lower health",
-      waves: "Appears starting wave 5, every 3rd wave",
+      frames: {
+        front: "images/enemies/stealth/front00",
+        right: "images/enemies/stealth/right00",
+        back: "images/enemies/stealth/back00"
+      },
+      frameCount: 3,
+      abilities: "140% speed, periodically becomes invisible",
+      waves: "Every 3rd wave after wave 4"
     },
     {
       type: "Healer",
       image: "images/enemies/healer.png",
-      abilities: "Heals nearby allies by 10% every 2s",
-      waves: "Appears starting wave 3, every 3rd wave",
+      abilities: "Heals nearby enemies for 10% max health every 2s, 80% speed",
+      waves: "Every 3rd wave after wave 4"
+    },
+    {
+      type: "Miniboss",
+      frames: {
+        front: "images/enemies/miniboss1/front00",
+        right: "images/enemies/miniboss1/right00",
+        back: "images/enemies/miniboss1/back00" 
+      },
+      frameCount: 6,
+      abilities: "170% health, 80% speed",
+      waves: "Every 5th wave"
     },
     {
       type: "Boss",
-      image: "images/enemies/boss1.png",
-      abilities: "Extremely high health and powerful",
-      waves: "Boss waves (every 8th wave)",
-    },
-
+      frames: {
+        front: "images/enemies/boss/front00",
+        right: "images/enemies/boss/right00",
+        back: "images/enemies/boss/back00"
+      },
+      frameCount: 6,
+      abilities: "300% health, 50% speed",
+      waves: "Every 8th wave"
+    }
   ];
 
   const container = document.getElementById("enemies-container");
+  
+  // Create canvas elements for animations
+  enemies.forEach((enemy, index) => {
+      const card = document.createElement("div");
+      card.className = "enemy-card";
+      
+      let content = '';
+      
+      if (enemy.frames) {
+        // Add canvas for animated enemies
+        content += `<canvas id="enemyCanvas${index}" width="100" height="100"></canvas>`;
+      } else {
+        // Static image for non-animated enemies
+        content += `<img src="${enemy.image}" alt="${enemy.type}">`;
+      }
+  
+      content += `
+        <h3>${enemy.type}</h3>
+        <p><strong>Abilities:</strong> ${enemy.abilities}</p>
+        <p><strong>Appears on:</strong> ${enemy.waves}</p>
+      `;
+  
+      card.innerHTML = content;
+      container.appendChild(card);
+  
+      // Set up animation if enemy has frames
+      if (enemy.frames) {
+        const canvas = document.getElementById(`enemyCanvas${index}`);
+        const ctx = canvas.getContext('2d');
+        let frame = 0;
+        let frameCount = enemy.frameCount;
+        const images = [];
+        let counter = 0;
+        const slowFactor = 12; // Slow down by 10x
 
-  enemies.forEach((enemy) => {
-    const card = document.createElement("div");
-    card.className = "enemy-card";
+        // Preload images
+        for (let i = 0; i < frameCount; i++) {
+          const img = new Image();
+          if (enemy.frames.sprite) {
+            img.src = `${enemy.frames.sprite}${i}.png`;
+          } else {
+            img.src = `${enemy.frames.front}${i}.png`;
+          }
+          images.push(img);
+        }
 
-    let imagesHTML = "";
+        function animate() {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(images[frame], 0, 0, canvas.width, canvas.height);
+          counter++;
+          if (counter % slowFactor === 0) {
+            frame = (frame + 1) % frameCount;
+          }
+          requestAnimationFrame(animate);
+        }
 
-    if (enemy.images) {
-      imagesHTML = enemy.images.map(imgSrc => `<img src="${imgSrc}" alt="${enemy.type}">`).join("");
-    } else {
-      imagesHTML = `<img src="${enemy.image}" alt="${enemy.type}">`;
-    }
-
-    card.innerHTML = `
-      ${imagesHTML}
-      <h3>${enemy.type}</h3>
-      <p><strong>Abilities:</strong> ${enemy.abilities}</p>
-      <p><strong>Appears on:</strong> ${enemy.waves}</p>
-    `;
-    container.appendChild(card);
-  });
-}
-
+        animate();
+      }
+    });
+  }
 document.addEventListener("DOMContentLoaded", () => {
   populateEnemies();
 });

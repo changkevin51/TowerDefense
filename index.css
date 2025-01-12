@@ -615,7 +615,13 @@ table td {
     width: 220px;
 }
 
-
+.enemy-card canvas {
+    width: 100px;
+    height: 100px;
+    border-radius: 5px;
+    image-rendering: pixelated;
+  }
+  
 .enemies-container {
     display: flex;
     flex-wrap: wrap;
