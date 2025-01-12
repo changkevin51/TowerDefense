@@ -22,7 +22,8 @@ class Enemy {
         this.isStunned = false;
         this.stunEndTime = 0;
 
-        // Assign preloaded images
+        this.healedAt = 0;  // Track when this enemy was last healed
+
         switch (type) {
             case 'normal':
                 this.img = normalEnemyImages[Math.floor(Math.random() * normalEnemyImages.length)];
@@ -48,10 +49,57 @@ class Enemy {
                 this.stealthDuration = 2000;   
                 this.stealthInterval = 3000;  
                 break;
+            case 'healer':
+                this.img = healerEnemyImage; 
+                this.healingRadius = 200;
+                this.healCooldown = 2000;
+                this.lastHealTime = millis();
+                this.showHealingRadius = false;
+                this.healingRadiusEndTime = 0;
+                this.healingRings = [];
+                this.lastRingTime = 0;
+                this.ringInterval = 500; // New ring every 500ms
+                break;
             default:
                 console.error(`Unknown enemy type: ${type}`);
         }
 
+    }
+
+    drawHealingArea() {
+        if (this.showHealingRadius && millis() - this.lastRingTime > this.ringInterval) {
+            this.healingRings.push({
+                radius: 0,
+                alpha: 255
+            });
+            this.lastRingTime = millis();
+        }
+
+        for (let i = this.healingRings.length - 1; i >= 0; i--) {
+            let ring = this.healingRings[i];
+            
+            drawingContext.shadowBlur = 15;
+            drawingContext.shadowColor = color(0, 255, 128);
+            
+            noFill();
+            stroke(0, 255, 128, ring.alpha);
+            strokeWeight(2);
+            ellipse(this.x, this.y, ring.radius * 2);
+            
+            drawingContext.shadowBlur = 0;
+            
+            ring.radius += 2;
+            ring.alpha -= 5;
+            
+            if (ring.alpha <= 0) {
+                this.healingRings.splice(i, 1);
+            }
+        }
+
+        // Base healing area
+        fill(0, 255, 128, 30);
+        noStroke();
+        ellipse(this.x, this.y, this.healingRadius * 2);
     }
 
     draw() {
@@ -104,6 +152,20 @@ class Enemy {
         textSize(12);
         textStyle(BOLD);
         text(Math.floor(this.strength), this.x, this.y - 31);
+
+        if (millis() - this.healedAt < 300) {
+            tint(128, 255, 128, 150);
+            image(healingImage, this.x - this.size, this.y - this.size, this.size*2, this.size*2);
+            noTint();
+        }
+
+        if (this.type === 'healer' && this.showHealingRadius) {
+            this.drawHealingArea();
+            if (millis() > this.healingRadiusEndTime) {
+                this.showHealingRadius = false;
+                this.healingRings = [];
+            }
+        }
     }
     
 
@@ -197,6 +259,10 @@ class Enemy {
         }
     }
 
+    isFullHealth() {
+        return this.strength >= this.maxHealth;
+    }
+
     update() {
         if (this.isExploding) {
             this.draw();
@@ -228,6 +294,41 @@ class Enemy {
                 this.lastStealthToggle = millis();
             }
         }
+
+        if (this.type === 'healer' && !this.isExploding) {
+            let adjustedCooldown = this.healCooldown / this.gameSpeed;
+        
+            if (millis() - this.lastHealTime >= adjustedCooldown) {
+                if (!this.isFullHealth() || enemies.length > 1) {
+                    this.lastHealTime = millis();
+                    this.showHealingRadius = false; 
+                    
+                    let healedAny = false;
+                    let healingRadiusSquared = this.healingRadius * this.healingRadius;
+        
+                    for (let e of enemies) {
+                        if (e.isExploding || e.isFullHealth()) continue;
+        
+                        let dx = this.x - e.x;
+                        let dy = this.y - e.y;
+                        let distanceSquared = dx * dx + dy * dy;
+        
+                        if (distanceSquared <= healingRadiusSquared) {
+                            e.strength = Math.min(e.maxHealth, Math.ceil(e.strength + e.maxHealth * 0.1));
+                            e.healedAt = millis();
+                            healedAny = true;
+                        }
+                    }
+        
+                    if (healedAny) {
+                        this.showHealingRadius = true;
+                        this.healingRadiusEndTime = millis() + 300;
+                    }
+                }
+            }
+        }
+        
+        
     
         this.findTarget();
         this.move();
