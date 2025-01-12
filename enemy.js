@@ -40,6 +40,14 @@ class Enemy {
                 this.img = bombEnemyImage;
                 this.explosionImg = explosionImage;
                 break;
+            case 'stealth':
+                this.img = stealthEnemyImage; 
+                this.speed *= 1.45;  
+                this.isStealth = false;
+                this.lastStealthToggle = millis();
+                this.stealthDuration = 2000;   
+                this.stealthInterval = 3000;  
+                break;
             default:
                 console.error(`Unknown enemy type: ${type}`);
         }
@@ -63,17 +71,19 @@ class Enemy {
             }
         }
     
-        if (this.isSlowed) {
+        if (this.isStealth) {
+            tint(128, 128, 128); 
+        } else if (this.isSlowed) {
             tint(89, 192, 225); 
         } else {
             noTint(); 
         }
     
         if (this.img) {
-            const adjustedX = this.x - this.size * (this.type === 'normal' || this.type === 'heavy' ? 0.75 : 1.15);
-            const adjustedY = this.y - this.size * 0.75;
-            const width = this.size * (this.type === 'normal' || this.type === 'heavy' ? 1.5 : 3);
-            const height = this.size * 1.5;
+            const adjustedX = this.x - this.size * (this.type === 'normal' || this.type === 'heavy' ? 0.75 : this.type === 'stealth' ? 0.8 : 1.15);
+            const adjustedY = this.y - this.size * (this.type === 'stealth' ? 1.0 : 0.75);
+            const width = this.size * (this.type === 'normal' || this.type === 'heavy' ? 1.5 : this.type === 'stealth' ? 1.5 : 3);
+            const height = this.size * (this.type === 'stealth' ? 2.0 : 1.5);
     
             image(this.img, adjustedX, adjustedY, width, height);
         } else {
@@ -101,8 +111,9 @@ class Enemy {
         if (!this.isExploding) {
             if (!this.isStunned) {
                 let factor = this.isSlowed ? this.slowFactor : 1;
-                this.x += this.xSpeed * this.gameSpeed * factor;
-                this.y += this.ySpeed * this.gameSpeed * factor;
+                let speedBonus = this.isStealth ? 1.2 : 1;
+                this.x += this.xSpeed * this.gameSpeed * factor * speedBonus;
+                this.y += this.ySpeed * this.gameSpeed * factor * speedBonus;
             }
         }
     }
@@ -203,6 +214,19 @@ class Enemy {
         }
         if (this.isStunned && millis() >= this.stunEndTime) {
             this.isStunned = false;
+        }
+
+        if (this.type === 'stealth' && !this.isExploding) {
+            let actualStealthInterval = this.stealthInterval / this.gameSpeed;
+            let actualStealthDuration = this.stealthDuration / this.gameSpeed;
+            if (!this.isStealth && millis() - this.lastStealthToggle >= actualStealthInterval) {
+                this.isStealth = true;
+                this.lastStealthStart = millis();
+            }
+            if (this.isStealth && millis() - this.lastStealthStart >= actualStealthDuration) {
+                this.isStealth = false;
+                this.lastStealthToggle = millis();
+            }
         }
     
         this.findTarget();

@@ -28,6 +28,7 @@ var levelOneNodes = [
  let fastEnemyImage;
  let bossEnemyImage;
  let bombEnemyImage;
+ let stealthEnemyImage;
  let explosionImage;
  var turrets;
  var projectiles;
@@ -50,6 +51,7 @@ var levelOneNodes = [
  var autoStart = false;
  var showStartArrow = true; 
  let isPopupActive = false;
+ let isGameOver = false;
 
 
 
@@ -71,6 +73,7 @@ var levelOneNodes = [
     bossEnemyImage = loadImage('images/enemies/boss1.png');
     bombEnemyImage = loadImage('images/enemies/bomb.png');
     explosionImage = loadImage('images/explosion.png');
+    stealthEnemyImage = loadImage('images/enemies/stealth.png');
 
     turretHolderImg = loadImage('images/shooter/greenHolder.png');
     for (let i = 1; i <= 7; i++) {
@@ -190,12 +193,10 @@ function onDecoration(x, y) {
 }
 
 function draw() {
-    // Draw base game elements always
     drawBackground();
     drawDecorations();
     path.draw();
 
-    // Draw all game elements
     if (showStartArrow) {
         path.drawStartArrow();
     }
@@ -215,13 +216,10 @@ function draw() {
         else projectile.draw();
     }
 
-    // Check for game over
     if (health <= 0) {
         drawGameOver();
-        return;
     }
 
-    // Handle pause state
     if (isPaused) {
         filter(BLUR, 3);
         push();
@@ -240,7 +238,6 @@ function draw() {
             showStartArrow = false;
         }
 
-        // Draw pause button during normal gameplay
         push();
         imageMode(CORNER);
         image(settingsImg, width - 60, 10, 60, 60);
@@ -324,13 +321,60 @@ function toggleAutoStart() {
 }
 
 
- function drawGameOver() {
-    background(0, 0, 0, 20);
-    fill(255);
-    textSize(48);
+function drawGameOver() {
+    // Set game over flag
+    isGameOver = true;
+    
+    // Add blur to game
+    filter(BLUR, 3);
+    
+    // Draw semi-transparent overlay
+    push();
+    fill(0, 0, 0, 150);
+    rect(0, 0, width, height);
+    pop();
+    
+    // Draw game over text
+    push();
     textAlign(CENTER, CENTER);
-    text("GAME OVER!", 350, 350);
- }
+    fill(255);
+    stroke(0);
+    strokeWeight(4);
+    textSize(64);
+    text("GAME OVER", width/2, height/2 - 50);
+    
+    // Draw waves survived text
+    textSize(32);
+    fill('#FFA500');
+    stroke(0);
+    strokeWeight(2);
+    text(`Waves Survived: ${wave.number}`, width/2, height/2 + 20);
+    
+    // Draw restart button
+    let btnWidth = 200;
+    let btnHeight = 60;
+    let btnX = width/2 - btnWidth/2;
+    let btnY = height/2 + 80;
+    
+    // Button hover effect
+    if (mouseX > btnX && mouseX < btnX + btnWidth &&
+        mouseY > btnY && mouseY < btnY + btnHeight) {
+        fill('#4CAF50');
+    } else {
+        fill('#388E3C');
+    }
+    
+    stroke(0);
+    strokeWeight(2);
+    rect(btnX, btnY, btnWidth, btnHeight, 10);
+    
+    // Restart text
+    fill(255);
+    noStroke();
+    textSize(24);
+    text("RESTART", width/2, btnY + btnHeight/2);
+    pop();
+}
 
  function updateInfo() {
     document.getElementById("Money").innerHTML = money;
@@ -454,6 +498,18 @@ function checkCollision() {
 
 
 function mousePressed() {
+    if (isGameOver) {
+        let btnWidth = 200;
+        let btnHeight = 60;
+        let btnX = width/2 - btnWidth/2;
+        let btnY = height/2 + 80;
+        
+        if (mouseX > btnX && mouseX < btnX + btnWidth &&
+            mouseY > btnY && mouseY < btnY + btnHeight) {
+            restartGame();
+            return;
+        }
+    }
     if (isPaused) {
         // Check for large centered button click
         if (dist(mouseX, mouseY, width/2, height/2) < 50) {
@@ -908,8 +964,46 @@ function sellTurret() {
     showSelectedTurretInfo(null);
 }
 
+function restartGame() {
+    isGameOver = false;
+    isPaused = false;
+    autoStart = false;
+    showStartArrow = true;
+    isPopupActive = false;
+    
 
-
+    money = 1050;
+    health = 100; 
+    gameSpeed = 1;
+    waveNumber = 0; 
+    wave = new Wave();
+    enemies = [];
+    turrets = [];
+    projectiles = [];
+    
+    turretPrice = 150;
+    turretPriceSniper = 300;
+    turretPriceWizard = 400;
+    turretPriceFroster = 350;
+    
+    isEasyMode = false;
+    isHardMode = false;
+    
+    const difficultyScreen = document.getElementById('difficultyScreen');
+    difficultyScreen.style.display = 'flex';
+    
+    const turretInfo = document.getElementById('turretInfo');
+    turretInfo.style.display = 'none';
+    
+    const turretMenu = document.getElementById('turretMenu');
+    if (turretMenu) turretMenu.style.display = 'none';
+    
+    updateInfo();
+    updateTurretMenuText();
+    updateWaveButtonText();
+    
+    draw();
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     const upgradeButton = document.getElementById('upgradeButton');
@@ -923,7 +1017,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
     easyButton.addEventListener('click', () => {
       isEasyMode = true;
-      health = 200;
+      health = 2;
       difficultyScreen.style.display = 'none';
       updateInfo();
     });

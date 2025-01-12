@@ -87,6 +87,7 @@ class Turret {
         pop();
     
         push();
+        strokeWeight(2); 
         fill('yellow');
         textSize(12);
         textAlign(CENTER, CENTER);
@@ -210,6 +211,9 @@ class Turret {
         var closestEnemy = null;
 
         for(var enemy of enemies) {
+            if(enemy.isStealth) { 
+                continue; 
+            }
             var distance = dist(enemy.x, enemy.y, this.x, this.y);
             if(distance > this.range + enemy.size/2) {
                 continue;
@@ -228,6 +232,9 @@ class Turret {
         var strongestStrength = 0;
 
         for(var enemy of enemies) {
+            if(enemy.isStealth) { 
+                continue; 
+            }
             var distance = dist(enemy.x, enemy.y, this.x, this.y);
             if (distance > this.range + enemy.size/2) {
                 continue;
@@ -245,6 +252,9 @@ class Turret {
         var farthestDistance = -1;
         var farthestEnemy = null;
         for(var enemy of enemies) {
+            if(enemy.isStealth) { 
+                continue; 
+            }
             var distance = dist(enemy.x, enemy.y, this.x, this.y);
             if (distance > this.range + enemy.size/2) {
                 continue;
@@ -264,6 +274,9 @@ class Turret {
     
         for (let i = enemies.length - 1; i >= 0; i--) {
             let enemy = enemies[i];
+            if(enemy.isStealth) { 
+                continue; 
+            }
             let distance = dist(enemy.x, enemy.y, this.x, this.y);
     
             if (distance <= this.range + enemy.size / 2) {
@@ -455,7 +468,8 @@ function unselectAllTurrets() {
             image(this.idleFrame, 0, 0, sniperSize, sniperSize);
         }
         pop();
-    
+        strokeWeight(2); 
+
         fill('yellow');
         textSize(12);
         textAlign(CENTER, CENTER);
@@ -615,7 +629,7 @@ class WizardTurret extends Turret {
         this.size = 65; 
         this.handOffset = 35; 
         this.gunSize = 50;
-        this.shootCooldown = 370; 
+        this.shootCooldown = 380; 
         this.projectileStrength = 3; 
         this.projectileSpeed = 2; 
         this.cost = 400; 
@@ -748,6 +762,7 @@ class WizardTurret extends Turret {
             image(this.idleFrame, 0, 0, wizardSize, wizardSize);
         }
         pop();
+        strokeWeight(2); 
 
         fill('yellow');
         textSize(12);
@@ -892,6 +907,7 @@ class FrosterTurret extends Turret {
             image(this.idleFrame, 0, 0, frosterSize, frosterSize);
         }
         pop();
+        strokeWeight(2); 
 
         fill('yellow');
         textSize(12);

@@ -150,6 +150,12 @@ function populateEnemies() {
       waves: "Every odd-numbered wave (Starting on wave 7)",
     },
     {
+      type: "Stealth",
+      image: "images/enemies/stealth.png",
+      abilities: "Turns invisible periodically, faster speed, lower health",
+      waves: "Appears starting wave 5, every 3rd wave",
+    },
+    {
       type: "Boss",
       image: "images/enemies/boss1.png",
       abilities: "Extremely high health and powerful",
@@ -165,7 +171,6 @@ function populateEnemies() {
 
     let imagesHTML = "";
 
-    // Show multiple images if present; otherwise fall back to single image
     if (enemy.images) {
       imagesHTML = enemy.images.map(imgSrc => `<img src="${imgSrc}" alt="${enemy.type}">`).join("");
     } else {
@@ -182,7 +187,6 @@ function populateEnemies() {
   });
 }
 
-// Populate the enemies tab on DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
   populateEnemies();
 });
