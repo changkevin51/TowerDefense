@@ -23,10 +23,9 @@ var levelOneNodes = [
  var orbImage;
  var enemyImg
  var bombImg, stunImg;
- let normalEnemyImages = [];
  let heavyEnemyImage;
  let fastEnemyImage;
- let bossEnemyImage;
+ // let bossEnemyImage;
  let bombEnemyImage;
  let stealthEnemyImage;
  let explosionImage;
@@ -54,28 +53,52 @@ var levelOneNodes = [
  let isPopupActive = false;
  let isGameOver = false;
 
-
+let robo1FrontFrames = [];
+let robo1RightFrames = [];
+let robo1BackFrames = [];
+let robo2FrontFrames = [];
+let robo2RightFrames = [];
+let robo2BackFrames = [];
+let robo3FrontFrames = [];
+let robo3RightFrames = [];
+let robo3BackFrames = [];
+let heavyFrontFrames = [];
+let heavyRightFrames = [];
+let heavyBackFrames = [];
+let fastFrontFrames = [];
+let fastRightFrames = [];
+let fastBackFrames = [];
+let stealthFrontFrames = [];
+let stealthRightFrames = [];
+let stealthBackFrames = [];
+let bossFrontFrames = [];
+let bossRightFrames = [];
+let bossBackFrames = [];
+let miniboss1FrontFrames = [];
+let miniboss1RightFrames = [];
+let miniboss1BackFrames = [];
+let miniboss2FrontFrames = [];
+let miniboss2RightFrames = [];
+let miniboss2BackFrames = [];
+let miniboss3FrontFrames = [];
+let miniboss3RightFrames = [];
+let miniboss3BackFrames = [];
+let bombFrames = [];
+let explosionFrames = [];
 
  function preload() {
     backgroundTile = loadImage('images/map/tile2.png');
     pathTile = loadImage('images/map/pathTile.png');
     powImage = loadImage('images/pow.png'); 
-    bombImg = loadImage('images/enemies/bomb.png');
+    // Remove or comment out bombImg = loadImage('images/enemies/bomb.png');
     stunImg = loadImage('images/stun2.png');
     healingImage = loadImage('images/healing.png');
     sandImg = loadImage("images/sand.jpg");
     snowballImg = loadImage('images/snowball.png');
     projectileImg = loadImage('images/shooter/shooterProjectile.png');
 
-    for (let i = 1; i <= 3; i++) {
-        normalEnemyImages.push(loadImage(`images/enemies/normal${i}.png`));
-    }
-    heavyEnemyImage = loadImage('images/enemies/heavy1.png');
-    fastEnemyImage = loadImage('images/enemies/fast1.png');
-    bossEnemyImage = loadImage('images/enemies/boss1.png');
     bombEnemyImage = loadImage('images/enemies/bomb.png');
     explosionImage = loadImage('images/explosion.png');
-    stealthEnemyImage = loadImage('images/enemies/stealth.png');
     healerEnemyImage = loadImage('images/enemies/healer.png');
 
     turretHolderImg = loadImage('images/shooter/greenHolder.png');
@@ -109,6 +132,70 @@ var levelOneNodes = [
 
     settingsImg = loadImage('images/pause.png');
     resumeImg = loadImage('images/resume.png');
+
+    for (let i = 0; i < 3; i++) {
+        robo1FrontFrames.push(loadImage(`images/enemies/robo1/front00${i}.png`));
+        robo1RightFrames.push(loadImage(`images/enemies/robo1/right00${i}.png`));
+        robo1BackFrames.push(loadImage(`images/enemies/robo1/back00${i}.png`));
+    }
+
+    for (let i = 0; i < 3; i++) {
+        robo2FrontFrames.push(loadImage(`images/enemies/robo2/front00${i}.png`));
+        robo2RightFrames.push(loadImage(`images/enemies/robo2/right00${i}.png`));
+        robo2BackFrames.push(loadImage(`images/enemies/robo2/back00${i}.png`));
+
+        robo3FrontFrames.push(loadImage(`images/enemies/robo3/front00${i}.png`));
+        robo3RightFrames.push(loadImage(`images/enemies/robo3/right00${i}.png`));
+        robo3BackFrames.push(loadImage(`images/enemies/robo3/back00${i}.png`));
+    }
+
+    // Load animated frames for heavy (tank)
+    for (let i = 0; i < 3; i++) {
+        heavyFrontFrames.push(loadImage(`images/enemies/tank/front00${i}.png`));
+        heavyRightFrames.push(loadImage(`images/enemies/tank/right00${i}.png`));
+        heavyBackFrames.push(loadImage(`images/enemies/tank/back00${i}.png`));
+    }
+
+    // Load animated frames for fast
+    for (let i = 0; i < 3; i++) {
+        fastFrontFrames.push(loadImage(`images/enemies/fast/front00${i}.png`));
+        fastRightFrames.push(loadImage(`images/enemies/fast/right00${i}.png`));
+        fastBackFrames.push(loadImage(`images/enemies/fast/back00${i}.png`));
+    }
+
+    // Load animated frames for stealth
+    for (let i = 0; i < 3; i++) {
+        stealthFrontFrames.push(loadImage(`images/enemies/stealth/front00${i}.png`));
+        stealthRightFrames.push(loadImage(`images/enemies/stealth/right00${i}.png`));
+        stealthBackFrames.push(loadImage(`images/enemies/stealth/back00${i}.png`));
+    }
+
+    // Remove bossEnemyImage usage and load animated boss frames (6 each)
+    for (let i = 0; i < 6; i++) {
+        bossFrontFrames.push(loadImage(`images/enemies/boss/front00${i}.png`));
+        bossRightFrames.push(loadImage(`images/enemies/boss/right00${i}.png`));
+        bossBackFrames.push(loadImage(`images/enemies/boss/back00${i}.png`));
+    }
+
+    // Similarly load miniboss1..3 with 6 frames each
+    for (let i = 0; i < 6; i++) {
+        miniboss1FrontFrames.push(loadImage(`images/enemies/miniboss1/front00${i}.png`));
+        miniboss1RightFrames.push(loadImage(`images/enemies/miniboss1/right00${i}.png`));
+        miniboss1BackFrames.push(loadImage(`images/enemies/miniboss1/back00${i}.png`));
+
+        miniboss2FrontFrames.push(loadImage(`images/enemies/miniboss2/front00${i}.png`));
+        miniboss2RightFrames.push(loadImage(`images/enemies/miniboss2/right00${i}.png`));
+        miniboss2BackFrames.push(loadImage(`images/enemies/miniboss2/back00${i}.png`));
+
+        miniboss3FrontFrames.push(loadImage(`images/enemies/miniboss3/front00${i}.png`));
+        miniboss3RightFrames.push(loadImage(`images/enemies/miniboss3/right00${i}.png`));
+        miniboss3BackFrames.push(loadImage(`images/enemies/miniboss3/back00${i}.png`));
+    }
+
+    for (let i = 0; i < 6; i++) {
+        bombFrames.push(loadImage(`images/enemies/bomb/frame${i}.png`));
+    }
+
 }
 
 
@@ -404,7 +491,7 @@ function drawGameOver() {
     updateInfo();
     
 
-    if (wave.number % 8 === 0) {
+    if (wave.number % 5 === 0) {
         showBossWarning();
     }
 
