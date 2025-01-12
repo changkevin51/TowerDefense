@@ -695,7 +695,7 @@ table td {
   font-size: 12px; 
   line-height: 1.35em;
   width: 200px; 
-  height: 80px; 
+  height: 95px; 
   overflow: hidden; 
   text-overflow: ellipsis;
 }
@@ -767,7 +767,7 @@ table td {
 
 #sellButton {
   position: absolute;
-  top: 10px;
+  top: 6px;
   left: 10px;
   padding: 8px 30px; 
   height: 35px; 
