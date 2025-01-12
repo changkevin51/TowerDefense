@@ -527,6 +527,64 @@ function unselectAllTurrets() {
             this.displayHitEffect(enemy);
         }
     }
+
+    getEnemyClosestToTurret() {
+        let closestDistance = Infinity;
+        let closestEnemy = null;
+        for (let enemy of enemies) {
+            if (enemy.strength <= 0) continue;
+            let distance = dist(enemy.x, enemy.y, this.x, this.y);
+            if (distance <= this.range + enemy.size/2 && distance < closestDistance) {
+                closestDistance = distance;
+                closestEnemy = enemy;
+            }
+        }
+        return closestEnemy;
+    }
+
+    getStrongestEnemy() {
+        let strongestEnemy = null;
+        let strongestStrength = 0;
+        for (let enemy of enemies) {
+            if (enemy.strength <= 0) continue;
+            let distance = dist(enemy.x, enemy.y, this.x, this.y);
+            if (distance <= this.range + enemy.size/2 && enemy.strength > strongestStrength) {
+                strongestStrength = enemy.strength;
+                strongestEnemy = enemy;
+            }
+        }
+        return strongestEnemy;
+    }
+
+    getEnemyFarthestFromStart() {
+        let farthestDistance = -1;
+        let farthestEnemy = null;
+        for (let enemy of enemies) {
+            if (enemy.strength <= 0) continue;
+            let distance = dist(enemy.x, enemy.y, this.x, this.y);
+            if (distance > this.range + enemy.size/2) continue;
+            let travel = enemy.distanceTraveled();
+            if (travel > farthestDistance) {
+                farthestDistance = travel;
+                farthestEnemy = enemy;
+            }
+        }
+        return farthestEnemy;
+    }
+
+    getLastEnemyInRange() {
+        let lastEnemy = null;
+        for (let i = enemies.length - 1; i >= 0; i--) {
+            let enemy = enemies[i];
+            if (enemy.strength <= 0) continue;
+            let distance = dist(enemy.x, enemy.y, this.x, this.y);
+            if (distance <= this.range + enemy.size / 2) {
+                lastEnemy = enemy;
+                break;
+            }
+        }
+        return lastEnemy;
+    }
     
     
 

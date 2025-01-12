@@ -853,6 +853,8 @@ function showSelectedTurretInfo(turret) {
             nextSpecialAbility = "+ Immune to Stun";
         } else if (turret.type === "froster" && level === 2) {
             nextSpecialAbility = "+ Freeze and Slow Enemies";
+        } else if (turret.type === "sniper" && level === 2) {
+            nextSpecialAbility = "+ Target Invisible Enemies and Instant Hit";
         }
         nextText = `
             Next Level:<br>

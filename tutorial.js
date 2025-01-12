@@ -96,6 +96,9 @@ function populateStats() {
         if (turret.name === "Froster" && level >= 3) {
           specialAbility = "Freeze + Slow Enemies";
       }
+        if (turret.name === "Sniper" && level >= 3) {
+          specialAbility = "Instant Hit + Target Invisible Enemies";
+      }
     
         const row = document.createElement("tr");
         row.innerHTML = `
