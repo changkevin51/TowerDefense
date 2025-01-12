@@ -125,6 +125,19 @@ class Wave {
         }
 
 
+        const healerGroups = isEasyMode ? [3] : isHardMode ? [3, 6, 9] : [3, 6];
+        if (
+            this.number >= 4 && 
+            (this.number+1) % 1 === 0 && 
+            healerGroups.includes(this.currentGroup) && 
+            this.currentMember === 0 
+        ) {
+            enemies.push(new Enemy(this.enemyMaxHealth, 2, levelOneNodes, this.enemyMaxHealth, 'healer'));
+            this.currentMember++; 
+            return;
+        }
+
+
         
         // normal
         if (this.timeToSpawn(this.currentGroup, this.currentMember)) {

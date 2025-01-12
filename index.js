@@ -30,6 +30,7 @@ var levelOneNodes = [
  let bombEnemyImage;
  let stealthEnemyImage;
  let explosionImage;
+ let healingImage;
  var turrets;
  var projectiles;
  var money = 1050;
@@ -61,6 +62,7 @@ var levelOneNodes = [
     powImage = loadImage('images/pow.png'); 
     bombImg = loadImage('images/enemies/bomb.png');
     stunImg = loadImage('images/stun2.png');
+    healingImage = loadImage('images/healing.png');
     sandImg = loadImage("images/sand.jpg");
     snowballImg = loadImage('images/snowball.png');
     projectileImg = loadImage('images/shooter/shooterProjectile.png');
@@ -74,6 +76,7 @@ var levelOneNodes = [
     bombEnemyImage = loadImage('images/enemies/bomb.png');
     explosionImage = loadImage('images/explosion.png');
     stealthEnemyImage = loadImage('images/enemies/stealth.png');
+    healerEnemyImage = loadImage('images/enemies/healer.png');
 
     turretHolderImg = loadImage('images/shooter/greenHolder.png');
     for (let i = 1; i <= 7; i++) {
@@ -1019,7 +1022,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
     easyButton.addEventListener('click', () => {
       isEasyMode = true;
-      health = 2;
+      health = 200;
       difficultyScreen.style.display = 'none';
       updateInfo();
     });

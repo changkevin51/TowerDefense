@@ -159,11 +159,18 @@ function populateEnemies() {
       waves: "Appears starting wave 5, every 3rd wave",
     },
     {
+      type: "Healer",
+      image: "images/enemies/healer.png",
+      abilities: "Heals nearby allies by 10% every 2s",
+      waves: "Appears starting wave 3, every 3rd wave",
+    },
+    {
       type: "Boss",
       image: "images/enemies/boss1.png",
       abilities: "Extremely high health and powerful",
       waves: "Boss waves (every 8th wave)",
     },
+
   ];
 
   const container = document.getElementById("enemies-container");
