@@ -11,7 +11,7 @@ class Wave {
         this.currentMember = 0;
         this.enemyStrength = 1;
         this.enemyMaxHealth = 8;
-        this.healthIncreasePerWave = 0.75;
+        this.healthIncreasePerWave = 0.72;
         this.gameSpeed = gameSpeed;
         this.isBossWave = false;
         this.bonusGiven = false; 
@@ -20,10 +20,15 @@ class Wave {
     }
 
     updateDifficulty() {
-        this.groupSize = Math.ceil(this.number / 5);
-        this.enemyMaxHealth = Math.round((Math.pow(this.number, isHardMode ? 1.6 : 1.54) * 
+        this.groupSize = Math.min(10, Math.round(this.number / 5.5));
+        this.enemyMaxHealth = Math.round((Math.pow(this.number, isHardMode ? 1.65 : 1.59) * 
             (isHardMode ? this.healthIncreasePerWave - 0.05 : this.healthIncreasePerWave)) / 
-            (this.groupSize * 0.75)) + 1;    }
+            (this.groupSize * 0.75)) + 1;    
+        this.movementSpeed += this.number * 0.018;
+        if (this.memberDelay > 18) {
+            this.memberDelay -= 0.2;
+            this.groupDelay -= 0.2;}
+    }
 
     determineEnemyType() {
         if (this.isBossWave) return 'boss';
@@ -41,13 +46,6 @@ class Wave {
             this.currentGroup = 0;
             this.currentMember = 0;
             this.isBossWave = this.number % 5 === 0;
-
-            if (this.memberDelay > 18) {
-                this.memberDelay -= 0.2;
-                this.groupDelay -= 0.2;
-                this.movementSpeed += 0.014;
-            }
-
             this.groupAmount = this.isBossWave ? (this.number % 10 === 0 ? 2 : 1) : 10;
             this.bonusGiven = false;
 
@@ -132,7 +130,7 @@ class Wave {
         }
 
 
-        const healerGroups = isEasyMode ? [3] : isHardMode ? [3, 6, 9] : [3, 6];
+        const healerGroups = isEasyMode ? [3] : isHardMode ? [1, 3, 6, 9] : [3, 6];
         if (
             this.number >= 4 && 
             (this.number+1) % 1 === 0 && 
