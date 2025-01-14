@@ -209,6 +209,7 @@ class Enemy {
     }
     draw() {
         strokeWeight(2);
+        
         if (this.isExploding) {
             if (millis() - this.explosionStartTime < this.explosionDuration) {
                 image(explosionImage, this.x - this.size*4, this.y - this.size*3, this.size * 8, this.size * 8);
@@ -219,18 +220,18 @@ class Enemy {
             return;
         }
     
+        push();
         if (this.isStealth) {
-            tint(128, 128, 128); 
+            tint(128, 128, 128);
         } else if (this.isSlowed) {
-            tint(89, 192, 225); 
-        } else {
-            noTint(); 
+            tint(89, 192, 225);
         }
     
         if (this.type === 'robo1' || this.type === 'robo2' || this.type === 'robo3' || 
             this.type === 'heavy' || this.type === 'fast' || this.type === 'stealth' ||
             this.type === 'miniboss1' || this.type === 'miniboss2' || this.type === 'miniboss3' ||
-            this.type === 'boss' ) {
+            this.type === 'boss') {
+            
             if (abs(this.xSpeed) > abs(this.ySpeed)) {
                 this.currentFrameSet = this.xSpeed > 0 ? this.rightFrames : this.rightFrames;
             } else {
@@ -240,7 +241,7 @@ class Enemy {
             if (this.animationTimer % 12 === 0) {
                 if (!this.currentFrameSet || !this.currentFrameSet.length) {
                     console.error(`No animation frames for enemy type: ${this.type}`);
-                    this.currentFrameSet = [this.img]; // Use default image as fallback
+                    this.currentFrameSet = [this.img];
                 } else {
                     this.animationIndex = (this.animationIndex + 1) % this.currentFrameSet.length;
                 }
@@ -250,13 +251,12 @@ class Enemy {
             let floatOffset = sin(millis() / 250) * 3;
             let roboImg = this.currentFrameSet[this.animationIndex];
             image(roboImg, this.x - this.size, this.y - this.size + floatOffset, this.size*2, this.size*2);
-            this.drawHealthBar();
-            return;
-
-        } else if (this.type === 'bomb') {
-            if (this.animationTimer % 10 === 0) { // Faster animation for bomb
+        }
+        else if (this.type === 'bomb') {
+            if (this.animationTimer % 10 === 0) {
                 if (!this.frames || !this.frames.length) {
                     console.error('No animation frames for bomb enemy');
+                    pop();
                     return;
                 }
                 this.animationIndex = (this.animationIndex + 1) % this.frames.length;
@@ -266,42 +266,27 @@ class Enemy {
             let floatOffset = sin(millis() / 250) * 3;
             let bombImg = this.frames[this.animationIndex];
             image(bombImg, this.x - this.size, this.y - this.size + floatOffset, this.size*2, this.size*2);
-            this.drawHealthBar();
-            return;
         }
-    
-        if (this.img) {
+        else if (this.img) {
             const adjustedX = this.x - this.size * (this.type === 'normal' || this.type === 'heavy' ? 0.75 : this.type === 'stealth' ? 0.8 : 1.15);
             const adjustedY = this.y - this.size * (this.type === 'stealth' ? 1.0 : 0.75);
             const width = this.size * (this.type === 'normal' || this.type === 'heavy' ? 1.5 : this.type === 'stealth' ? 1.5 : 3);
             const height = this.size * (this.type === 'stealth' ? 2.0 : 1.5);
-    
             image(this.img, adjustedX, adjustedY, width, height);
         } else {
             console.error("Image not loaded for enemy type:", this.type);
         }
+        pop();
     
-        noTint();
+        this.drawHealthBar();
     
-        fill(255, 0, 0);
-        rect(this.x - 25, this.y - 35, 50, 10);
-    
-        fill(4, 128, 49);
-        const healthWidth = (this.strength / this.maxHealth) * 50;
-        rect(this.x - 25, this.y - 35, healthWidth, 10);
-    
-        fill('white');
-        textAlign(CENTER, CENTER);
-        textSize(12);
-        textStyle(BOLD);
-        text(Math.floor(this.strength), this.x, this.y - 31);
-
         if (millis() - this.healedAt < 300) {
+            push();
             tint(128, 255, 128, 150);
             image(healingImage, this.x - this.size, this.y - this.size, this.size*2, this.size*2);
-            noTint();
+            pop();
         }
-
+    
         if (this.type === 'healer' && this.showHealingRadius) {
             this.drawHealingArea();
             if (millis() > this.healingRadiusEndTime) {
@@ -452,7 +437,8 @@ class Enemy {
                         let distanceSquared = dx * dx + dy * dy;
         
                         if (distanceSquared <= healingRadiusSquared) {
-                            e.strength = Math.min(e.maxHealth, Math.ceil(e.strength + e.maxHealth * 0.1));
+                            const healAmount = isHardMode ? e.maxHealth * 0.15 : e.maxHealth * 0.1;
+                            e.strength = Math.min(e.maxHealth, Math.ceil(e.strength + healAmount));
                             e.healedAt = millis();
                             healedAny = true;
                         }
