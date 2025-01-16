@@ -11,6 +11,10 @@ var levelOneNodes = [
     {x: 600, y: 50},
     {x: 600, y: 800},
 ];
+
+window.userSubmittedScore = false;
+window.userDisplayName = '';
+
  let isEasyMode = false;
  let isHardMode = false;
  let settingsImg;
@@ -85,6 +89,7 @@ let miniboss3RightFrames = [];
 let miniboss3BackFrames = [];
 let bombFrames = [];
 let explosionFrames = [];
+
 
  function preload() {
     backgroundTile = loadImage('images/map/tile2.png');
@@ -464,6 +469,9 @@ function drawGameOver() {
     textSize(24);
     text("RESTART", width/2, btnY + btnHeight/2);
     pop();
+    if (waveNumber >= 25) {
+        promptLeaderboardIfEligible();
+    }
 }
 
  function updateInfo() {
@@ -1105,6 +1113,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const easyButton = document.getElementById('easyButton');
     const normalButton = document.getElementById('normalButton');
     const hardButton = document.getElementById('hardButton');
+    const openBtn = document.getElementById('openLeaderboardBtn');
+    const closeBtn = document.getElementById('closeLeaderboardBtn');
 
   
     easyButton.addEventListener('click', () => {
@@ -1123,7 +1133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     hardButton.addEventListener('click', () => {
         isHardMode = true;
         isEasyMode = false;
-        health = 75;
+        health = 20;
         difficultyScreen.style.display = 'none';
         updateInfo();
     });
@@ -1145,4 +1155,151 @@ document.addEventListener('DOMContentLoaded', () => {
         event.preventDefault();
         sellTurret();
     });
+
+    openBtn.addEventListener('click', openLeaderboard);
+    closeBtn.addEventListener('click', closeLeaderboard);
+
+
+    document.getElementById('openLeaderboardBtn').addEventListener('click', openLeaderboard);
+    document.querySelector('.close-popup').addEventListener('click', closeLeaderboard);
+    document.getElementById('difficultyFilter').addEventListener('change', filterLeaderboard);
+    document.getElementById('addEntryButton').addEventListener('click', submitLeaderboardEntry);
 });
+
+window.totalDamage = 0;
+
+function openLeaderboard() {
+    const popup = document.getElementById('leaderboardPopup');
+    popup.style.display = 'block';
+    fetchLeaderboardEntries();
+}
+
+async function fetchLeaderboardEntries() {
+    const loadingDiv = document.querySelector('.leaderboard-loading');
+    if (loadingDiv) {
+        loadingDiv.style.display = 'block';
+    }
+    
+    try {
+        const response = await fetch('/.netlify/functions/leaderboard', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
+        const data = await response.json();
+        displayLeaderboardEntries(data);
+    } catch (err) {
+        console.error('Error fetching leaderboard:', err);
+        document.getElementById('leaderboardContents').innerHTML = 
+            '<div class="error-message">Failed to load leaderboard</div>';
+    } finally {
+        if (loadingDiv) {
+            loadingDiv.style.display = 'none';
+        }
+    }
+}
+function closeLeaderboard() {
+    const popup = document.getElementById('leaderboardPopup');
+    popup.style.display = 'none';
+}
+
+function displayLeaderboardEntries(entries) {
+    const container = document.getElementById('leaderboardContents');
+    container.innerHTML = '';
+    
+    // Check if user has an entry
+    const userEntry = entries.find(entry => entry.player_name === window.userDisplayName);
+    if (userEntry) {
+        window.userSubmittedScore = true;
+        const addEntryButton = document.getElementById('addEntryButton');
+        addEntryButton.textContent = '🔄 Update Score';
+    }
+    
+    entries.forEach((entry, index) => {
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'leaderboard-entry';
+        entryDiv.innerHTML = `
+            <span class="entry-rank">#${index + 1}</span>
+            <span class="entry-name">${entry.player_name}</span>
+            <span class="entry-score">Wave ${entry.wave} | DMG: ${entry.damage}</span>
+            <span class="entry-date">${new Date(entry.created_at).toLocaleDateString()}</span>
+        `;
+        container.appendChild(entryDiv);
+    });
+}
+function filterLeaderboard(event) {
+    const difficulty = event.target.value;
+    const entries = document.querySelectorAll('.leaderboard-entry');
+    
+    entries.forEach(entry => {
+        const entryDifficulty = entry.querySelector('.entry-score').textContent.split('|')[1].trim();
+        entry.style.display = (difficulty === 'all' || entryDifficulty === difficulty) ? '' : 'none';
+    });
+}
+
+/* Trigger after wave or game over if wave>=25 */
+function promptLeaderboardIfEligible() {
+    if (waveNumber >= 1) {
+        const prompt = document.getElementById('leaderboardPrompt');
+        prompt.classList.add('show');
+        // Hide after 3 seconds
+        setTimeout(() => prompt.classList.remove('show'), 3000);
+    }
+}
+
+async function submitLeaderboardEntry() {
+    if (waveNumber < 1) {
+        alert('You must reach wave 25 to submit a score!');
+        return;
+    }
+
+    if (!window.userSubmittedScore) {
+        const displayName = prompt('Enter your display name:');
+        if (!displayName) return;
+        window.userDisplayName = displayName;
+    }
+
+    try {
+        const response = await fetch('/.netlify/functions/leaderboard', {
+            method: window.userSubmittedScore ? 'PUT' : 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                player_name: window.userDisplayName,
+                wave: waveNumber,
+                damage: window.totalDamage,
+                difficulty: isHardMode ? 'hard' : (isEasyMode ? 'easy' : 'normal')
+            })
+        });
+
+        if (response.ok) {
+            await fetchLeaderboardEntries();
+            showSuccessPopup(window.userSubmittedScore ? 'Score updated!' : 'Score submitted!');
+            window.userSubmittedScore = true;
+        } else {
+            throw new Error('Failed to submit score');
+        }
+    } catch (err) {
+        console.error('Error:', err);
+        alert('Failed to submit score. Please try again.');
+    }
+}
+
+function showSuccessPopup(message) {
+    let popup = document.getElementById('successPopup');
+    if (!popup) {
+        popup = document.createElement('div');
+        popup.id = 'successPopup';
+        popup.className = 'success-popup';
+        document.body.appendChild(popup);
+    }
+    
+    popup.textContent = message;
+    popup.classList.add('show');
+    setTimeout(() => popup.classList.remove('show'), 3000);
+}

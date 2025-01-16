@@ -293,10 +293,50 @@
     <br>
   </div>
 
+  <div id="leaderboardPrompt" class="popupMessage">
+      <div class="prompt-content">
+        <span class="trophy-icon">🏆</span>
+        <p>Congratulations! You've reached wave 25!</p>
+        <p>Add your name to the leaderboard?</p>
+      </div>
+  </div>
+  
+  <button id="openLeaderboardBtn">
+      <span class="trophy-icon">🏆</span>
+      Leaderboard
+  </button>
+  
+  <div id="leaderboardPopup" class="popup">
+      <div class="popup-header">
+        <h2><span class="trophy-icon">🏆</span> Leaderboard</h2>
+        <button id="closeLeaderboardBtn" class="close-popup">&times;</button>
+      </div>
+      
+      <div class="popup-content">
+        <div class="leaderboard-controls">
+          <button id="addEntryButton" class="primary-button">
+            <span class="plus-icon">+</span> Add Your Score
+          </button>
+          <div class="leaderboard-filters">
+            <select id="difficultyFilter">
+              <option value="all">All Difficulties</option>
+              <option value="easy">Easy</option>
+              <option value="normal">Normal</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+        </div>
+    
+        <div id="leaderboardContents">
+          <div class="leaderboard-loading">Loading entries...</div>
+        </div>
+      </div>
+  </div>
 
   <footer id="footer">
     A project by <a href="https://github.com/changkevin51" target="_blank" style="color: #ffffff; text-decoration: underline;">Kevin Chang</a>
   </footer>
+  <script src="https://unpkg.com/@supabase/postgrest-js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.9.0/p5.min.js"></script>
   <script src="path.js"></script>
   <script src="enemy.js"></script>
@@ -305,6 +345,6 @@
   <script src="wave.js"></script>
   <script src="index.js" defer></script>
   <script src="tutorial.js" defer></script>
-
+  
 </body>
 </html>
