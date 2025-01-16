@@ -11,7 +11,7 @@ var levelOneNodes = [
     {x: 600, y: 50},
     {x: 600, y: 800},
 ];
-
+console.log('Database URL:', process.env.DATABASE_URL);
 window.userSubmittedScore = false;
 window.userDisplayName = '';
 
