@@ -4,5 +4,8 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "npm": "^11.0.0"
+  },
+  "devDependencies": {
+    "dotenv-webpack": "^8.1.0"
   }
 }
