@@ -11,20 +11,20 @@ class Wave {
         this.currentMember = 0;
         this.enemyStrength = 1;
         this.enemyMaxHealth = 8;
-        this.healthIncreasePerWave = 0.72;
+        this.healthIncreasePerWave = 0.66;
         this.gameSpeed = gameSpeed;
         this.isBossWave = false;
         this.bonusGiven = false; 
-        this.movementSpeed = 2.3
+        this.movementSpeed = 2.25
         
     }
 
     updateDifficulty() {
-        this.groupSize = Math.min(10, Math.round(this.number / 5.5));
-        this.enemyMaxHealth = Math.round((Math.pow(this.number, isHardMode ? 1.65 : 1.59) * 
+        this.groupSize = Math.max(1, Math.min(10, Math.round(this.number / 5.5)));
+        this.enemyMaxHealth = Math.round((Math.pow(this.number, isHardMode ? 1.64 : 1.58) * 
             (isHardMode ? this.healthIncreasePerWave - 0.05 : this.healthIncreasePerWave)) / 
             (this.groupSize * 0.75)) + 1;    
-        this.movementSpeed += this.number * 0.018;
+        this.movementSpeed += 0.014;
         if (this.memberDelay > 18) {
             this.memberDelay -= 0.2;
             this.groupDelay -= 0.2;}
@@ -201,13 +201,15 @@ class Wave {
             
         }
         else if (!this.active && enemies.length === 0 && !this.bonusGiven) {
-            let rewardCash = isEasyMode ? 200 : isHardMode ? 135 : 150;
-            let healthIncrease = isHardMode ? this.number : 2 * this.number;
-            money += rewardCash;
-            health += healthIncrease;
-            showMoneyPopup(rewardCash);
-            showHealthPopup(healthIncrease);
-            updateInfo();
+            if (health > 0) { 
+                let rewardCash = isEasyMode ? 200 : isHardMode ? 135 : 150;
+                let healthIncrease = isHardMode ? this.number : 2 * this.number;
+                money += rewardCash;
+                health += healthIncrease;
+                showMoneyPopup(rewardCash);
+                showHealthPopup(healthIncrease);
+                updateInfo();
+            }
             this.bonusGiven = true;
         }
     }

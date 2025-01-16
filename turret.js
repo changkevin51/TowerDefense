@@ -201,6 +201,7 @@ class Turret {
             projectiles.push(new Projectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 10));
             this.shootingTimer = 0;
             this.totalDamage += this.projectileStrength;
+            dealDamage(this.projectileStrength); // Increment global damage counter
         }
     }
     
@@ -516,6 +517,7 @@ function unselectAllTurrets() {
             this.totalDamage += damage;
             money += Math.round(damage * 0.5);
             updateInfo();
+            dealDamage(damage); // Increment global damage counter
     
             if (enemy.strength <= 0) {
                 enemy.strength = 0;
@@ -925,6 +927,7 @@ class FrosterTurret extends Turret {
             projectiles.push(snowball);
             this.shootingTimer = 0;
             this.totalDamage += this.projectileStrength;
+            dealDamage(this.projectileStrength); // Increment global damage counter
         }
     }
 
@@ -1024,5 +1027,12 @@ class FrosterTurret extends Turret {
             }
         }
         this.draw();
+    }
+}
+
+function dealDamage(amount) {
+    // Increment global damage counter
+    if (typeof window.totalDamage === 'number') {
+        window.totalDamage += amount;
     }
 }

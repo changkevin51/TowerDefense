@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "npm": "^11.0.0"
+  }
+}
