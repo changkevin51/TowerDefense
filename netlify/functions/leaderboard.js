@@ -1,13 +1,41 @@
 const { neon } = require('@neondatabase/serverless');
 
-const sql = neon(process.env.DATABASE_URL);
+// Initialize database connection with error handling
+let sql;
+try {
+    sql = neon(process.env.DATABASE_URL.replace('postgresql://', 'postgres://'));
+} catch (error) {
+    console.error('Database connection error:', error);
+    throw error;
+}
 
+// Expanded CORS headers
 const corsHeaders = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400',
     'Content-Type': 'application/json'
 };
+
+// Initialize database table
+const initDB = async () => {
+    try {
+        await sql`
+            CREATE TABLE IF NOT EXISTS leaderboard (
+                id SERIAL PRIMARY KEY,
+                player_name VARCHAR(100) NOT NULL,
+                wave INTEGER NOT NULL,
+                damage INTEGER NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `;
+    } catch (error) {
+        console.error('Database initialization error:', error);
+        throw error;
+    }
+};
+
 
 exports.handler = async (event, context) => {
     // Handle preflight requests
@@ -26,6 +54,9 @@ exports.handler = async (event, context) => {
                 ORDER BY wave DESC, damage DESC 
                 LIMIT 100
             `;
+            
+            console.log('Fetched entries:', entries.length);
+            
             return {
                 statusCode: 200,
                 headers: corsHeaders,
@@ -63,13 +94,15 @@ exports.handler = async (event, context) => {
             headers: corsHeaders,
             body: JSON.stringify({ error: 'Method not allowed' })
         };
-
     } catch (error) {
-        console.error('Error:', error);
+        console.error('Handler error:', error);
         return {
             statusCode: 500,
             headers: corsHeaders,
-            body: JSON.stringify({ error: 'Server error' })
+            body: JSON.stringify({ 
+                error: 'Server error',
+                details: process.env.NODE_ENV === 'development' ? error.message : undefined
+            })
         };
     }
 };

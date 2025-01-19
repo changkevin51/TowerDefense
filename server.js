@@ -4,32 +4,10 @@ const { neon } = require('@neondatabase/serverless');
 const cors = require('cors');
 const PORT = process.env.PORT || 3000;
 
-// Validate and format database URL
-const dbUrl = process.env.DATABASE_URL;
-if (!dbUrl) {
-    throw new Error('DATABASE_URL environment variable is not set');
-}
 
-// Initialize database connection with error handling
-let sql;
-try {
-    sql = neon(dbUrl.trim());
-} catch (error) {
-    console.error('Failed to initialize database connection:', error);
-    process.exit(1);
-}
 
-// Verify connection
-const testConnection = async () => {
-    try {
-        await sql`SELECT 1`;
-        console.log('Database connection successful');
-    } catch (error) {
-        console.error('Database connection failed:', error);
-        process.exit(1);
-    }
-};
-
+// Initialize database connection
+const sql = neon(process.env.DATABASE_URL);
 
 const initDB = async () => {
     await sql`
