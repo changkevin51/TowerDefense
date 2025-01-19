@@ -11,15 +11,15 @@ var levelOneNodes = [
     {x: 600, y: 50},
     {x: 600, y: 800},
 ];
-console.log('Database URL:', process.env.DATABASE_URL);
+// console.log('Database URL:', process.env.DATABASE_URL);
 window.userSubmittedScore = false;
 window.userDisplayName = '';
 
- let isEasyMode = false;
- let isHardMode = false;
- let settingsImg;
- let resumeImg;
- let isPaused = false;
+ var isEasyMode = false;
+ var isHardMode = false;
+ var settingsImg;
+ var resumeImg;
+ var isPaused = false;
  var canvas;
  var path;
  var enemies;
@@ -27,13 +27,13 @@ window.userDisplayName = '';
  var orbImage;
  var enemyImg
  var bombImg, stunImg;
- let heavyEnemyImage;
- let fastEnemyImage;
+ var heavyEnemyImage;
+ var fastEnemyImage;
  // let bossEnemyImage;
- let bombEnemyImage;
- let stealthEnemyImage;
- let explosionImage;
- let healingImage;
+ var bombEnemyImage;
+ var stealthEnemyImage;
+ var explosionImage;
+ var healingImage;
  var turrets;
  var projectiles;
  var money = 1050;
@@ -42,7 +42,7 @@ window.userDisplayName = '';
  var waveNumber = 1;
  var gameSpeed = 1; 
  var isCooldown = false;
- let isWaveCooldown = false;
+ var isWaveCooldown = false;
  var frameRateBase = 60; 
  var turretPrice = 150; 
  var turretPriceSniper = 300;
@@ -54,8 +54,8 @@ window.userDisplayName = '';
  const frosterPriceIncreaseFactor = 2.5;
  var autoStart = false;
  var showStartArrow = true; 
- let isPopupActive = false;
- let isGameOver = false;
+ var isPopupActive = false;
+ var isGameOver = false;
 
 let robo1FrontFrames = [];
 let robo1RightFrames = [];
