@@ -3,7 +3,9 @@ const { neon } = require('@neondatabase/serverless');
 // Initialize database connection with error handling
 let sql;
 try {
-    sql = neon(process.env.DATABASE_URL.replace('postgresql://', 'postgres://'));
+    sql = neon(process.env.DATABASE_URL, {
+        ssl: { rejectUnauthorized: false }
+    });
 } catch (error) {
     console.error('Database connection error:', error);
     throw error;
@@ -95,14 +97,11 @@ exports.handler = async (event, context) => {
             body: JSON.stringify({ error: 'Method not allowed' })
         };
     } catch (error) {
-        console.error('Handler error:', error);
+        console.error('Error in handler:', error);
         return {
             statusCode: 500,
             headers: corsHeaders,
-            body: JSON.stringify({ 
-                error: 'Server error',
-                details: process.env.NODE_ENV === 'development' ? error.message : undefined
-            })
+            body: JSON.stringify({ error: 'Server error', details: error.message }),
         };
     }
 };
