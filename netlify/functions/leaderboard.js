@@ -1,18 +1,16 @@
 const { neon } = require('@neondatabase/serverless');
-
+console.log('Function loaded');
+console.log('Environment:', process.env.NODE_ENV);
+console.log('Database URL:', process.env.DATABASE_URL);
 // Initialize database connection with error handling
 let sql;
 try {
-    sql = neon(process.env.DATABASE_URL, {
-        ssl: { rejectUnauthorized: false }
-    
-    });
-    console.log('Database connection initialized');
+    sql = neon(process.env.DATABASE_URL);
+    console.log('Database connected');
 } catch (error) {
-    console.error('Database connection error:', error);
+    console.error('Connection error:', error);
     throw error;
 }
-console.log('DATABASE_URL:', process.env.DATABASE_URL);
 
 // Expanded CORS headers
 const corsHeaders = {
