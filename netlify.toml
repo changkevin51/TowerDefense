@@ -1,9 +1,11 @@
 [build]
-  command = "# no build command needed"
+  command = "npm install"
   functions = "netlify/functions"
   publish = "."
 
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
+[functions]
+  node_bundler = "esbuild"
+
+[build.environment]
+  NODE_VERSION = "18"
+
