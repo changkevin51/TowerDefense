@@ -11,7 +11,7 @@ class Wave {
         this.currentMember = 0;
         this.enemyStrength = 1;
         this.enemyMaxHealth = 8;
-        this.healthIncreasePerWave = 0.66;
+        this.healthIncreasePerWave = 0.62;
         this.gameSpeed = gameSpeed;
         this.isBossWave = false;
         this.bonusGiven = false; 
@@ -21,7 +21,7 @@ class Wave {
 
     updateDifficulty() {
         this.groupSize = Math.max(1, Math.min(10, Math.round(this.number / 5.5)));
-        this.enemyMaxHealth = Math.round((Math.pow(this.number, isHardMode ? 1.64 : 1.58) * 
+        this.enemyMaxHealth = Math.round((Math.pow(this.number, isHardMode ? 1.63 : 1.58) * 
             (isHardMode ? this.healthIncreasePerWave - 0.05 : this.healthIncreasePerWave)) / 
             (this.groupSize * 0.75)) + 1;    
         this.movementSpeed += 0.014;
