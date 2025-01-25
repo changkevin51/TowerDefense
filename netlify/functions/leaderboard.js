@@ -5,10 +5,13 @@ console.log('Database URL:', process.env.DATABASE_URL);
 // Initialize database connection with error handling
 let sql;
 try {
-    sql = neon(process.env.DATABASE_URL);
-    console.log('Database connected');
+    sql = neon(process.env.DATABASE_URL, {
+        ssl: { rejectUnauthorized: false }
+    
+    });
+    console.log('Database connection initialized');
 } catch (error) {
-    console.error('Connection error:', error);
+    console.error('Database connection error:', error);
     throw error;
 }
 
