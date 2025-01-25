@@ -9,3 +9,8 @@
 [build.environment]
   NODE_VERSION = "18"
 
+[redirects]
+  from = "https://towerdefense.tech/*"
+  to = "https://www.towerdefense.tech/:splat"
+  status = 301
+  force = true
