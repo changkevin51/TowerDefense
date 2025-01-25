@@ -3,7 +3,10 @@
     "@neondatabase/serverless": "^0.10.4",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "npm": "^11.0.0"
+    "next": "^15.1.6",
+    "npm": "^11.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "dotenv-webpack": "^8.1.0"

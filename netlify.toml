@@ -1,10 +1,10 @@
-[build]
-  command = "npm install"
-  functions = "netlify/functions"
-  publish = "."
+# [build]
+#   command = "npm install"
+#   functions = "netlify/functions"
+#   publish = "."
 
-[functions]
-  node_bundler = "esbuild"
+# [functions]
+#   node_bundler = "esbuild"
 
 [build.environment]
   NODE_VERSION = "18"

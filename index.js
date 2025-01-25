@@ -1168,14 +1168,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.totalDamage = 0;
 
+function openLeaderboard() {
+    const popup = document.getElementById('leaderboardPopup');
+    popup.style.display = 'block';
+    fetchLeaderboardEntries();
+}
+
 async function fetchLeaderboardEntries() {
-    console.log('Fetching leaderboard...');
     const loadingDiv = document.querySelector('.leaderboard-loading');
-    if (loadingDiv) loadingDiv.style.display = 'block';
+    if (loadingDiv) {
+        loadingDiv.style.display = 'block';
+    }
     
     try {
-        const response = await fetch('/api/leaderboard');
-        if (!response.ok) throw new Error('Network response was not ok');
+        const response = await fetch('/api/leaderboard', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        
         const data = await response.json();
         displayLeaderboardEntries(data);
     } catch (err) {
@@ -1183,7 +1199,9 @@ async function fetchLeaderboardEntries() {
         document.getElementById('leaderboardContents').innerHTML = 
             '<div class="error-message">Failed to load leaderboard</div>';
     } finally {
-        if (loadingDiv) loadingDiv.style.display = 'none';
+        if (loadingDiv) {
+            loadingDiv.style.display = 'none';
+        }
     }
 }
 
