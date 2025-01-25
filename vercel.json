@@ -1,6 +1,9 @@
 {
   "version": 2,
-  "buildCommand": "next build",
-  "devCommand": "next dev",
-  "framework": "nextjs"
+  "functions": {
+    "api/leaderboard.js": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
 }
