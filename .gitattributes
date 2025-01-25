@@ -1,2 +1,4 @@
-* text=auto
-.env
+* text=auto eol=lf
+*.{cmd,[cC][mM][dD]} text eol=crlf
+*.{bat,[bB][aA][tT]} text eol=crlf
+.env text eol=lf
