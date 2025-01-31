@@ -2,6 +2,8 @@
 
 NOTE: THIS GAME IS DESIGNED TO BE HARD. STRATEGY IS REQUIRED TO GET THROUGH FURTHER WAVES. 
 
+NOTE (2): LEADERBOARD IN PROGRESS. (Istg adding a leaderboard makes this soooo complicated...)
+
 A fun tower defense game made with JavaScript and p5.js. Players defend their base by placing turrets, earning money, and surviving waves of enemies.
 
 Record: Wave: 120 (Daniel Xu)
