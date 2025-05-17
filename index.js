@@ -8,8 +8,11 @@ var levelOneNodes = [
     {x: 400, y: 200},
     {x: 250, y: 200},
     {x: 250, y: 50},
-    {x: 600, y: 50},
-    {x: 600, y: 800},
+    {x: 700, y: 50},
+    {x: 700, y: 250},
+    {x: 600, y: 250},
+    {x: 600, y: 650},
+    {x: 800, y: 650},
 ];
 // console.log('Database URL:', process.env.DATABASE_URL);
 window.userSubmittedScore = false;
@@ -95,7 +98,6 @@ let explosionFrames = [];
     backgroundTile = loadImage('images/map/tile2.png');
     pathTile = loadImage('images/map/pathTile.png');
     powImage = loadImage('images/pow.png'); 
-    // Remove or comment out bombImg = loadImage('images/enemies/bomb.png');
     stunImg = loadImage('images/stun2.png');
     healingImage = loadImage('images/healing.png');
     sandImg = loadImage("images/sand.jpg");
@@ -132,6 +134,7 @@ let explosionFrames = [];
     water = loadImage('images/map/water.png');
     rocks = loadImage('images/map/rocks.png');
     cactus = loadImage('images/map/cactus.png');
+    cactus2 = loadImage('images/map/cactus2.png');
     sign = loadImage('images/map/sign.png');
     bigRock = loadImage('images/map/bigRock.png');
 
@@ -154,35 +157,30 @@ let explosionFrames = [];
         robo3BackFrames.push(loadImage(`images/enemies/robo3/back00${i}.png`));
     }
 
-    // Load animated frames for heavy (tank)
     for (let i = 0; i < 3; i++) {
         heavyFrontFrames.push(loadImage(`images/enemies/tank/front00${i}.png`));
         heavyRightFrames.push(loadImage(`images/enemies/tank/right00${i}.png`));
         heavyBackFrames.push(loadImage(`images/enemies/tank/back00${i}.png`));
     }
 
-    // Load animated frames for fast
     for (let i = 0; i < 3; i++) {
         fastFrontFrames.push(loadImage(`images/enemies/fast/front00${i}.png`));
         fastRightFrames.push(loadImage(`images/enemies/fast/right00${i}.png`));
         fastBackFrames.push(loadImage(`images/enemies/fast/back00${i}.png`));
     }
 
-    // Load animated frames for stealth
     for (let i = 0; i < 3; i++) {
         stealthFrontFrames.push(loadImage(`images/enemies/stealth/front00${i}.png`));
         stealthRightFrames.push(loadImage(`images/enemies/stealth/right00${i}.png`));
         stealthBackFrames.push(loadImage(`images/enemies/stealth/back00${i}.png`));
     }
 
-    // Remove bossEnemyImage usage and load animated boss frames (6 each)
     for (let i = 0; i < 6; i++) {
         bossFrontFrames.push(loadImage(`images/enemies/boss/front00${i}.png`));
         bossRightFrames.push(loadImage(`images/enemies/boss/right00${i}.png`));
         bossBackFrames.push(loadImage(`images/enemies/boss/back00${i}.png`));
     }
 
-    // Similarly load miniboss1..3 with 6 frames each
     for (let i = 0; i < 6; i++) {
         miniboss1FrontFrames.push(loadImage(`images/enemies/miniboss1/front00${i}.png`));
         miniboss1RightFrames.push(loadImage(`images/enemies/miniboss1/right00${i}.png`));
@@ -203,10 +201,8 @@ let explosionFrames = [];
 
 }
 
-
-
  function setup() {
-    canvas = createCanvas(700, 700).parent("gameCanvas");
+    canvas = createCanvas(800, 700).parent("gameCanvas");
     frameRate(frameRateBase); 
     path = new Path(levelOneNodes, pathTile);
     enemies = [];
@@ -252,8 +248,13 @@ function drawDecorations() {
     pop();
 
     push();
-    translate(460, 250); 
+    translate(460, 200); 
     image(cactus, 0, 0, cactus.width*0.9, cactus.height*0.9);
+    pop();
+
+    push();
+    translate(650, 490); 
+    image(cactus2, 0, 0, cactus2.width*0.9, cactus2.height*0.9);
     pop();
 
     push();
@@ -271,7 +272,8 @@ function getDecorationBounds() {
     return [
         { x: 300, y: 590, width: water.width, height: water.height },
         { x: 280, y: 580 + water.height, width: rocks.width, height: rocks.height },
-        { x: 460, y: 250, width: cactus.width*0.9, height: cactus.height*0.9 },
+        { x: 460, y: 200, width: cactus.width*0.9, height: cactus.height*0.9 },
+        { x: 670, y: 490, width: cactus2.width*0.9, height: cactus2.height*0.9 },
         { x: 275, y: 80, width: sign.width * 0.7, height: sign.height * 0.7 },
         { x: 200, y: 320, width: bigRock.width * 0.8, height: bigRock.height * 0.8 },
     ];
@@ -626,7 +628,7 @@ function mousePressed() {
 
     if (isPopupActive) {
 
-        if (mouseY < 560 && mouseX < 700) {
+        if (mouseY < 560 && mouseX < 800) {
             let turret = getTurretBeingClicked();
             if (turret) {
                 turrets.forEach(t => t.selected = false);
@@ -990,42 +992,6 @@ function showSelectedTurretInfo(turret) {
     }
 }
 
-function sellTurret() {
-    const turret = getTurretBeingSelected();
-    if (!turret) return;
-
-    const initialPrice = turret.type === 'sniper'
-        ? 300
-        : turret.type === 'wizard'
-            ? 400
-            : turret.type === 'frost'
-                ? 350
-                : 150;
-    const upgradeCost = (turret.type === 'sniper' || turret.type === 'wizard' || turret.type === 'frost') ? 250 : 120;
-    const totalSpent = initialPrice + turret.upgrades * upgradeCost;
-
-    const sellPrice = Math.round(totalSpent * 0.8);
-    money += sellPrice;
-
-    const turretIndex = turrets.indexOf(turret);
-    if (turretIndex > -1) {
-        turrets.splice(turretIndex, 1);
-    }
-
-    if (turret.type === 'shooter') {
-        turretPrice = Math.round(turretPrice / turretPriceIncreaseFactor);
-    } else if (turret.type === 'sniper') {
-        turretPriceSniper = Math.round(turretPriceSniper / sniperPriceIncreaseFactor);
-    } else if (turret.type === 'wizard') {
-        turretPriceWizard = Math.round((turretPriceWizard - 500)/ wizardPriceIncreaseFactor);
-    } else if (turret.type === 'frost') {
-        turretPriceFroster = Math.round((turretPriceFroster - 500)/ frostPriceIncreaseFactor);
-    }
-
-    updateInfo();
-    updateTurretMenuText();
-    showSelectedTurretInfo(null);
-}
 
 function sellTurret() {
     const turret = getTurretBeingSelected();

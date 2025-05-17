@@ -144,9 +144,13 @@ class SnowballProjectile extends Projectile {
                 enemy.slowEndTime = millis() + this.slowDuration;
                 enemy.slowFactor = 0.6;
 
-                if (this.stunDuration > 0) {
+                if (this.stunDuration > 0 && enemy.type !== 'boss' && enemy.type !== 'miniboss1' && enemy.type !== 'miniboss2' && enemy.type !== 'miniboss3') {
                     enemy.isStunned = true;
                     enemy.stunEndTime = millis() + this.stunDuration;
+                } else if (this.stunDuration > 0 && (enemy.type === 'boss' || enemy.type === 'miniboss1' || enemy.type === 'miniboss2' || enemy.type === 'miniboss3')) {
+                    // apply a stronger slow effect instead of stun for bosses
+                    enemy.slowFactor = 0.4; 
+                    enemy.slowEndTime = millis() + this.slowDuration; 
                 }
 
                 if (enemy.strength <= 0 && !enemy.isExploding) {

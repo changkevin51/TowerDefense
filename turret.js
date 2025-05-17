@@ -148,8 +148,8 @@ class Turret {
             this.y > garbageY && this.y < garbageY + garbageHeight) {
             return false; 
         }
-    
-        if (this.x < 0 || this.x > 700 || this.y < 0 || this.y > 700) {
+
+        if (this.x < 0 || this.x > 800 || this.y < 0 || this.y > 700) {
             return false; 
         }
     
@@ -376,6 +376,7 @@ function CircleInRect(c, r) {
         return false;
     }
 }
+
 function CircleInCircle(c1, c2) {
     return dist(c1.x, c1.y, c2.x, c2.y) < (c1.size/2) + (c2.size/2);
 }
@@ -877,7 +878,8 @@ class FrosterTurret extends Turret {
         this.maxUpgrades = 3;
         this.slowDurationBase = 1500;
         this.slowDurationUpgraded = 2000;
-        this.stunDuration = 700;
+        this.stunDuration = 600;
+        
         // Animation properties
         this.frameNumber = 0;
         this.isAnimating = false;
@@ -994,7 +996,6 @@ class FrosterTurret extends Turret {
         }
     
         if (enemy) {
-            // Only update angle if animation is complete
             if (millis() >= this.animationEndTime) {
                 this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
             }

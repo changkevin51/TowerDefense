@@ -51,7 +51,7 @@ body {
 #container {
     position: relative;
     display: flex; 
-    width: 990px; 
+    width: 1090px; 
     height: 700px; 
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     margin-top: 10px;
