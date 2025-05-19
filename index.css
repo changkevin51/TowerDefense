@@ -246,7 +246,7 @@ body {
     z-index: 10;
 }
 
-#healthPopup, #moneypopup, #bossWarningPopup {
+#healthPopup, #moneypopup, #bossWarningPopup, #minionWarningPopup {
     position: fixed;
     left: 55%;
     padding: 11px 12px;
@@ -285,9 +285,25 @@ body {
     font-size: 16px;
 }
 
+#minionWarningPopup {
+    top: 210px;
+    left: 50%;
+    width: 140px;
+    background: linear-gradient(45deg, #ff6600, #ffaa00);
+    color: white;
+    font-size: 16px;
+    animation: pulseWarning 0.6s infinite alternate;
+}
+
+@keyframes pulseWarning {
+    0% { transform: translateX(-50%) translateY(20px) scale(1); }
+    100% { transform: translateX(-50%) translateY(20px) scale(1.05); }
+}
+
 #healthPopup.show, 
 #moneypopup.show, 
-#bossWarningPopup.show {
+#bossWarningPopup.show,
+#minionWarningPopup.show {
     visibility: visible;
     opacity: 1;
     transform: translateY(0);
@@ -1785,4 +1801,22 @@ table td {
     text-align: center;
     margin-top: 20px;
     font-style: italic;
+}
+
+.popup.minion-warning {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px 30px;
+    border-radius: 8px;
+    z-index: 1001;
+    font-size: 24px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.popup.minion-warning.show {
+    opacity: 1;
 }

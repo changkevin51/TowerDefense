@@ -654,20 +654,22 @@ function scheduleNextWaveCheck() {
 
 function showHealthPopup(amount) {
     const popup = document.getElementById('healthPopup');
-    popup.textContent = `+ ${amount} Health`; 
-    popup.classList.add('show'); 
+    popup.textContent = '+ ' + amount;
+    popup.classList.add('show');
+    
     setTimeout(() => {
         popup.classList.remove('show');
-    }, 1000); 
+    }, 1000);  
 }
 
 function showMoneyPopup(amount) {
     const popup = document.getElementById('moneypopup');
-    popup.textContent = `+ ${amount} $`; 
-    popup.classList.add('show'); 
+    popup.textContent = '+ ' + amount;
+    popup.classList.add('show');
+    
     setTimeout(() => {
         popup.classList.remove('show');
-    }, 1000); 
+    }, 1000);
 }
 
 
@@ -678,6 +680,42 @@ function showBossWarning(amount) {
     setTimeout(() => {
         popup.classList.remove('show');
     }, 1000); 
+}
+
+function showMinionWarning() {
+    const popup = document.getElementById('minionWarningPopup');
+    if (!popup) {
+        
+        const newPopup = document.createElement('div');
+        newPopup.id = 'minionWarningPopup';
+        newPopup.className = 'popup minion-warning';
+        document.body.appendChild(newPopup);
+        
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            .minion-warning {
+                background-color: rgba(255, 150, 0, 0.8);
+                border: 3px solid #ff6600;
+                color: white;
+                font-weight: bold;
+                animation: pulse 0.5s infinite alternate;
+            }
+            @keyframes pulse {
+                from { transform: scale(1); }
+                to { transform: scale(1.05); }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    const warningPopup = document.getElementById('minionWarningPopup') || newPopup;
+    warningPopup.textContent = 'Boss Spawning Minions!';
+    warningPopup.classList.add('show');
+    
+    setTimeout(() => {
+        warningPopup.classList.remove('show');
+    }, 2000);
 }
 
 function checkCollision() {
@@ -701,7 +739,7 @@ function checkCollision() {
                         projectile.hitEnemies.add(enemy);
 
                         if (enemy.strength <= 0 && !enemy.isExploding) {
-                            enemy.explode(); // Trigger explosion
+                            enemy.explode(); 
                         }
 
                     }
@@ -714,7 +752,7 @@ function checkCollision() {
                     updateInfo();
 
                     if (enemy.strength <= 0 && !enemy.isExploding) {
-                        enemy.explode(); // Trigger explosion
+                        enemy.explode(); 
                     }
 
                     if (projectile.strength <= 0) {

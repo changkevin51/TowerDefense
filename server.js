@@ -96,4 +96,3 @@
 //     });
 // }).catch(console.error);
 
-console.log("Server.js not used by Next.js but can remain for custom logic.");

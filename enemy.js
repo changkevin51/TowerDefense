@@ -16,14 +16,16 @@ class Enemy {
         this.type = type;
         this.isExploding = false;
         this.explosionDuration = 500; 
-
+        this.isSpawned = false; 
+        this.spawnTime = 0; 
+        this.spawnEffectDuration = 500; 
+        this.spawnScale = 1.0; 
         this.isSlowed = false;
         this.slowEndTime = 0;
         this.slowFactor = 1;
         this.isStunned = false;
         this.stunEndTime = 0;
-
-        this.healedAt = 0;  // Track when this enemy was last healed
+        this.healedAt = 0;  
 
         switch (type) {
             case 'heavy':
@@ -33,7 +35,7 @@ class Enemy {
                 this.animationIndex = 0;
                 this.animationTimer = 0;
                 this.currentFrameSet = this.frontFrames;
-                this.size = 48; // Adjust as needed
+                this.size = 48; 
                 break;
             case 'fast':
                 this.frontFrames = fastFrontFrames;
@@ -67,7 +69,7 @@ class Enemy {
                 this.healingRadiusEndTime = 0;
                 this.healingRings = [];
                 this.lastRingTime = 0;
-                this.ringInterval = 500; // New ring every 500ms
+                this.ringInterval = 500; 
                 this.speed *= 0.8; 
                 break;
             case 'robo1':
@@ -108,6 +110,23 @@ class Enemy {
                 this.maxHealth *= 3; 
                 this.strength = this.maxHealth;
                 this.speed *= 0.5;
+                  
+                this.canSpawnMinions = true;
+                this.spawnThresholds = [0.8, 0.5, 0.3]; 
+                this.spawnedAtThreshold = [false, false, false]; 
+                this.isSpawningMinions = false;
+                this.lastSpawnTime = 0;
+                this.needsToResumeMovement = false; 
+                
+                
+                const waveMultiplier = Math.floor(waveNumber / 5);
+                this.minionsPerSpawn = Math.min(6, 2 + waveMultiplier); 
+                
+                
+                this.spawnCooldown = isEasyMode ? 2000 : isHardMode ? 1000 : 1500;
+                this.minionTypes = waveNumber <= 5 ? ['robo1', 'robo2', 'robo3'] : 
+                                   waveNumber <= 15 ? ['robo1', 'robo2', 'robo3', 'heavy', 'fast'] : 
+                                   ['robo1', 'robo2', 'robo3', 'heavy', 'fast', 'stealth', 'bomb'];
                 break;
             case 'miniboss1':
                 this.frontFrames = miniboss1FrontFrames;
@@ -117,7 +136,7 @@ class Enemy {
                 this.animationTimer = 0;
                 this.currentFrameSet = this.frontFrames;
                 this.size = 58;
-                this.maxHealth *= 1.7;
+                this.maxHealth *= 1.8;
                 this.strength = this.maxHealth;
                 this.speed *= 0.8;
                 break;
@@ -188,7 +207,7 @@ class Enemy {
             }
         }
 
-        // Base healing area
+        
         fill(0, 255, 128, 30);
         noStroke();
         ellipse(this.x, this.y, this.healingRadius * 2);
@@ -225,6 +244,16 @@ class Enemy {
             tint(128, 128, 128);
         } else if (this.isSlowed) {
             tint(89, 192, 225);
+        } else if (this.type === 'boss' && this.isSpawningMinions) {
+            
+            tint(255, 150, 0, 200 + sin(millis() / 100) * 55);
+        } else if (this.isSpawned && millis() - this.spawnTime < this.spawnEffectDuration) {
+            
+            const progress = (millis() - this.spawnTime) / this.spawnEffectDuration;
+            tint(255, 200, 0, 255 * (1 - progress * 0.5));
+            
+            
+            this.spawnScale = 0.1 + progress * 0.9; 
         }
     
         if (this.type === 'robo1' || this.type === 'robo2' || this.type === 'robo3' || 
@@ -246,11 +275,21 @@ class Enemy {
                     this.animationIndex = (this.animationIndex + 1) % this.currentFrameSet.length;
                 }
             }
-            this.animationTimer++;
-        
+            this.animationTimer++;            
             let floatOffset = sin(millis() / 250) * 3;
             let roboImg = this.currentFrameSet[this.animationIndex];
-            image(roboImg, this.x - this.size, this.y - this.size + floatOffset, this.size*2, this.size*2);
+            
+            
+            if (this.isSpawned && this.spawnScale < 1 && millis() - this.spawnTime < this.spawnEffectDuration) {
+                const scaledSize = this.size * 2 * this.spawnScale;
+                image(roboImg, 
+                      this.x - scaledSize/2, 
+                      this.y - scaledSize/2 + floatOffset, 
+                      scaledSize, 
+                      scaledSize);
+            } else {
+                image(roboImg, this.x - this.size, this.y - this.size + floatOffset, this.size*2, this.size*2);
+            }
         }
         else if (this.type === 'bomb') {
             if (this.animationTimer % 10 === 0) {
@@ -261,11 +300,20 @@ class Enemy {
                 }
                 this.animationIndex = (this.animationIndex + 1) % this.frames.length;
             }
-            this.animationTimer++;
-        
-            let floatOffset = sin(millis() / 250) * 3;
+            this.animationTimer++;            let floatOffset = sin(millis() / 250) * 3;
             let bombImg = this.frames[this.animationIndex];
-            image(bombImg, this.x - this.size, this.y - this.size + floatOffset, this.size*2, this.size*2);
+            
+            
+            if (this.isSpawned && this.spawnScale < 1 && millis() - this.spawnTime < this.spawnEffectDuration) {
+                const scaledSize = this.size * 2 * this.spawnScale;
+                image(bombImg, 
+                      this.x - scaledSize/2, 
+                      this.y - scaledSize/2 + floatOffset, 
+                      scaledSize, 
+                      scaledSize);
+            } else {
+                image(bombImg, this.x - this.size, this.y - this.size + floatOffset, this.size*2, this.size*2);
+            }
         }
         else if (this.img) {
             const adjustedX = this.x - this.size * (this.type === 'normal' || this.type === 'heavy' ? 0.75 : this.type === 'stealth' ? 0.8 : 1.15);
@@ -287,6 +335,22 @@ class Enemy {
             pop();
         }
     
+        if (this.type === 'boss' && this.isSpawningMinions) {
+            
+            drawingContext.shadowBlur = 15;
+            drawingContext.shadowColor = color(255, 150, 0);
+            
+            noFill();
+            stroke(255, 150, 0, 150 + sin(millis() / 100) * 50);
+            strokeWeight(3);
+            
+            
+            const pulseSize = this.size * (1.5 + sin(millis() / 150) * 0.2);
+            ellipse(this.x, this.y, pulseSize * 2);
+            
+            drawingContext.shadowBlur = 0;
+        }
+    
         if (this.type === 'healer' && this.showHealingRadius) {
             this.drawHealingArea();
             if (millis() > this.healingRadiusEndTime) {
@@ -295,40 +359,99 @@ class Enemy {
             }
         }
     }
-    
-
-    move() {
+        move() {
         if (!this.isExploding) {
+            
+            if (this.type === 'boss' && this.isSpawningMinions) {
+                return;
+            }
+            
             if (!this.isStunned) {
                 let factor = this.isSlowed ? this.slowFactor : 1;
                 let speedBonus = this.isStealth ? 1.2 : 1;
+                
+                
+                if (isNaN(this.xSpeed) || isNaN(this.ySpeed)) {
+                    console.warn(`Invalid movement speed: xSpeed=${this.xSpeed}, ySpeed=${this.ySpeed}`);
+                    this.xSpeed = 0;
+                    this.ySpeed = 0;
+                    
+                    setTimeout(() => this.findTarget(), 0);
+                    return;
+                }
+                
+                
                 this.x += this.xSpeed * this.gameSpeed * factor * speedBonus;
                 this.y += this.ySpeed * this.gameSpeed * factor * speedBonus;
             }
         }
-    }
-
-    findTarget() {
-        if (this.xSpeed === 0 && this.ySpeed === 0) {
-            this.targetNode++;
-            if (this.targetNode >= this.nodes.length) return;
+    }    findTarget() {
+        
+        if (this.type === 'boss' && this.needsToResumeMovement) {
+            
+        } else if (this.xSpeed === 0 && this.ySpeed === 0) {
+            
+            const isStillSpawning = this.isSpawned && (millis() - this.spawnTime <= this.spawnEffectDuration);
+            
+            
+            if (!isStillSpawning) {
+                this.targetNode++;
+            }
+            
+            
+            if (this.targetNode >= this.nodes.length) {
+                this.targetNode = this.nodes.length - 1; 
+                return;
+            }
+            
+            
+            if (!this.nodes[this.targetNode]) {
+                console.warn(`Target node is undefined at index ${this.targetNode}`);
+                
+                this.targetNode = Math.min(this.nodes.length - 1, Math.max(0, this.targetNode));
+                if (!this.nodes[this.targetNode]) {
+                    console.error("Could not find a valid node for enemy");
+                    return;
+                }
+            }
 
             const target = this.nodes[this.targetNode];
             const xDifference = target.x - this.x;
             const yDifference = target.y - this.y;
             const angle = atan2(yDifference, xDifference);
+            
             this.xSpeed = this.speed * cos(angle);
             this.ySpeed = this.speed * sin(angle);
+            
+            if (this.isSpawned && this.minionCount === 1) {
+            }
         }
     }
-
-    checkTarget() {
+      checkTarget() {
+        if (this.targetNode < 0 || this.targetNode >= this.nodes.length) {
+            console.warn(`Enemy has invalid targetNode: ${this.targetNode}. Reset to valid value.`);
+            this.targetNode = Math.min(this.nodes.length - 1, Math.max(0, this.targetNode));
+            return;
+        }
+        
         const target = this.nodes[this.targetNode];
+        if (!target) {
+            console.warn(`Target node is undefined at index ${this.targetNode}`);
+            return;
+        }
+        
         const distance = dist(this.x, this.y, target.x, target.y);
-        if (distance < this.speed * this.gameSpeed) {
+        
+        const threshold = this.isSpawned ? Math.min(this.speed * this.gameSpeed, 5) : this.speed * this.gameSpeed;
+        
+        if (distance < threshold) {
+            
             this.xSpeed = 0;
             this.ySpeed = 0;
+            this.x = target.x; 
+            this.y = target.y;
 
+            
             if (this.targetNode === this.nodes.length - 1) {
                 this.finished = true;
                 health -= Math.round(this.strength);
@@ -339,13 +462,8 @@ class Enemy {
                 updateInfo();
             }
         }
-        if (distance < this.speed * this.gameSpeed) {
-            this.x = target.x;
-            this.y = target.y;
-            this.xSpeed = 0;
-            this.ySpeed = 0;
-        }
     }
+    
 
     distanceTraveled() {
         let distance = 0;
@@ -367,7 +485,7 @@ class Enemy {
 
     explode() {
         const EXPLOSION_RADIUS = 185;
-        if (this.type === 'bomb') { // Ensure only bomb enemies trigger this
+        if (this.type === 'bomb') { 
             this.isExploding = true;
             this.explosionStartTime = millis();
             turrets.forEach(turret => {
@@ -384,9 +502,7 @@ class Enemy {
 
     isFullHealth() {
         return this.strength >= this.maxHealth;
-    }
-
-    update() {
+    }    update() {
         if (this.isExploding) {
             this.draw();
             return;
@@ -396,13 +512,197 @@ class Enemy {
             this.explode();
             return;
         }
+        
+        
+        if (this.type === 'boss' && !this.isSpawningMinions) {
+            if (!this.lastMoveCheck) {
+                this.lastMoveCheck = millis();
+                this.lastPosition = { x: this.x, y: this.y };
+            } else if (millis() - this.lastMoveCheck > 2000) {
+                
+                const hasMoved = Math.abs(this.x - this.lastPosition.x) > 1 || 
+                               Math.abs(this.y - this.lastPosition.y) > 1;
+                
+                
+                if (!hasMoved && !this.isSpawningMinions) {
+                    console.log("Boss appears stuck - forcing movement");
+                    this.needsToResumeMovement = true;
+                }
+                
+                
+                this.lastMoveCheck = millis();
+                this.lastPosition = { x: this.x, y: this.y };
+            }
+        }
     
-        if (this.isSlowed && millis() >= this.slowEndTime) {
+        
+        if (this.type === 'boss' && this.canSpawnMinions && !this.isExploding) {
+            
+            for (let i = 0; i < this.spawnThresholds.length; i++) {
+                const healthRatio = this.strength / this.maxHealth;
+                if (healthRatio <= this.spawnThresholds[i] && !this.spawnedAtThreshold[i]) {
+                    this.isSpawningMinions = true;
+                    this.spawnedAtThreshold[i] = true;
+                    this.minionCount = 0;
+                    
+                    
+                    this.savedTargetNode = this.targetNode;
+                    
+                    break;
+                }
+            }
+            
+            
+            if (this.isSpawningMinions) {
+                
+                this.xSpeed = 0;
+                this.ySpeed = 0;
+                
+                
+                const adjustedCooldown = this.spawnCooldown / this.gameSpeed;
+                if (millis() - this.lastSpawnTime >= adjustedCooldown) {
+                    this.lastSpawnTime = millis();
+                      
+                    if (!this.nodes || this.nodes.length === 0) {
+                        console.error("Boss has invalid nodes array, cannot spawn minions");
+                        this.isSpawningMinions = false;
+                        return;
+                    }
+                    
+                    
+                    const randomType = this.minionTypes[Math.floor(Math.random() * this.minionTypes.length)];
+                    
+                    
+                    let minionHealth = this.maxHealth * 0.1; 
+                    let minionSpeed = 2.5;
+                    
+                    
+                    const minion = new Enemy(
+                        minionHealth, 
+                        minionSpeed, 
+                        [...this.nodes], 
+                        minionHealth,
+                        randomType
+                    );
+                    
+                    
+                    if (!minion.nodes || minion.nodes.length === 0) {
+                        console.error("Minion created with invalid nodes array");
+                        return; 
+                    }
+                    
+                    
+                    let closestNodeIndex = 0;
+                    let closestDistance = Infinity;
+                    
+                    for (let i = 0; i < this.nodes.length; i++) {
+                        const nodeDistance = dist(this.x, this.y, this.nodes[i].x, this.nodes[i].y);
+                        if (nodeDistance < closestDistance) {
+                            closestDistance = nodeDistance;
+                            closestNodeIndex = i;
+                        }
+                    }
+                    
+                    
+                    minion.x = this.x;
+                    minion.y = this.y;
+                    
+                    
+                    minion.targetNode = Math.min(closestNodeIndex + 1, this.nodes.length - 1);
+                    minion.xSpeed = 0;
+                    minion.ySpeed = 0;
+                    
+                    
+                    minion.isSpawned = true;
+                    minion.spawnTime = millis();
+                    minion.spawnEffectDuration = 500;
+                    minion.spawnScale = 0.1;
+                    
+                    
+                    const target = minion.nodes[minion.targetNode];
+                    const xDifference = target.x - minion.x;
+                    const yDifference = target.y - minion.y;
+                    const angle = atan2(yDifference, xDifference);
+                    minion.xSpeed = minion.speed * cos(angle);
+                    minion.ySpeed = minion.speed * sin(angle);
+                    
+                    
+                    enemies.push(minion);
+                    
+                    
+                    this.minionCount++;
+                      
+                    if (this.minionCount >= this.minionsPerSpawn) {
+                        this.isSpawningMinions = false;
+                        
+                        
+                        
+                        
+                        if (this.savedTargetNode !== undefined && this.savedTargetNode >= 0 && this.savedTargetNode < this.nodes.length) {
+                            this.targetNode = this.savedTargetNode;
+                        } else {
+                            
+                            
+                            console.warn(`Boss: savedTargetNode (${this.savedTargetNode}) was invalid. Current targetNode: ${this.targetNode}. Clamping.`);
+                            if (this.targetNode === undefined || this.targetNode >= this.nodes.length || this.targetNode < 0) {
+                                this.targetNode = 0; 
+                            }
+                        }
+                        
+                        
+                        
+                        if (this.targetNode >= this.nodes.length || this.targetNode < 0) {
+                             console.warn(`Boss: Corrected targetNode ${this.targetNode} is still invalid. Resetting to 0. Path length: ${this.nodes.length}`);
+                            this.targetNode = 0; 
+                        }
+                        
+                        this.needsToResumeMovement = true;
+                        console.log(`Boss finished spawning. Restored targetNode to: ${this.targetNode}. Will resume movement.`);
+                    }
+                    
+                    
+                    if (this.minionCount === 1) {
+                        showMinionWarning();
+                    }
+                }
+            }
+        }        if (this.isSlowed && millis() >= this.slowEndTime) {
             this.isSlowed = false;
             this.slowFactor = 1;
         }
         if (this.isStunned && millis() >= this.stunEndTime) {
             this.isStunned = false;
+        }
+        
+        
+        if (this.type === 'boss' && this.needsToResumeMovement) {
+            this.needsToResumeMovement = false;
+            
+            
+            
+            if (this.targetNode >= 0 && this.targetNode < this.nodes.length) {
+                const target = this.nodes[this.targetNode];
+                const xDifference = target.x - this.x;
+                const yDifference = target.y - this.y;
+                
+                
+                if (Math.abs(xDifference) < 0.1 && Math.abs(yDifference) < 0.1) { 
+                    this.xSpeed = 0;
+                    this.ySpeed = 0;
+                    
+                } else {
+                    const angle = atan2(yDifference, xDifference);
+                    this.xSpeed = this.speed * cos(angle);
+                    this.ySpeed = this.speed * sin(angle);
+                }
+            } else {
+                
+                
+                this.xSpeed = 0;
+                this.ySpeed = 0;
+                console.warn(`Boss resuming with invalid targetNode: ${this.targetNode}. findTarget will attempt recovery.`);
+            }
+            console.log(`Boss resumed movement. Target Node: ${this.targetNode}, New Speed: (${this.xSpeed.toFixed(2)}, ${this.ySpeed.toFixed(2)})`);
         }
 
         if (this.type === 'stealth' && !this.isExploding) {
@@ -452,8 +752,6 @@ class Enemy {
             }
         }
         
-        
-    
         this.findTarget();
         this.move();
         this.draw();

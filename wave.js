@@ -1,6 +1,6 @@
 class Wave {
     constructor() {
-        this.number = 0;
+        this.number = 9;
         this.active = false;
         this.groupAmount = 10;
         this.groupSize = 1;
@@ -85,9 +85,11 @@ class Wave {
                         this.currentGroup++;
                         this.currentMember = 0;
                         if (!isMegaBossWave) this.active = false;
-                    }
+                    }                
                 } else if (isMegaBossWave && this.currentGroup === 1) {
                     health *= (waveMultiplier * 2);
+                    // Pass the current wave number for boss minion spawning logic
+                    waveNumber = this.number; // Ensure waveNumber is up to date
                     enemies.push(new Enemy(health, 2.8, levelOneNodes, health, 'boss'));
                     this.currentGroup++;
                     this.active = false;
