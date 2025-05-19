@@ -1,10 +1,11 @@
-# Tower Defense Game
+# Tower Defense Game - Turrets vs Robots
+
+![image](https://github.com/user-attachments/assets/c8db0087-2d5d-4e03-94c1-081f7e6a0ee9)
+
 
 NOTE: THIS GAME IS DESIGNED TO BE HARD. STRATEGY IS REQUIRED TO GET THROUGH FURTHER WAVES. 
 
 A fun tower defense game made with JavaScript and p5.js. Players defend their base by placing turrets, earning money, and surviving waves of enemies.
-
-Record: Wave: 120 (Daniel Xu)
 
 ---
 
