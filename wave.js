@@ -1,6 +1,6 @@
 class Wave {
     constructor() {
-        this.number = 9;
+        this.number = 0;
         this.active = false;
         this.groupAmount = 10;
         this.groupSize = 1;

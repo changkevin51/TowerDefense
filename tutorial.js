@@ -315,7 +315,7 @@ function populateEnemies() {
         back: "images/enemies/boss/back00"
       },
       frameCount: 6,
-      abilities: "Extremely high health, slow speed",
+      abilities: "Extremely high health, spawns minions once in a while",
       waves: "Every 8th wave",
       healthMultiplier: 3,
       speedMultiplier: 0.5,
