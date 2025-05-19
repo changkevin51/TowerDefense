@@ -3,7 +3,7 @@ body {
     background: linear-gradient(90deg, rgba(151, 77, 252, 0.75), rgba(51, 203, 255, 0.75)), url("images/background.jpg") no-repeat center center fixed;
     background-size: cover;
     backdrop-filter: blur(6px);
-    animation: none; /* Remove old gradient animation */
+    animation: none; 
     overflow-x: hidden;
 }
 
@@ -93,74 +93,106 @@ body {
     right: 0px;
     width: 290px;
     height: 100%;
-    background: rgba(33, 33, 33, 0.5);
-    backdrop-filter: blur(6px);
+    background: linear-gradient(145deg, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.95));
+    backdrop-filter: blur(10px);
     color: #fff;
     border-radius: 0 15px 15px 0;
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.4);
     z-index: 100;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     padding: 20px;
     box-sizing: border-box;
+    font-family: 'Exo 2', sans-serif;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
 }
-
 
 #menuInfo {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    color:#ddd;
+    gap: 20px;
+    color: #ddd;
+    background: rgba(40, 40, 40, 0.7);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 #menuInfo img {
-    float: left;
-    width: 50px;
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
 }
 
 #menuInfo h2 {
-    float: left;
-    width: 125px;
-    font-size: 20px;
-    padding-left: 25px;
+    font-family: 'Russo One', sans-serif;
+    font-size: 18px;
+    padding-left: 15px;
+    margin: 0;
+    color: #FFD700;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.3);
+}
+
+.menu-stat {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+    flex-direction: row; 
+    justify-content: flex-start;
 }
 
 #Money, #Health, #Wave {
     font-size: 20px;
-    font-weight: 600;
-    color: #fff;
-}
-
-#menuButtons button {
-    float: left;
-    height: 75px;
-    width: 250px;
-    font-size: 18px;
-    font-weight: 600;
-    margin: 8px 0;
-    border: 2px solid #fff;
-    background: transparent;
-    transition: all 0.3s;
-    border-radius: 30px;
-}
-
-#menuButtons button:hover {
-    color: #007acc;
-    background: #fff;
+    font-weight: 700;
+    color: white;
+    font-family: 'Russo One', sans-serif;
+    margin-left: 5px; 
 }
 
 #menuButtons {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    margin-top: 30px;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+#menuButtons button {
+    height: 65px;
+    width: 100%;
+    font-size: 17px;
+    font-weight: 600;
+    font-family: 'Exo 2', sans-serif;
+    text-transform: uppercase;
+    border: none;
+    background: linear-gradient(145deg, rgba(60, 60, 60, 0.8), rgba(40, 40, 40, 0.8));
+    color: white;
+    transition: all 0.3s ease;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    letter-spacing: 1px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#menuButtons button:hover {
+    transform: translateY(-3px);
+    background: linear-gradient(145deg, #007acc, #005f99);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+    border-color: rgba(0, 122, 204, 0.5);
+}
+
+#menuButtons button:active {
+    transform: translateY(1px);
 }
 
 .autoStartToggle {
-    display: block; /* Makes the span a block-level element */
-    font-size: smaller;
-    opacity: 0.7;
+    display: block;
+    font-size: 12px;
+    opacity: 0.8;
+    font-family: 'Exo 2', sans-serif;
+    margin-top: 5px;
+    color: #FFD700;
 }
 
 .hoverButton {
@@ -346,8 +378,9 @@ body {
 }
 
 .popupMenu button img {
-    width: 55px;
-    height: 55px;
+    width: 85px;
+    height: 85px;
+    
 }
 
 .popupMenu button:active {
@@ -375,44 +408,74 @@ body {
     position: fixed;
     bottom: 7cap;
     right: 50px;
-    padding: 15px 25px;
-    background: linear-gradient(135deg, #ffd726, #fb8c00);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: bold;
+    width: 70px;
+    height: 70px;
     display: flex;
     align-items: center;
-    gap: 10px;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    transition: all 0.3s ease;
+    justify-content: center;
+    background: linear-gradient(135deg, #007bff, #004080);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3), 0 0 15px rgba(0, 123, 255, 0.5);
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 100;
+    overflow: hidden;
+    font-size: 22px;
 }
 
 
+.tutorial-icon {
+    
+    color: white;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
+}
 
 #openTutorialButton:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.3);
-    background: linear-gradient(135deg, #fb8c00, #f57c00);
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 123, 255, 0.7);
+    border-color: rgba(255, 255, 255, 0.6);
+}
+
+#openTutorialButton:hover .tutorial-icon {
+    animation: tutorialPulse 1.5s infinite;
 }
 
 #openTutorialButton:active {
-    transform: scale(0.95); 
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    background: linear-gradient(135deg, #e65100, #fb8c00);
+    transform: scale(0.95);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2), 0 0 10px rgba(0, 123, 255, 0.3);
+    background: linear-gradient(135deg, #0056b3, #003366);
     transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
-
-
-.tutorialIcon {
-    width: 25px;
-    height: 25px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+@keyframes tutorialPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
 
+#openTutorialButton:before {
+    content: '';
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #007bff, #00e0ff);
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+#openTutorialButton:hover:before {
+    opacity: 0.4;
+    animation: tutorialRotate 3s linear infinite;
+}
+
+@keyframes tutorialRotate {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
 .popup {
     width: 80%;
@@ -656,67 +719,73 @@ table td {
   }
   
 .turret-info {
-  display: none;
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 660px; 
-  height: 140px; 
-  background: linear-gradient(140deg, #1e1e2f, #3c3c59);
-  color: #fff;
-  padding: 10px 20px; 
-  display: flex;
-  flex-direction: column; 
-  justify-content: space-between; 
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
-  border-top: 2px solid #333;
-  border-radius: 0 0 10px 10px; 
-  z-index: 50;
-  transition: all 0.3s ease-in-out;
-  border-radius: 5px;
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 760px;
+    height: 140px;
+    background: linear-gradient(145deg, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.95));
+    color: #fff;
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: 'Exo 2', sans-serif;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px 15px 0 0;
+    z-index: 50;
+    transition: all 0.3s ease-in-out;
 }
 
 .turret-info h3 {
-  margin: 0;
-  font-size: 18px; 
-  letter-spacing: 1px;
-  color: #ffd700;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  text-align: center;
+    margin: 0;
+    font-size: 20px;
+    letter-spacing: 1px;
+    color: #FFD700;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    text-align: center;
+    font-family: 'Russo One', sans-serif;
 }
 
 .turret-info .info-container {
-  display: flex;
-  justify-content: space-between;
-  max-width: 500px;
-  align-items: center;
-  height: 100px; 
+    display: flex;
+    justify-content: space-between;
+    max-width: 500px;
+    align-items: center;
+    height: 100px;
 }
 
 #turretCurrentStats,
 #turretNextStats {
-  background: rgba(255, 255, 255, 0.05);
-  padding: 5px 10px;
-  border-radius: 5px;
-  box-shadow: inset 0 0 5px rgba(255, 255, 255, 0.1);
-  font-size: 12px; 
-  line-height: 1.35em;
-  width: 200px; 
-  height: 95px; 
-  overflow: hidden; 
-  text-overflow: ellipsis;
+    background: rgba(60, 60, 60, 0.5);
+    padding: 8px 12px;
+    border-radius: 8px;
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    font-size: 13px;
+    line-height: 1.4em;
+    width: 200px;
+    height: 95px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 #upgradeCostLabel {
-  position: absolute;
-  top: 15px;
-  right: 80px;
-  font-size: 20px; 
-  font-weight: 700;
-  color: #42a5f5;
-  text-align: center;
-  margin-bottom: 10px;
+    position: absolute;
+    top: 15px;
+    right: 210px;
+    font-size: 18px;
+    font-weight: 700;
+    color: #FFD700;
+    text-align: center;
+    padding: 5px 15px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    font-family: 'Russo One', sans-serif;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .upgrade-section {
@@ -735,35 +804,32 @@ table td {
     top: 15px;
     right: 20px;
     padding: 5px 15px;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
+    background: rgba(60, 60, 60, 0.5);
+    border-radius: 20px;
     font-size: 14px;
-    color: #ffd700;
+    color: #FFD700;
     display: flex;
     align-items: center;
     gap: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.damage-counter::before {
-    content: "⚔️";
-    font-size: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-family: 'Exo 2', sans-serif;
 }
 
 #upgradeButton {
     position: absolute;
-    padding: 20px 40px; 
-    height: 80px; 
+    padding: 15px 25px;
+    height: 80px;
     width: 170px;
-    background-color: #4CAF50;
+    background: linear-gradient(145deg, #4CAF50, #388E3C);
     border: none;
     color: #fff;
     cursor: pointer;
-    font-size: 20px; 
-    border-radius: 30px; 
+    font-size: 18px;
+    border-radius: 10px;
     font-weight: 700;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
-    transition: transform 0.1s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
     top: 55px;
     right: 20px;
     display: flex;
@@ -771,201 +837,59 @@ table td {
     justify-content: center;
     text-transform: uppercase;
     letter-spacing: 1px;
+    font-family: 'Exo 2', sans-serif;
 }
 
-#sellButton {
-  position: absolute;
-  top: 6px;
-  left: 10px;
-  padding: 8px 30px; 
-  height: 35px; 
-  background-color: #FFA726;
-  border: none;
-  color: #fff;
-  cursor: pointer;
-  font-size: 14px; 
-  border-radius: 20px; 
-  font-weight: 600;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  transition: transform 0.1s ease, background-color 0.3s ease;
-  z-index: 1000;
+#upgradeButton:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(145deg, #5BBD60, #43A047);
 }
 
-#sellButton:hover {
-    background-color: #FB8C00;
-    transform: translateY(-2px);
-  }
-  
 #upgradeButton.blue {
-  background-color: #388E3C;
+    background: linear-gradient(145deg, #388E3C, #2E7D32);
 }
 
 #upgradeButton.blue:hover {
-  background-color: #256128;
-  transform: translateY(-2px);
+    background: linear-gradient(145deg, #43A047, #388E3C);
 }
 
 #upgradeButton.red {
-  background-color: #ef5350;
+    background: linear-gradient(145deg, #ef5350, #d32f2f);
 }
 
 #upgradeButton.red:hover {
-  background-color: #e53935;
-  transform: translateY(-2px);
+    background: linear-gradient(145deg, #f44336, #e53935);
 }
 
-
-.difficulty-screen {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(20,20,40,0.95) 100%);
-  backdrop-filter: blur(10px);
-  z-index: 1000;
-}
-
-.difficulty-screen .title {
-  font-family: 'Arial Black', sans-serif;
-  font-size: 3rem;
-  letter-spacing: 4px;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255,255,255,0.5);
-  margin-bottom: 2rem;
-}
-
-.button-container {
-  display: flex;
-  gap: 2rem;
-}
-
-.difficulty-btn {
-  padding: 1rem 3rem;
-  font-size: 1.2rem;
-  font-weight: bold;
-  letter-spacing: 2px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  background: rgba(255,255,255,0.1);
-  color: white;
-  backdrop-filter: blur(5px);
-  border: 1px solid rgba(255,255,255,0.2);
-}
-
-.difficulty-btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 0 20px rgba(255,255,255,0.3);
-}
-
-.difficulty-btn.easy {
-  background: linear-gradient(45deg, #4CAF50, #45a049);
-}
-
-.difficulty-btn.normal {
-  background: linear-gradient(45deg, #ff9800, #f57c00);
-}
-
-.tooltip-container {
-    position: relative;
-    display: inline-block;
-}
-
-.tooltip {
+#sellButton {
     position: absolute;
-    bottom: 120%; /* Position above button */
-    left: 50%;
-    transform: translateX(-50%); /* Center horizontally */
-    width: 300px;
-    padding: 20px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    visibility: hidden;
+    top: 6px;
+    left: 10px;
+    padding: 8px 20px;
+    height: 35px;
+    background: linear-gradient(145deg, #FFA726, #FB8C00);
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     transition: all 0.3s ease;
-    z-index: 100;
+    z-index: 1000;
+    font-family: 'Exo 2', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-.tooltip:after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    border-top: 10px solid rgba(255, 255, 255, 0.1);
-}
-
-
-.tooltip h3 {
-    color: #fff;
-    margin-bottom: 10px;
-    font-size: 1.2em;
-}
-
-.tooltip p {
-    color: #ddd;
-    margin-bottom: 15px;
-    font-size: 0.9em;
-}
-
-.tooltip ul {
-    list-style: none;
-    padding: 0;
-}
-
-.tooltip li {
-    color: #fff;
-    margin: 8px 0;
-    font-size: 0.9em;
-}
-
-.tooltip-container:hover .tooltip {
-    opacity: 1;
-    visibility: visible;
-}
-
-.easy-tooltip {
-    border-color: rgba(100, 255, 100, 0.3);
-}
-
-.normal-tooltip {
-    border-color: rgba(255, 200, 100, 0.3);
+#sellButton:hover {
+    background: linear-gradient(145deg, #FB8C00, #F57C00);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 
-.hard-tooltip {
-    border-color: rgba(255, 100, 100, 0.3);
-}
-
-.difficulty-btn.hard {
-    background: linear-gradient(45deg, #8b0000, #ff0000);
-    color: white;
-}
-
-.difficulty-btn.hard:hover {
-    background: linear-gradient(45deg, #ff0000, #8b0000);
-}
-
-.help-text {
-    position: absolute;
-    bottom: 20%;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 0.9em;
-    text-align: center;
-    margin-top: 20px;
-    font-style: italic;
-}
-
-/* Leaderboard notification prompt styling */
 #leaderboardPrompt {
     position: fixed;
     top: 220px;
@@ -996,7 +920,7 @@ table td {
     50% { transform: translateY(-10px); }
 }
 
-/* Leaderboard button styling */
+
 #openLeaderboardBtn {
     position: fixed;
     bottom: 13cap;
@@ -1028,7 +952,7 @@ table td {
     background: linear-gradient(135deg, #3949ab, #283593);
 }
 
-/* Leaderboard popup styling */
+
 #leaderboardPopup {
     width: 800px;
     max-height: 80vh;
@@ -1165,7 +1089,7 @@ table td {
     color: rgba(255,255,255,0.7);
 }
 
-/* Add these styles */
+
 .error-message {
     color: #ff6b6b;
     text-align: center;
@@ -1186,7 +1110,7 @@ table td {
     display: block;
 }
 
-/* Difficulty Dropdown Styles */
+
 .leaderboard-filters {
     width: 100%;
     max-width: 250px;
@@ -1251,7 +1175,7 @@ table td {
     margin-bottom: 20px;
 }
 
-/* Scrollbar styling */
+
 #leaderboardContents::-webkit-scrollbar {
     width: 8px;
 }
@@ -1295,4 +1219,570 @@ table td {
 @keyframes slideDown {
     from { transform: translate(-50%, -20px); }
     to { transform: translate(-50%, 0); }
+}
+
+
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Exo+2:wght@400;600;700&display=swap');
+
+#turretMenu.turret-shop-active {
+    display: flex !important; 
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between; /* Changed from flex-start to space-between */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(20, 20, 20, 0.95); 
+    backdrop-filter: blur(8px);
+    border-radius: 0 15px 15px 0; 
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 150; 
+    font-family: 'Exo 2', sans-serif;
+    overflow: visible; /* Ensures tooltips can appear outside */
+}
+.turret-shop-scroll-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: calc(100% - 70px); /* Leave space for controls at bottom */
+    position: relative;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding-right: 20px; /* Compensate for scrollbar width */
+    margin-right: -20px; /* Offset the padding */
+}
+
+.turret-shop-scroll-container::-webkit-scrollbar {
+    width: 10px;
+}
+
+.turret-shop-scroll-container::-webkit-scrollbar-track {
+    background: rgba(40, 40, 40, 0.5);
+    border-radius: 0 8px 8px 0;
+}
+
+.turret-shop-scroll-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(145deg, #4CAF50, #388E3C);
+    border-radius: 5px;
+    border: 2px solid rgba(20, 20, 20, 0.7);
+}
+
+.turret-shop-scroll-container::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(145deg, #5BBD60, #43A047);
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+.turret-shop-header {
+    display: flex;
+    justify-content: space-between;
+    width: 90%;
+    background: rgba(40, 40, 40, 0.7);
+    border-radius: 10px;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shop-stat {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+}
+
+.shop-stat img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.shop-stat-value {
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.2em;
+    color: #FFD700; 
+}
+
+.shop-title {
+    width: 100%;
+    text-align: center;
+    margin: 0 0 10px 0;
+    color: #FFD700;
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.5em;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.7);
+    letter-spacing: 1px;
+}
+
+
+
+.turret-shop-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 20px; 
+    width: 90%;
+    margin: 0 auto 20px auto; 
+    padding: 10px; 
+}
+
+.turret-shop-item {
+    position: relative; 
+    background: linear-gradient(145deg, rgba(60, 60, 60, 0.8), rgba(40, 40, 40, 0.8));
+    border: 2px solid #4CAF50; 
+    border-radius: 10px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 140px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    z-index: 1000; 
+}
+
+.turret-shop-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.5);
+    border-color: #8BC34A;
+    z-index: 1001; 
+}
+
+.turret-shop-item:nth-child(1) .turret-tooltip,
+.turret-shop-item:nth-child(2) .turret-tooltip {
+    bottom: auto;
+    top: 125%; 
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1500; 
+}
+
+
+.turret-shop-item:nth-child(1) .turret-tooltip:after,
+.turret-shop-item:nth-child(2) .turret-tooltip:after {
+    top: -10px; 
+    bottom: auto;
+    left: 50%;
+    transform: translateX(-50%);
+    border-color: transparent transparent rgba(20, 20, 20, 0.95) transparent;
+}
+
+
+.turret-shop-item:nth-child(1):hover .turret-tooltip,
+.turret-shop-item:nth-child(2):hover .turret-tooltip {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(5px); 
+}
+
+.turret-shop-item img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin-bottom: 5px;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.3));
+}
+
+.turret-shop-item.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    border-color: #888;
+}
+
+/* .turret-shop-item.disabled:hover {
+    transform: none;
+    box-shadow: none;
+} */
+
+.turret-name {
+    color: white;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 600;
+    font-size: 0.9em;
+    text-align: center;
+    margin: 0;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+    margin-bottom: 32px;
+}
+
+.price-tag {
+    position: absolute;
+    bottom: 10px;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    color: #000;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1em;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    font-family: 'Russo One', sans-serif;
+}
+
+
+.turret-tooltip {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    bottom: 130%; 
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 230px; 
+    min-width: 220px; 
+    background: linear-gradient(145deg, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.95));
+    color: #fff;
+    text-align: left;
+    padding: 15px;
+    border-radius: 10px;
+    z-index: 1200; 
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    pointer-events: none; 
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    
+    box-sizing: border-box; 
+    margin: 0;
+}
+
+
+.turret-shop-item:hover .turret-tooltip {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+}
+
+
+
+.turret-shop-item:nth-child(3):hover .turret-tooltip,
+.turret-shop-item:nth-child(4):hover .turret-tooltip {
+    transform: translateX(0) translateY(-5px);
+}
+
+
+.turret-tooltip:after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px;
+    border-style: solid;
+    border-color: rgba(20, 20, 20, 0.95) transparent transparent transparent;
+}
+
+
+
+.tooltip-title {
+    color: #FFD700;
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.2em;
+    margin: 0 0 8px 0;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+    padding-bottom: 5px;
+}
+
+.tooltip-description {
+    color: #CCC;
+    margin: 5px 0 8px 0;
+    font-style: italic;
+    font-size: 0.85em;
+    line-height: 1.2;
+}
+
+.tooltip-stats {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 3px 8px;
+    margin-top: 8px;
+    font-size: 0.85em;
+}
+
+.stat-label {
+    color: #8BC34A;
+    font-weight: 600;
+    text-align: right;
+}
+
+.stat-value {
+    color: white;
+}
+
+#cancelTurretSelectionButton {
+    background: linear-gradient(145deg, #f44336, #d32f2f);
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    font-family: 'Exo 2', sans-serif;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    margin-top: auto;
+    width: 80%;
+    max-width: 250px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#cancelTurretSelectionButton:hover {
+    background: linear-gradient(145deg, #d32f2f, #b71c1c);
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+
+
+
+.turret-shop-item:nth-child(1) .turret-tooltip,
+.turret-shop-item:nth-child(3) .turret-tooltip {
+    left: 10px;
+    transform: translateX(0);
+}
+
+.turret-shop-item:nth-child(1) .turret-tooltip:after,
+.turret-shop-item:nth-child(3) .turret-tooltip:after {
+    left: 20%;
+}
+
+
+.turret-shop-item:nth-child(2) .turret-tooltip,
+.turret-shop-item:nth-child(4) .turret-tooltip {
+    left: auto;
+    right: 10px;
+    transform: translateX(0);
+}
+
+
+
+
+.turret-shop-item:nth-child(3):hover .turret-tooltip,
+.turret-shop-item:nth-child(4):hover .turret-tooltip {
+    transform: translateX(0) translateY(-5px);
+}
+
+
+.turret-hover-info {
+    position: absolute;
+    display: none;
+    width: 220px;
+    background: linear-gradient(145deg, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.95));
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    border-radius: 10px;
+    padding: 12px;
+    color: white;
+    z-index: 100;
+    font-family: 'Exo 2', sans-serif;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+}
+
+.turret-hover-title {
+    color: #FFD700;
+    font-family: 'Russo One', sans-serif;
+    font-size: 1.1em;
+    margin: 0 0 8px 0;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+    padding-bottom: 4px;
+}
+
+.turret-hover-stats {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 8px;
+    font-size: 0.85em;
+}
+
+.turret-hover-label {
+    color: #8BC34A;
+    font-weight: 600;
+    text-align: right;
+}
+
+.turret-hover-value {
+    color: white;
+}
+
+#buyText {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(145deg, #4CAF50, #388E3C);
+    color: white;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 600;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+#buyText:hover {
+    background: linear-gradient(145deg, #5BBD60, #43A047);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+#buyText img {
+    width: 22px !important;
+    height: 22px !important;
+}
+
+
+
+
+.difficulty-screen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(0,0,0,0.9) 0%, rgba(20,20,40,0.95) 100%);
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+}
+
+.difficulty-screen .title {
+  font-family: 'Arial Black', sans-serif;
+  font-size: 3rem;
+  letter-spacing: 4px;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.5);
+  margin-bottom: 2rem;
+}
+
+.button-container {
+  display: flex;
+  gap: 2rem;
+}
+
+.difficulty-btn {
+  padding: 1rem 3rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.1);
+  color: white;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.difficulty-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+.difficulty-btn.easy {
+  background: linear-gradient(45deg, #4CAF50, #45a049);
+}
+
+.difficulty-btn.normal {
+  background: linear-gradient(45deg, #ff9800, #f57c00);
+}
+
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip {
+    position: absolute;
+    bottom: 120%; 
+    left: 50%;
+    transform: translateX(-50%); 
+    width: 300px;
+    padding: 20px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 100;
+}
+
+.tooltip:after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid rgba(255, 255, 255, 0.1);
+}
+
+
+.tooltip h3 {
+    color: #fff;
+    margin-bottom: 10px;
+    font-size: 1.2em;
+}
+
+.tooltip p {
+    color: #ddd;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
+
+.tooltip ul {
+    list-style: none;
+    padding: 0;
+}
+
+.tooltip li {
+    color: #fff;
+    margin: 8px 0;
+    font-size: 0.9em;
+}
+
+.tooltip-container:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+.easy-tooltip {
+    border-color: rgba(100, 255, 100, 0.3);
+}
+
+.normal-tooltip {
+    border-color: rgba(255, 200, 100, 0.3);
+}
+
+
+.hard-tooltip {
+    border-color: rgba(255, 100, 100, 0.3);
+}
+
+.difficulty-btn.hard {
+    background: linear-gradient(45deg, #8b0000, #ff0000);
+    color: white;
+}
+
+.difficulty-btn.hard:hover {
+    background: linear-gradient(45deg, #ff0000, #8b0000);
+}
+
+.help-text {
+    position: absolute;
+    bottom: 20%;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9em;
+    text-align: center;
+    margin-top: 20px;
+    font-style: italic;
 }

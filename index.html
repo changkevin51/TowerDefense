@@ -38,96 +38,60 @@
             <li>Each upgrade increases damage, range, shooting speed, and sometimes projectile speed.</li>
             <li>Check <strong>"Stats"</strong> tab for more information.</li>
           </ul>
-          <h3>Switch Target Modes:</h3>
-          <p>Use arrow keys or the <strong>"Change Target Mode"</strong> button to switch turret targeting modes:</p>
+          <h3>Game Controls:</h3>
           <ul>
-            <li>Mode 0: Targets the closest enemy.</li>
-            <li>Mode 1: Targets the strongest enemy.</li>
-            <li>Mode 2: Targets the first/furthest enemy.</li>
-            <li>Mode 3: Targets the last enemy.</li>
+            <li><strong>Start Wave:</strong> Initiates the next wave of enemies.</li>
+            <li><strong>Toggle Speed:</strong> Switches between normal and fast game speed.</li>
+            <li><strong>Change Target Mode:</strong> Cycles through turret targeting priorities.</li>
           </ul>
-          <h3>Waves:</h3>
-          <p>Click <strong>"Start Wave"</strong> when the wave is ready. Defeat enemies before they reach the end of the path.</p>
+          <h3>Tips & Tricks:</h3>
+          <ul>
+            <li>Early game, focus on a few well-placed, upgraded turrets rather than many weak ones.</li>
+            <li>Pay attention to enemy types and use appropriate turrets (e.g., Snipers for bosses, Wizards for crowds).</li>
+            <li>Don't be afraid to sell and reposition turrets as the game progresses.</li>
           </ul>
-            <li><strong>*NEW*:</strong> Waves will <strong>auto start</strong> by default when "Start Wave" is clicked. You can disable this by clicking the button again while wave is active.</li>
-            <li><strong>Boss waves</strong> occur every <strong>8</strong> waves. There are less enemies but they are much stronger and require more strategic planning.</li>
-          </ul>
-          <h3>Adjust Game Speed:</h3>
-          <p>Use the <strong>"Toggle Speed"</strong> button to switch between 1x, 1.5x, and 2x speed. (There is a slight cooldown)</p>
-          <h3>Important things to note:</h3>
-          </ul>
-            <li>You start with $1200. It increases by $150 every wave.</li>
-            <li>Your health starts at 100 and increases by an increasing amount every wave so it's OK to lose some health. The game is over when health reaches 0.</li>
-            <li>Turret prices increases with each turret bought.</li>
-          <h2>Good luck and have fun!</h2>
         </div>
-    
         <div id="stats" class="tab-content">
-          <h1>Stats</h1>
-          <div id="stats-sections"></div> 
-          <br>
-          <p>*Shoot cooldown is in Frames. The FPS is set to 60 for this game.</p>
-        </div>
-               
-        <div id="enemies" class="tab-content">
-          <h1>Enemies</h1>
-          <div id="enemies-container" class="enemies-container">
+          <h1>Turret Statistics</h1>
+          <div id="stats-sections">
+            <!-- Turret stats tables will be populated here by tutorial.js -->
+            <p>Loading turret statistics...</p>
           </div>
         </div>
-        
+        <div id="enemies" class="tab-content">
+          <h1>Enemy Information</h1>
+          <div id="enemies-container">
+            <!-- Enemy information table will be populated here by tutorial.js -->
+            <p>Loading enemy information...</p>
+          </div>
+        </div>
         <div id="tips" class="tab-content">
-          <h1>Tips</h1>
-        
-          <h3>Placement</h3>
+          <h1>Advanced Tips & Strategies</h1>
+          <!-- Content for Tips tab -->
+          <h2>General Strategy</h2>
           <ul>
-            <li>
-              <strong>Take projectile speed into account!</strong> (Except snipers cuz they are just too good.)
-            </li>
-            <li>
-              Place turrets near paths to increase the chance of hitting enemies.
-              <ul>
-                <p>
-                  <strong>Example of bad shooter placement:</strong>
-                  <button class="dropdown-toggle" onclick="toggleDropdown('bad-placement')">Show/Hide Example</button>
-                  <div id="bad-placement" class="dropdown-content">
-                    <img src="images/badPlacement.jpeg" alt="Bad Placement Example" class="tip-image">
-                  </div>
-                </p>
-              </ul>
-            </li>
-            <li>
-              The more path coverage a turret has, the better.
-            </li>
-            <li>
-              Turrets with special abilities may benefit from strategic placement:
-              <ul>
-                <p>
-                  <strong>Example of ideal wizard placement:</strong>
-                  <button class="dropdown-toggle" onclick="toggleDropdown('wizard-placement')">Show/Hide Example</button>
-                  <div id="wizard-placement" class="dropdown-content">
-                    <img src="images/wizardPlacement.jpeg" alt="Wizard Placement Example" class="tip-image">
-                  </div>
-                </p>
-              </ul>
-            </li>
+            <li><strong>Economy Management:</strong> Always try to have enough money for crucial upgrades before a tough wave. Don't overspend on new turrets if upgrades are more cost-effective.</li>
+            <li><strong>Pathing Exploitation:</strong> Understand how enemies move. Place turrets at chokepoints or along long stretches where they can maximize their firing time.</li>
+            <li><strong>Synergy:</strong> Combine turret abilities. For example, use Froster turrets to slow enemies, making them easier targets for Snipers or area-of-effect Wizards.</li>
+            <li><strong>Wave Knowledge:</strong> Pay attention to the wave counter and the types of enemies that appear. Prepare for special waves like boss waves or waves with many fast/stealthy enemies.</li>
           </ul>
-        
-          
-          
-        
-          <h3>Target Modes</h3>
+          <h2>Turret Specific Tips</h2>
           <ul>
-            <li>Target modes are critical for maximizing turret efficiency.</li>
-            <li>Adjust target modes based on turret type and placement:
-              <ul>
-                <li>Snipers are best set to "Strong" to maximize their heavy damage. Alternatively, use "First" for general defense.</li>
-                <li><strong>Wizards should almost ALWAYS be set to "Last"</strong> when placed at the end of a straight path. This ensures their piercing ability is fully utilized.</li>
-              </ul>
-            </li>
+            <li><strong>Shooter:</strong> Reliable early-game turret. Good for general purpose defense. Upgrade them steadily.</li>
+            <li><strong>Sniper:</strong> Essential for high-health targets like bosses and minibosses. Their long range allows them to cover large parts of the map. Level 3+ Snipers can target invisible units.</li>
+            <li><strong>Wizard:</strong> Excellent for crowd control due to piercing projectiles. Effective against groups of weaker enemies. Level 3+ Wizards are immune to stun from Bomb enemies.</li>
+            <li><strong>Froster:</strong> Provides crucial slowing effects, which can be upgraded to a full freeze. Very useful for controlling the flow of enemies and clumping them up for other turrets.</li>
           </ul>
-        
-          <h3>Other Tips</h3>
+          <h2>Enemy Prioritization</h2>
           <ul>
+            <li><strong>Healers:</strong> Eliminate these quickly as they can significantly prolong the survival of other enemies.</li>
+            <li><strong>Bomb Carriers:</strong> Be mindful of their explosion radius. Try to take them out before they reach dense groups of your turrets, or use stun-immune turrets nearby.</li>
+            <li><strong>Stealth Units:</strong> Require specific counter-measures like high-level Snipers or careful placement of other turrets to hit them when they decloak.</li>
+          </ul>
+          <h2>Advanced Techniques</h2>
+          <ul>
+            <li><strong>Turret Juggling/Selling:</strong> In desperate situations, selling a less critical turret to afford an upgrade for a more critical one can save you.</li>
+            <li><strong>Pre-Wave Building:</strong> Use the time between waves effectively to plan and build/upgrade your defenses.</li>
             <li>Focus on upgrades rather than adding more turrets. Upgrading is often the better choice when it costs less.</li>
             <li>Selling a turret gives back <strong>90%</strong> of all money spent on the turret and reverts the buying cost to the previous one.</li>
             <li>Use a mix of turrets to cover weaknesses:
@@ -146,7 +110,7 @@
     
     
     <button id="openTutorialButton" onclick="toggleTutorialPopup()">
-      <img src="images/tutorial.png" alt="Tutorial Icon" class="tutorialIcon">Tutorial
+      <span id="tutorial-icon" class="icon-only">📖</span>
     </button>
     
     <div id="container">
@@ -230,46 +194,27 @@
 
       <div id="gameMenu">
         <div id="menuInfo">
-          <div title="Money">
+          <div title="Money" class="menu-stat">
             <img src="images/money.png" alt="Money Icon">
             <h2 id="Money">100</h2>
           </div>
-          <div title="Health">
+          <div title="Health" class="menu-stat">
             <img src="images/health.png" alt="Health Icon">
             <h2 id="Health">100</h2>
           </div>
-          <div title="Wave">
+          <div title="Wave" class="menu-stat">
             <img src="images/wave.png" alt="Wave Icon">
             <h2 id="Wave">0</h2>
           </div>
         </div>
         <div id="menuButtons">
           
-          <button class="hoverButton" id="buyText" onclick="showTurretMenu()">
-            Buy a Turret
-            <span class="hoverText" id="buyTurretText">Select a turret to buy</span>
+          <button class="hoverButton" id="buyText" onclick="handleBuyTurretClick()"> <!-- MODIFIED onclick handler -->
           </button>
 
-          <div id="turretMenu" class="popupMenu" style="display: none;">
-            <button onclick="buyTurret('shooter')">
-              <span>Buy Shooter - $150</span>
-              <img src="images/shooter_icon.png" alt="Shooter Icon">
-            </button>
-            <button onclick="buyTurret('sniper')">
-              <span>Buy Sniper - $300</span>
-              <img src="images/sniper_icon.png" alt="Sniper Icon">
-            </button>
-            <button onclick="buyTurret('wizard')">
-              <span>Buy Wizard - $400</span>
-              <img src="images/orb.png" alt="Orb Icon">
-            </button>
-            <button onclick="buyTurret('froster')">
-              <span>Buy Froster - $350</span>
-              <img src="images/freezegun.png" alt="Freeze Gun">
-            </button>          
+          <div id="turretMenu" style="display: none;"> 
           </div>
           
-
           <button id="startWaveButton" class="hoverButton" onclick="toggleAutoStart()" onmouseover="checkWave()">
             Start Wave 
             <span class="autoStartToggle">Auto Start Toggle: False</span>
@@ -293,7 +238,7 @@
     <br>
   </div>
 
-  <div id="leaderboardPrompt" class="popupMessage">
+  <!-- <div id="leaderboardPrompt" class="popupMessage">
       <div class="prompt-content">
         <span class="trophy-icon">🏆</span>
         <p>Congratulations! You've reached wave 25!</p>
@@ -302,8 +247,7 @@
   </div>
   
   <button id="openLeaderboardBtn">
-      <span class="trophy-icon">🏆</span>
-      Leaderboard
+      <span class="icon-only">🏆</span>
   </button>
   
   <div id="leaderboardPopup" class="popup">
@@ -331,7 +275,7 @@
           <div class="leaderboard-loading">Loading entries...</div>
         </div>
       </div>
-  </div>
+  </div> -->
 
   <footer id="footer">
     A project by <a href="https://github.com/changkevin51" target="_blank" style="color: #ffffff; text-decoration: underline;">Kevin Chang</a>

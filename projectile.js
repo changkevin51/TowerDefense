@@ -35,7 +35,7 @@ class Projectile {
 
     inWorld() {
         let outside = 5;
-        return this.x > outside && this.x < 690 + outside
+        return this.x > outside && this.x < 790 + outside
             && this.y > outside && this.y < 690 + outside;
     }
 }
@@ -149,7 +149,7 @@ class SnowballProjectile extends Projectile {
                     enemy.stunEndTime = millis() + this.stunDuration;
                 } else if (this.stunDuration > 0 && (enemy.type === 'boss' || enemy.type === 'miniboss1' || enemy.type === 'miniboss2' || enemy.type === 'miniboss3')) {
                     // apply a stronger slow effect instead of stun for bosses
-                    enemy.slowFactor = 0.4; 
+                    enemy.slowFactor = 0.5; 
                     enemy.slowEndTime = millis() + this.slowDuration; 
                 }
 

@@ -5,35 +5,43 @@ let wizardFrames = [];
 let wizardHolderImg;
 let frosterFrames = [];
 let frosterHolderImg;
+let machinegunFrames = [];
+let machinegunHolderImg;
 
 class Turret {
-    constructor(roads) {
-        this.roads = roads;
-        this.x = 150;
-        this.y = 150;
-        this.size = 50
+    constructor(type, x, y, projectileImgResource, idleFrameResource, animationFrames, holderImgResource, roadsData) { // Updated signature
+        this.type = type; // Added type initialization
+        this.roads = roadsData;
+        this.x = x;
+        this.y = y;
+        this.size = 50;
         this.gunSize = 37.5;
         this.range = 150;
         this.lookAngle = 0;
-        this.placed = false;
+        this.placed = true; // Turrets created via placeSelectedTurret are placed
         this.selected = false;
-        this.projectileSpeed = 8.5; 
+        this.projectileSpeed = 8.5;
         this.projectileStrength = 1;
         this.shootCooldown = 30;
         this.shootingTimer = 30;
         this.targetMode = 0;
         this.upgrades = 0;
         this.maxUpgrades = 3;
-        this.gameSpeed = gameSpeed; 
+        this.gameSpeed = gameSpeed;
         this.isStunned = false;
         this.stunEndTime = 0;
-        this.stunImg = loadImage('images/stun2.png'); 
+        this.stunImg = stunImg; // Use preloaded stunImg from index.js
         this.totalDamage = 0;
         this.frameNumber = 0;
         this.isAnimating = false;
         this.animationSpeed = 8;
         this.lastAngle = 0;
-        this.idleFrame = loadImage('images/shooter/tile000.png');
+        
+        // Assign passed image resources
+        this.projectileImg = projectileImgResource; 
+        this.turretFrames = animationFrames;     // Animation frames
+        this.turretHolderImg = holderImgResource; // Base/holder image
+        this.idleFrame = idleFrameResource; // Specific idle frame
     }
     
 
@@ -50,7 +58,7 @@ class Turret {
     }
 
     draw() {
-        if (!this.placed || this.selected) {
+        if (this.selected) { // Simplified: always show range if selected
             push();
             strokeWeight(1);
             stroke('black');
@@ -64,7 +72,7 @@ class Turret {
         if (!this.placed && !this.isValid()) {
             tint(238, 75, 43); 
         }
-        image(turretHolderImg, this.x, this.y, this.size, this.size);
+        image(this.turretHolderImg, this.x, this.y, this.size, this.size); // Use instance-specific holder
     
         push();
         translate(this.x, this.y);
@@ -72,7 +80,7 @@ class Turret {
         
         let turretBodySize = this.size * 2;
         if (this.isAnimating) {
-            image(turretFrames[this.frameNumber], 0, 0, turretBodySize, turretBodySize);
+            image(this.turretFrames[this.frameNumber], 0, 0, turretBodySize, turretBodySize); // Use instance-specific frames
             if (frameCount % Math.floor(this.animationSpeed / this.gameSpeed) === 0) {
                 this.frameNumber++;
                 if (this.frameNumber >= turretFrames.length) {
@@ -81,7 +89,7 @@ class Turret {
                 }
             }
         } else {
-            image(this.idleFrame, 0, 0, turretBodySize, turretBodySize);  // Changed this line
+            image(this.idleFrame, 0, 0, turretBodySize, turretBodySize);  // Use instance-specific idle frame
         }
         pop();
         pop();
@@ -415,26 +423,28 @@ function unselectAllTurrets() {
  }
 
  class SniperTurret extends Turret {
-    constructor(roads) {
-        super(roads);
+    constructor(x, y, sniperAnimationFrames, roadsData) {
+
+        super("sniper", x, y, null, sniperAnimationFrames[0], sniperAnimationFrames, turretHolderImg, roadsData); // Added "sniper" type
         this.range = 400;
-        this.size = 60;
+        this.size = 60; // Sniper specific size
         this.gunSize = 55;
         this.shootCooldown = 100;
         this.projectileStrength = 4;
         this.hitEffects = [];
-        this.targetMode = 2;
-        this.upgrades = 0;
+        this.targetMode = 2; // Default for sniper
+        // this.upgrades = 0; // from super
         this.currentTarget = null;
-        this.frameNumber = 0;
-        this.isAnimating = false;
+        // this.frameNumber = 0; // from super
+        // this.isAnimating = false; // from super
         this.animationSpeed = 1.5;
-        this.lastAngle = 0;
-        this.idleFrame = loadImage('images/sniper/tile000.png');
+        // this.lastAngle = 0; // from super
+        this.idleFrame = sniperAnimationFrames[0]; // Sniper's specific idle frame
+        this.sniperFrames = sniperAnimationFrames; // Store specific frames if needed differently from base
     }
 
     draw() {
-        if (!this.placed || this.selected) {
+        if (this.selected) { // Simplified
             push();
             strokeWeight(1);
             stroke('black');
@@ -448,7 +458,7 @@ function unselectAllTurrets() {
         if (!this.placed && !this.isValid()) {
             tint(238, 75, 43); 
         }
-        image(turretHolderImg, this.x, this.y, this.size, this.size);
+        image(this.turretHolderImg, this.x, this.y, this.size, this.size); // Use instance-specific or common holder
         pop();
     
         push();
@@ -458,7 +468,7 @@ function unselectAllTurrets() {
         
         let sniperSize = this.size * 2;
         if (this.isAnimating) {
-            image(sniperFrames[this.frameNumber], 0, 0, sniperSize, sniperSize);
+            image(this.sniperFrames[this.frameNumber], 0, 0, sniperSize, sniperSize); // Use sniper specific frames
             if (frameCount % Math.floor(this.animationSpeed / this.gameSpeed) === 0) {
                 this.frameNumber++;
                 if (this.frameNumber >= sniperFrames.length) {
@@ -467,7 +477,7 @@ function unselectAllTurrets() {
                 }
             }
         } else {
-            image(this.idleFrame, 0, 0, sniperSize, sniperSize);
+            image(this.idleFrame, 0, 0, sniperSize, sniperSize); // Use sniper specific idle
         }
         pop();
         strokeWeight(2); 
@@ -684,24 +694,20 @@ function unselectAllTurrets() {
 }
 
 class WizardTurret extends Turret {
-    constructor(roads) {
-        super(roads);
-        this.range = 465; 
-        this.size = 65; 
-        this.handOffset = 35; 
-        this.gunSize = 50;
-        this.shootCooldown = 380; 
-        this.projectileStrength = 3; 
-        this.projectileSpeed = 2; 
-        this.cost = 400; 
-        this.immuneToStun = false; 
-        this.frameNumber = 0;
-        this.isAnimating = false;
-        this.animationSpeed = 6;
-        this.lastAngle = 0;
-        this.idleFrame = loadImage('images/wizard/tile000.png');
-        this.animationEndTime = 0;
-        this.animationDelay = 500; 
+    constructor(x, y, wizardAnimationFrames, wizardHolderResource, wizardProjectileResource, roadsData) {
+        super("wizard", x, y, wizardProjectileResource, wizardAnimationFrames[0], wizardAnimationFrames, wizardHolderResource, roadsData);
+        this.range = 400;
+        this.size = 67; 
+        this.gunSize = 53; 
+        this.projectileSpeed = 5;
+        this.projectileStrength = 3;
+        this.shootCooldown = 380;
+        this.stunChance = 0.2;
+        this.stunDuration = 1000;
+        this.projectileImg = wizardProjectileResource;
+        this.targetMode = 0;
+        this.animationSpeed = 5;
+        this.animationDelay = 500;
     }
 
     upgrade() {
@@ -789,7 +795,7 @@ class WizardTurret extends Turret {
     
 
     draw() {
-        if (!this.placed || this.selected) {
+        if (this.selected) {
             push();
             strokeWeight(1);
             stroke('black');
@@ -803,7 +809,8 @@ class WizardTurret extends Turret {
         if (!this.placed && !this.isValid()) {
             tint(238, 75, 43); 
         }
-        image(wizardHolderImg, this.x, this.y, this.size, this.size);
+        // Use this.turretHolderImg instead of this.wizardHolderImg
+        image(this.turretHolderImg, this.x, this.y, this.size, this.size);
         pop();
 
         push();
@@ -813,9 +820,10 @@ class WizardTurret extends Turret {
         
         let wizardSize = this.size * 2;
         if (this.isAnimating) {
-            image(wizardFrames[Math.floor(this.frameNumber)], 0, 0, wizardSize, wizardSize);
+            // Use this.turretFrames instead of this.wizardFrames
+            image(this.turretFrames[Math.floor(this.frameNumber)], 0, 0, wizardSize, wizardSize);
             this.frameNumber += this.animationSpeed / this.gameSpeed;
-            if (this.frameNumber >= wizardFrames.length) {
+            if (this.frameNumber >= this.turretFrames.length) { // Use this.turretFrames.length
                 this.frameNumber = 0;
                 this.isAnimating = false;
             }
@@ -834,60 +842,27 @@ class WizardTurret extends Turret {
             image(this.stunImg, this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
         }
     }
-
-    chooseColor() {
-        if(this.selected) {
-            return "blue";
-        }
-        if(this.placed || this.isValid()) {
-            return "magenta";
-        } else {
-            return "red";
-        }
-    }
-
-    update() {
-        if (this.isStunned && millis() >= this.stunEndTime) {
-            this.isStunned = false;
-        }
-        if (!this.isStunned) {
-            if (!this.placed) {
-                this.followMouse();
-            } else {
-                // Only target new enemy if animation is complete
-                if (millis() >= this.animationEndTime) {
-                    this.targetEnemy();
-                }
-            }
-        }
-        this.draw();
-    }
 }
 
-
 class FrosterTurret extends Turret {
-    constructor(roads) {
-        super(roads);
+    constructor(x, y, frosterAnimationFrames, frosterHolderResource, snowballProjectileResource, roadsData) {
+        super("froster", x, y, snowballProjectileResource, frosterAnimationFrames[0], frosterAnimationFrames, frosterHolderResource, roadsData);
         this.range = 300;
-        this.size = 60;
-        this.gunSize = 45;
-        this.shootCooldown = 100;
-        this.projectileStrength = 2;
-        this.projectileSpeed = 6.5;
-        this.upgrades = 0;
-        this.maxUpgrades = 3;
-        this.slowDurationBase = 1500;
-        this.slowDurationUpgraded = 2000;
-        this.stunDuration = 600;
-        
-        // Animation properties
-        this.frameNumber = 0;
-        this.isAnimating = false;
-        this.animationSpeed = 1.5;
-        this.lastAngle = 0;
-        this.idleFrame = loadImage('images/froster/tile000.png');
+        this.size = 60; 
+        this.gunSize = 42; 
+        this.projectileSpeed = 6;
+        this.projectileStrength = 0.5;
+        this.shootCooldown = 50;
+        this.slowFactor = 0.5;
+        this.slowDuration = 1600;
+        this.slowDurationBase = 1600;
+        this.slowDurationUpgraded = 4000;
+        this.stunDuration = 1000;
+        this.projectileImg = snowballProjectileResource;
+        this.targetMode = 0;
+        this.animationSpeed = 6;
         this.animationEndTime = 0;
-        this.animationDelay = 400;
+        this.animationDelay = 500;
     }
 
     upgrade() {
@@ -934,7 +909,7 @@ class FrosterTurret extends Turret {
     }
 
     draw() {
-        if (!this.placed || this.selected) {
+        if (this.selected) {
             push();
             strokeWeight(1);
             stroke('black');
@@ -949,7 +924,8 @@ class FrosterTurret extends Turret {
         if (!this.placed && !this.isValid()) {
             tint(238, 75, 43); 
         }
-        image(frosterHolderImg, this.x, this.y, this.size, this.size);
+        // Use this.turretHolderImg instead of this.frosterHolderImg
+        image(this.turretHolderImg, this.x, this.y, this.size, this.size);
         pop();
 
         // Draw animated turret
@@ -960,9 +936,9 @@ class FrosterTurret extends Turret {
         
         let frosterSize = this.size * 2;
         if (this.isAnimating) {
-            image(frosterFrames[Math.floor(this.frameNumber)], 0, 0, frosterSize, frosterSize);
+            image(this.turretFrames[Math.floor(this.frameNumber)], 0, 0, frosterSize, frosterSize);
             this.frameNumber += this.animationSpeed / this.gameSpeed;
-            if (this.frameNumber >= frosterFrames.length) {
+            if (this.frameNumber >= this.turretFrames.length) { // Use this.turretFrames.length
                 this.frameNumber = 0;
                 this.isAnimating = false;
             }
@@ -1024,6 +1000,150 @@ class FrosterTurret extends Turret {
             if (!this.placed) {
                 this.followMouse();
             } else {
+                if (millis() >= this.animationEndTime) {
+                    this.targetEnemy();
+                }
+            }
+        }
+        this.draw();
+    }
+}
+
+class MachineGunTurret extends Turret {
+    constructor(x, y, machinegunAnimationFrames, machinegunHolderResource, projectileImgResource, roadsData) {
+        super("machinegun", x, y, projectileImgResource, machinegunAnimationFrames[0], machinegunAnimationFrames, machinegunHolderResource, roadsData);
+        this.range = Infinity; 
+        this.size = 55;
+        this.gunSize = 40;
+        this.projectileSpeed = 12;
+        this.projectileStrength = 0.6;
+        this.shootCooldown = 7; 
+        this.spreadFactor = 0.3; 
+        this.projectileImg = projectileImgResource;
+        this.targetMode = 0;
+        this.animationSpeed = 12; 
+        this.cursorX = mouseX;
+        this.cursorY = mouseY;
+    }
+
+    upgrade() {
+        let upgradePrice = (this.upgrades + 2) * 180;
+        if (this.upgrades < this.maxUpgrades && money >= upgradePrice) {
+            money -= upgradePrice;
+            updateInfo();
+            this.upgrades++;
+            this.shootCooldown -= 0.5;
+            this.projectileStrength += 0.6;
+            this.spreadFactor -= 0.05; 
+        }
+    }
+
+    draw() {
+        if (this.selected) {
+            push();
+            strokeWeight(1);
+            stroke('black');
+            fill(255, 100, 100, 50);
+            ellipse(this.x, this.y, 1500, 1500); // Big visual indicator for infinite range
+            pop();
+        }
+
+        push();
+        imageMode(CENTER);
+        if (!this.placed && !this.isValid()) {
+            tint(238, 75, 43);
+        }
+        image(this.turretHolderImg, this.x, this.y, this.size, this.size);
+        pop();
+
+        push();
+        imageMode(CENTER);
+        translate(this.x, this.y);
+        rotate(this.lookAngle + PI/2);
+        
+        let machineGunSize = this.size * 2;
+        if (this.isAnimating) {
+            image(this.turretFrames[Math.floor(this.frameNumber)], 0, 0, machineGunSize, machineGunSize);
+            this.frameNumber += this.animationSpeed / this.gameSpeed;
+            if (this.frameNumber >= this.turretFrames.length) {
+                this.frameNumber = 0;
+                this.isAnimating = false;
+            }
+        } else {
+            image(this.idleFrame, 0, 0, machineGunSize, machineGunSize);
+        }
+        pop();
+        
+        push();
+        strokeWeight(2); 
+        fill('yellow');
+        textSize(12);
+        textAlign(CENTER, CENTER);
+        text("level " + (this.upgrades + 1), this.x, this.y - this.size / 2 - 10);
+        pop();
+
+        if (this.isStunned) {
+            image(this.stunImg, this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+        }
+    }
+
+    shootProjectile() {
+        if (this.placed) {
+            this.isAnimating = true;
+            this.frameNumber = 0;
+            
+            this.cursorX = mouseX;
+            this.cursorY = mouseY;
+            
+            this.lookAngle = atan2(this.cursorY - this.y, this.cursorX - this.x);
+            
+            let spreadAngle = this.lookAngle + random(-this.spreadFactor, this.spreadFactor);
+            
+            let x = this.x + (this.gunSize * cos(this.lookAngle));
+            let y = this.y + (this.gunSize * sin(this.lookAngle));
+            
+            let xSpeed = this.projectileSpeed * cos(spreadAngle) * this.gameSpeed;
+            let ySpeed = this.projectileSpeed * sin(spreadAngle) * this.gameSpeed;
+            
+            projectiles.push(new Projectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 8));
+            this.shootingTimer = 0;
+            this.totalDamage += this.projectileStrength;
+            dealDamage(this.projectileStrength);
+        }
+    }
+
+    targetEnemy() {
+        if (this.isStunned) {
+            return;
+        }
+
+        if (this.shootingTimer >= this.shootCooldown / this.gameSpeed) {
+            this.shootProjectile();
+        } else {
+            this.shootingTimer += 1;
+        }
+        
+        if (this.placed) {
+            this.cursorX = mouseX;
+            this.cursorY = mouseY;
+            this.lookAngle = atan2(this.cursorY - this.y, this.cursorX - this.x);
+        }
+    }
+
+    chooseColor() {
+        if (this.selected) return "blue";
+        if (this.placed || this.isValid()) return "red";
+        return "red";
+    }
+
+    update() {
+        if (this.isStunned && millis() >= this.stunEndTime) {
+            this.isStunned = false;
+        }
+        if (!this.isStunned) {
+            if (!this.placed) {
+                this.followMouse();
+            } else {
                 this.targetEnemy();
             }
         }
@@ -1032,7 +1152,6 @@ class FrosterTurret extends Turret {
 }
 
 function dealDamage(amount) {
-    // Increment global damage counter
     if (typeof window.totalDamage === 'number') {
         window.totalDamage += amount;
     }

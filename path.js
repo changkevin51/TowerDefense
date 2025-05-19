@@ -139,4 +139,37 @@ class Path {
             rect(cornerX, cornerY, this.size, this.size);
         }
     }
+
+    onPath(checkX, checkY, checkRadius) {
+        if (!this.roads || this.roads.length === 0) {
+            console.warn("Path.onPath called, but this.roads is not populated or is empty.");
+            return false;
+        }
+
+        const checkCircle = { x: checkX, y: checkY, size: checkRadius * 2 }; 
+
+        for (const roadSegment of this.roads) {
+
+            let closeX = checkCircle.x;
+            let closeY = checkCircle.y;
+
+            if (checkCircle.x < roadSegment.x) {
+                closeX = roadSegment.x;
+            } else if (checkCircle.x > roadSegment.x + roadSegment.w) {
+                closeX = roadSegment.x + roadSegment.w;
+            }
+
+            if (checkCircle.y < roadSegment.y) {
+                closeY = roadSegment.y;
+            } else if (checkCircle.y > roadSegment.y + roadSegment.h) {
+                closeY = roadSegment.y + roadSegment.h;
+            }
+
+            if (dist(checkCircle.x, checkCircle.y, closeX, closeY) < checkCircle.size / 2) {
+                return true; // Collision detected
+            }
+        }
+
+        return false; 
+    }
 }
