@@ -57,11 +57,16 @@ class Enemy {
                 this.speed *= 1.4;  
                 this.isStealth = false;
                 this.lastStealthToggle = millis();
-                this.stealthDuration = 2000;   
-                this.stealthInterval = 3000;  
+                this.stealthDuration = 2000;
+                this.stealthInterval = 3000;
                 break;
             case 'healer':
-                this.img = healerEnemyImage; 
+                this.frontFrames = healerFrontFrames;
+                this.rightFrames = healerRightFrames;
+                this.backFrames = healerBackFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.currentFrameSet = this.frontFrames;
                 this.healingRadius = 200;
                 this.healCooldown = 2000;
                 this.lastHealTime = millis();
@@ -254,10 +259,9 @@ class Enemy {
             
             
             this.spawnScale = 0.1 + progress * 0.9; 
-        }
-    
-        if (this.type === 'robo1' || this.type === 'robo2' || this.type === 'robo3' || 
+        } if (this.type === 'robo1' || this.type === 'robo2' || this.type === 'robo3' || 
             this.type === 'heavy' || this.type === 'fast' || this.type === 'stealth' ||
+            this.type === 'healer' ||
             this.type === 'miniboss1' || this.type === 'miniboss2' || this.type === 'miniboss3' ||
             this.type === 'boss') {
             

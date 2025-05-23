@@ -282,11 +282,15 @@ function populateEnemies() {
       abilities: "Periodically becomes invisible, fast",
       waves: "Every 3rd wave after wave 4",
       healthMultiplier: 0.9,
-      speedMultiplier: 1.4,
-    },
+      speedMultiplier: 1.4,    },
     {
       type: "Healer",
-      image: "images/enemies/healer.png",
+      frames: {
+        front: "images/enemies/healer/front00",
+        right: "images/enemies/healer/right00",
+        back: "images/enemies/healer/back00"
+      },
+      frameCount: 3,
       abilities: "Heals nearby enemies",
       waves: "Every 3rd wave after wave 4",
       healthMultiplier: 1,

@@ -78,6 +78,9 @@ let fastBackFrames = [];
 let stealthFrontFrames = [];
 let stealthRightFrames = [];
 let stealthBackFrames = [];
+let healerFrontFrames = [];
+let healerRightFrames = [];
+let healerBackFrames = [];
 let bossFrontFrames = [];
 let bossRightFrames = [];
 let bossBackFrames = [];
@@ -106,7 +109,6 @@ let hoveredTurret = null;
 
     bombEnemyImage = loadImage('images/enemies/bomb.png');
     explosionImage = loadImage('images/explosion.png');
-    healerEnemyImage = loadImage('images/enemies/healer.png');
 
     turretHolderImg = loadImage('images/shooter/greenHolder.png');
     for (let i = 1; i <= 7; i++) {
@@ -177,6 +179,12 @@ let hoveredTurret = null;
         stealthFrontFrames.push(loadImage(`images/enemies/stealth/front00${i}.png`));
         stealthRightFrames.push(loadImage(`images/enemies/stealth/right00${i}.png`));
         stealthBackFrames.push(loadImage(`images/enemies/stealth/back00${i}.png`));
+    }
+
+    for (let i = 0; i < 3; i++) {
+        healerFrontFrames.push(loadImage(`images/enemies/healer/front00${i}.png`));
+        healerRightFrames.push(loadImage(`images/enemies/healer/right00${i}.png`));
+        healerBackFrames.push(loadImage(`images/enemies/healer/back00${i}.png`));
     }
 
     for (let i = 0; i < 6; i++) {
