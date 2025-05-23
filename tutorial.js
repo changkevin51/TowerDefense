@@ -6,7 +6,6 @@ function toggleTutorialPopup() {
     document.querySelectorAll('.tab-button').forEach(button => button.style.display = ''); 
 
     if (isOpening) {
-        
         const firstTabButton = document.querySelector('.tab-button');
         let defaultTabId = 'tutorial'; 
         if (firstTabButton) {
@@ -104,7 +103,6 @@ function populateStats() {
     const stats = populateStats();
     const statsSections = document.getElementById("stats-sections");
     statsSections.innerHTML = ''; 
-
     const table = document.createElement("table");
     table.className = "stats-table"; 
     table.innerHTML = `
@@ -193,7 +191,7 @@ function populateStats() {
                 specialAbility = "Piercing Projectiles + Immune to Stun";
             }
             if (turret.name === "Froster" && level >= 3) {
-              specialAbility = "Freeze + Slow Enemies";
+              specialAbility = "Freeze Enemies (Slow on bosses)";
             }
             if (turret.name === "Sniper" && level >= 3) {
               specialAbility = "Instant Hit + Target Invisible Enemies";
