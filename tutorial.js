@@ -56,43 +56,53 @@ function populateStats() {
     return [
       {
         name: "Shooter",
+        image: "images/turrets/shooter.png",
         baseRange: 150,
         baseStrength: 1,
         baseCooldown: 30,
         upgradeCost: (level) => (level + 1) * 120,
-        ability: "None",
+        ability: "Basic projectile turret",
+        description: "A reliable, all-purpose turret that fires single projectiles at enemies. Great for beginners and early waves."
       },
       {
         name: "Sniper",
+        image: "images/turrets/sniper.png", 
         baseRange: 400,
         baseStrength: 4,
         baseCooldown: 100,
         upgradeCost: (level) => (level + 1) * 250,
         ability: "Instant Hit",
+        description: "Long-range precision turret with high damage. Perfect for taking down tough enemies and bosses from a distance."
       },
       {
         name: "Wizard",
+        image: "images/turrets/wizard.png",
         baseRange: 400,
         baseStrength: 3,
         baseCooldown: 280,
         upgradeCost: (level) => (level + 1) * 260,
         ability: "Piercing Projectiles",
+        description: "Magical turret that fires projectiles through multiple enemies. Excellent for handling groups of weaker enemies."
       },
       {
         name: "Froster",
+        image: "images/turrets/froster.png",
         baseRange: 300,
         baseStrength: 2,
         baseCooldown: 100,
         upgradeCost: (level) => (level + 1) * 270,
         ability: "Slow Enemies",
+        description: "Ice-based turret that slows enemies while dealing damage. Great for crowd control and supporting other turrets."
       },
       {
         name: "Machinegun",
+        image: "images/turrets/machinegun.png",
         baseRange: Infinity,
         baseStrength: 0.6,
         baseCooldown: 7,
         upgradeCost: (level) => (level + 1) * 180,
         ability: "Targets Mouse Cursor",
+        description: "High-speed automatic turret that follows your mouse cursor. Requires manual aiming but offers rapid fire rate."
       },
     ];
   }
@@ -103,17 +113,69 @@ function populateStats() {
     const stats = populateStats();
     const statsSections = document.getElementById("stats-sections");
     statsSections.innerHTML = ''; 
+
+    // Create turret overview cards
+    const turretGrid = document.createElement("div");
+    turretGrid.className = "turret-overview-grid";
+    
+    stats.forEach((turret) => {
+        const card = document.createElement("div");
+        card.className = "turret-card";
+        
+        card.innerHTML = `
+            <div class="turret-card-header">
+                <img src="${turret.image}" alt="${turret.name}" class="turret-card-image">
+                <h3 class="turret-card-name">${turret.name}</h3>
+            </div>
+            <div class="turret-card-content">
+                <p class="turret-description">${turret.description}</p>
+                <div class="turret-quick-stats">
+                    <div class="quick-stat">
+                        <span class="stat-label">Range:</span>
+                        <span class="stat-value">${turret.baseRange === Infinity ? '∞' : turret.baseRange}</span>
+                    </div>
+                    <div class="quick-stat">
+                        <span class="stat-label">Damage:</span>
+                        <span class="stat-value">${turret.baseStrength}</span>
+                    </div>
+                    <div class="quick-stat">
+                        <span class="stat-label">Speed:</span>
+                        <span class="stat-value">${Math.round(1000/turret.baseCooldown*10)/10}/s</span>
+                    </div>
+                    <div class="quick-stat">
+                        <span class="stat-label">Cost:</span>
+                        <span class="stat-value">$${turret.upgradeCost(1)}</span>
+                    </div>
+                </div>
+                <div class="turret-ability">
+                    <span class="ability-label">Special:</span>
+                    <span class="ability-text">${turret.ability}</span>
+                </div>
+            </div>
+        `;
+        
+        turretGrid.appendChild(card);
+    });
+    
+    statsSections.appendChild(turretGrid);
+
+    // Add detailed stats table
+    const detailsHeader = document.createElement("h2");
+    detailsHeader.textContent = "📊 Detailed Statistics";
+    detailsHeader.className = "section-header";
+    statsSections.appendChild(detailsHeader);
+    
     const table = document.createElement("table");
     table.className = "stats-table"; 
     table.innerHTML = `
         <thead>
             <tr>
-                <th>Turret Name</th>
+                <th>Turret</th>
                 <th>Base Range</th>
-                <th>Base Strength</th>
-                <th>Base Cooldown</th>
-                <th>Upgrade Cost (Lvl 1)</th>
-                <th>Base Special Ability</th>
+                <th>Base Damage</th>
+                <th>Fire Rate (per sec)</th>
+                <th>Upgrade Cost</th>
+                <th>Special Ability</th>
             </tr>
         </thead>
         <tbody></tbody>
@@ -123,101 +185,139 @@ function populateStats() {
     stats.forEach((turret) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${turret.name}</td>
-            <td>${turret.baseRange}</td>
+            <td>
+                <div class="table-turret-info">
+                    <img src="${turret.image}" alt="${turret.name}" class="table-turret-icon">
+                    <span>${turret.name}</span>
+                </div>
+            </td>
+            <td>${turret.baseRange === Infinity ? '∞' : turret.baseRange}</td>
             <td>${turret.baseStrength}</td>
-            <td>${turret.baseCooldown}</td>
+            <td>${Math.round(1000/turret.baseCooldown*10)/10}</td>
             <td>$${turret.upgradeCost(1)}</td>
             <td>${turret.ability}</td>
         `;
         tbody.appendChild(row);
     });
     statsSections.appendChild(table);
-
-    
-    stats.forEach((turret) => {
-        const section = document.createElement("div");
-        section.className = "turret-level-details";
-
-        const header = document.createElement("h4"); 
-        header.textContent = `${turret.name} - Level Up Stats`;
-        section.appendChild(header);
-
-        const levelTable = document.createElement("table");
-        levelTable.className = "level-stats-table";
-        levelTable.innerHTML = `
-            <thead>
-                <tr>
-                    <th>Level</th>
-                    <th>Range</th>
-                    <th>Projectile Strength</th>
-                    <th>Shoot Cooldown*</th>
-                    <th>Upgrade Cost</th>
-                    <th>Special Ability</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        `;
-        const levelTbody = levelTable.querySelector("tbody");        for (let level = 1; level <= 4; level++) {
-            let range;
-            if (turret.name === "Machinegun") {
-                range = "Infinite";
-            } else {
-                range = turret.baseRange + (level - 1) * (turret.name === "Wizard" ? 30 : turret.name === "Froster" ? 10 : 50);
-            }
-            
-            let rawStrength = turret.baseStrength + (level - 1) * (
-                turret.name === "Sniper" ? (4 + level) : 
-                turret.name === "Wizard" ? (2 + level) : 
-                turret.name === "Machinegun" ? 0.6 : 
-                1
-            );
-
-            const strength = Number.isInteger(rawStrength) ? rawStrength : parseFloat(rawStrength.toFixed(1));
-
-            // Calculate cooldown based on turret type
-            const cooldown = turret.baseCooldown - (level - 1) * (
-                turret.name === "Sniper" ? 8 : 
-                turret.name === "Wizard" ? 5 : 
-                turret.name === "Froster" ? 8 : 
-                turret.name === "Machinegun" ? 0.5 : 
-                3
-            );
-
-            const upgradeCost = level < 4 ? `$${turret.upgradeCost(level)}` : "Max";
-            let specialAbility = turret.ability;
-
-            if (turret.name === "Wizard" && level >= 3) {
-                specialAbility = "Piercing Projectiles + Immune to Stun";
-            }
-            if (turret.name === "Froster" && level >= 3) {
-              specialAbility = "Freeze Enemies (Slow on bosses)";
-            }
-            if (turret.name === "Sniper" && level >= 3) {
-              specialAbility = "Instant Hit + Target Invisible Enemies";
-            }
-            if (turret.name === "Machinegun" && level >= 2) {
-              specialAbility = "Targets Mouse Cursor + Improved Accuracy";
-            }
-
-            const row = document.createElement("tr");
-            row.innerHTML = `
-                <td>${level}</td>
-                <td>${range}</td>
-                <td>${strength}</td>
-                <td>${cooldown}</td>
-                <td>${upgradeCost}</td>
-                <td>${specialAbility}</td>
-            `;
-            levelTbody.appendChild(row);
+}  
+function populatePowerUps() {
+    const powerUps = [
+        {
+            name: "Speed Boost",
+            image: "images/abilities/speedboost.png",
+            description: "Increases all turret fire rates by 50% for 5 seconds",
+            baseCost: 150,
+            costIncrease: 35,
+            duration: "5 seconds",
+            effect: "+50% fire rate",
+            tips: "Best used during heavy enemy waves or boss fights"
+        },
+        {
+            name: "Health Reduction", 
+            image: "images/abilities/healthreduced.png",
+            description: "Instantly reduces health of all enemies by 70% (30% for bosses/minibosses)",
+            baseCost: 150,
+            costIncrease: 35,
+            duration: "Instant",
+            effect: "-70% enemy HP (-30% bosses)",
+            tips: "Perfect for clearing overwhelming waves or weakening tough enemies"
         }
-        section.appendChild(levelTable);
-        statsSections.appendChild(section);
+    ];
+
+    const container = document.getElementById("powerups-container");
+    container.innerHTML = '';
+
+    // Create power-ups grid
+    const powerUpGrid = document.createElement("div");
+    powerUpGrid.className = "powerup-overview-grid";
+
+    powerUps.forEach((powerUp) => {
+        const card = document.createElement("div");
+        card.className = "powerup-card";
+        
+        card.innerHTML = `
+            <div class="powerup-card-header">
+                <img src="${powerUp.image}" alt="${powerUp.name}" class="powerup-card-image">
+                <h3 class="powerup-card-name">${powerUp.name}</h3>
+            </div>
+            <div class="powerup-card-content">
+                <p class="powerup-description">${powerUp.description}</p>
+                <div class="powerup-stats">
+                    <div class="powerup-stat">
+                        <span class="stat-label">Duration:</span>
+                        <span class="stat-value">${powerUp.duration}</span>
+                    </div>
+                    <div class="powerup-stat">
+                        <span class="stat-label">Effect:</span>
+                        <span class="stat-value">${powerUp.effect}</span>
+                    </div>
+                    <div class="powerup-stat">
+                        <span class="stat-label">Base Cost:</span>
+                        <span class="stat-value">$${powerUp.baseCost}</span>
+                    </div>
+                    <div class="powerup-stat">
+                        <span class="stat-label">Cost Growth:</span>
+                        <span class="stat-value">+$${powerUp.costIncrease}/wave</span>
+                    </div>
+                </div>
+                <div class="powerup-tips">
+                    <span class="tips-label">💡 Tip:</span>
+                    <span class="tips-text">${powerUp.tips}</span>
+                </div>
+            </div>
+        `;
+        
+        powerUpGrid.appendChild(card);
     });
-  }
-  
+
+    container.appendChild(powerUpGrid);
+
+    // Add usage guide
+    const usageGuide = document.createElement("div");
+    usageGuide.className = "powerup-usage-guide";
+    usageGuide.innerHTML = `
+        <h2 class="section-header">🎮 How to Use Power-ups</h2>
+        <div class="usage-steps">
+            <div class="usage-step">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h4>Purchase</h4>
+                    <p>Click the "Buy Power-up" button in the game menu</p>
+                </div>
+            </div>
+            <div class="usage-step">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h4>Select</h4>
+                    <p>Choose the power-up you want from the shop</p>
+                </div>
+            </div>
+            <div class="usage-step">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h4>Activate</h4>
+                    <p>Click on the power-up to activate it instantly</p>
+                </div>
+            </div>
+        </div>
+        <div class="powerup-notes">
+            <h3>📋 Important Notes</h3>
+            <ul>
+                <li>Power-up costs increase with each wave</li>
+                <li>Only one of each type can be active at a time</li>
+                <li>Speed Boost affects all placed turrets</li>
+                <li>Health Reduction affects all enemies currently on the map</li>
+            </ul>
+        </div>
+    `;
+    
+    container.appendChild(usageGuide);
+}
+
   document.addEventListener("DOMContentLoaded", () => {
     populateStatsTable();
+    populatePowerUps();
   });
   
 function populateEnemies() {

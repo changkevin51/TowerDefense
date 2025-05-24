@@ -15,58 +15,66 @@
     <img id="turret" src="images/turret.png" alt="Turret">
     <h4 id="message">This tower defense game is designed to push your strategic skills to the limit. It's OK to lose some health at the start, you'll get them back eventually!</h4>
 
-    <div id="popup" class="popup">
-      <div class="popup-header">
+    <div id="popup" class="popup">      <div class="popup-header">
         <button class="tab-button active" onclick="showTab('tutorial')">Tutorial</button>
-        <button class="tab-button" onclick="showTab('stats')">Stats</button>
+        <button class="tab-button" onclick="showTab('stats')">Turrets</button>
+        <button class="tab-button" onclick="showTab('powerups')">Power-ups</button>
         <button class="tab-button" onclick="showTab('enemies')">Enemies</button>
         <button class="tab-button" onclick="showTab('tips')">Tips</button>
         <button class="close-popup" onclick="closePopup()">×</button>
       </div>
-      <div class="popup-content">
-        <div id="tutorial" class="tab-content active">
-          <h1>Tutorial</h1>
-          <h3>Place Turrets:</h3>
+      <div class="popup-content">        <div id="tutorial" class="tab-content active">
+          <h1>🎮 Game Tutorial</h1>
+          <h3>🏗️ Place Turrets:</h3>
           <ul>
             <li>Click <strong>"Buy Turret"</strong> to purchase a turret (requires money).</li>
             <li>Place the turret on valid spots in the game area (strategic placement is key).</li>
             <li>Drag to the garbage bin to cancel turret selection.</li>
           </ul>
-          <h3>Upgrade Turrets:</h3>
+          <h3>⬆️ Upgrade Turrets:</h3>
           <ul>
-            <li>Select a turret and click <strong>"Upgrade"</strong> to enhance its stats.</li>
-            <li>Each upgrade increases damage, range, shooting speed, and sometimes projectile speed.</li>
-            <li>Check <strong>"Stats"</strong> tab for more information.</li>
+            <li>Click on a placed turret to select it and view its stats.</li>
+            <li>Click <strong>"Upgrade"</strong> to enhance its damage, range, and speed.</li>
+            <li>Higher level turrets gain special abilities (check <strong>"Turrets"</strong> tab).</li>
+            <li>Strategic upgrading is more effective than placing many weak turrets.</li>
           </ul>
-          <h3>Game Controls:</h3>
+          <h3>🎮 Game Controls:</h3>
           <ul>
-            <li><strong>Start Wave:</strong> Initiates the next wave of enemies.</li>
-            <li><strong>Toggle Speed:</strong> Switches between normal and fast game speed.</li>
-            <li><strong>Change Target Mode:</strong> Cycles through turret targeting priorities.</li>
+            <li><strong>Start Wave:</strong> Initiates the next wave of enemies (can be toggled to auto-start).</li>
+            <li><strong>Toggle Speed:</strong> Switches between normal (1x) and fast (2x) game speed.</li>
+            <li><strong>Change Target Mode:</strong> Cycles through turret targeting priorities (First, Last, Closest, Strongest).</li>
+            <li><strong>Pause/Resume:</strong> Use spacebar or click the pause button to pause the game.</li>
           </ul>
-          <h3>Tips & Tricks:</h3>
+          <h3>💡 Essential Tips:</h3>
           <ul>
-            <li>Early game, focus on a few well-placed, upgraded turrets rather than many weak ones.</li>
-            <li>Pay attention to enemy types and use appropriate turrets (e.g., Snipers for bosses, Wizards for crowds).</li>
-            <li>Don't be afraid to sell and reposition turrets as the game progresses.</li>
+            <li>Early game: Focus on 2-3 well-placed, upgraded turrets rather than many weak ones.</li>
+            <li>Different turrets excel against different enemy types - diversify your defense!</li>
+            <li>Watch your health carefully - it's better to slow down and build strong defenses.</li>
+            <li>Power-ups can turn the tide in difficult situations - use them wisely!</li>
+            <li>Don't be afraid to sell and reposition turrets as waves get tougher.</li>
           </ul>
-        </div>
-        <div id="stats" class="tab-content">
-          <h1>Turret Statistics</h1>
+        </div><div id="stats" class="tab-content">
+          <h1>🚁 Turret Arsenal</h1>
           <div id="stats-sections">
             <!-- Turret stats tables will be populated here by tutorial.js -->
             <p>Loading turret statistics...</p>
           </div>
         </div>
-        <div id="enemies" class="tab-content">
-          <h1>Enemy Information</h1>
+        <div id="powerups" class="tab-content">
+          <h1>⚡ Power-ups</h1>
+          <div id="powerups-container">
+            <!-- Power-up information will be populated here by tutorial.js -->
+            <p>Loading power-up information...</p>
+          </div>
+        </div>        <div id="enemies" class="tab-content">
+          <h1>🤖 Enemy Intel</h1>
           <div id="enemies-container">
             <!-- Enemy information table will be populated here by tutorial.js -->
             <p>Loading enemy information...</p>
           </div>
         </div>
         <div id="tips" class="tab-content">
-          <h1>Advanced Tips & Strategies</h1>
+          <h1>🎯 Advanced Tips & Strategies</h1>
           <!-- Content for Tips tab -->
           <h2>General Strategy</h2>
           <ul>

@@ -282,7 +282,6 @@ class Enemy {
             const progress = (millis() - this.spawnTime) / this.spawnEffectDuration;
             tint(255, 200, 0, 255 * (1 - progress * 0.5));
             
-            
             this.spawnScale = 0.1 + progress * 0.9;        }        if (this.type === 'robo1' || this.type === 'robo2' || this.type === 'robo3' || 
             this.type === 'heavy' || this.type === 'fast' || this.type === 'stealth' ||
             this.type === 'healer' || this.type === 'boss' ||
