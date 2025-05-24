@@ -62,7 +62,18 @@ function populateStats() {
         baseCooldown: 30,
         upgradeCost: (level) => (level + 1) * 120,
         ability: "Basic projectile turret",
-        description: "A reliable, all-purpose turret that fires single projectiles at enemies. Great for beginners and early waves."
+        description: "A reliable, all-purpose turret that fires single projectiles at enemies. Great for beginners and early waves.",
+        levelAbilities: {
+          1: "Basic projectile turret with standard targeting",
+          2: "Improved reload speed and slightly faster projectiles",
+          3: "Shoots even faster projectiles",
+          4: "Optimized for better accuracy and range"
+        },
+        statGrowth: {
+          range: level => 150 + (level * 30), // +30 range per level
+          damage: level => 1 + (level * 1),   // +1 damage per level
+          cooldown: level => Math.max(15, 30 - (level * 5)) // -5 cooldown per level, min 15
+        }
       },
       {
         name: "Sniper",
@@ -72,7 +83,18 @@ function populateStats() {
         baseCooldown: 100,
         upgradeCost: (level) => (level + 1) * 250,
         ability: "Instant Hit",
-        description: "Long-range precision turret with high damage. Perfect for taking down tough enemies and bosses from a distance."
+        description: "Long-range precision turret with high damage. Perfect for taking down tough enemies and bosses from a distance.",
+        levelAbilities: {
+          1: "Instant hit projectiles with extreme range",
+          2: "Improved damage and slightly faster reload",
+          3: "Can target and hit invisible/stealth enemies",
+          4: "Armor piercing rounds that deal extra damage to heavy enemies"
+        },
+        statGrowth: {
+          range: level => 400 + (level * 50), // +50 range per level
+          damage: level => 4 + (level * 8),   // +8 damage per level
+          cooldown: level => Math.max(70, 100 - (level * 10)) // -10 cooldown per level, min 70
+        }
       },
       {
         name: "Wizard",
@@ -82,7 +104,19 @@ function populateStats() {
         baseCooldown: 280,
         upgradeCost: (level) => (level + 1) * 260,
         ability: "Piercing Projectiles",
-        description: "Magical turret that fires projectiles through multiple enemies. Excellent for handling groups of weaker enemies."
+        description: "Magical turret that fires projectiles through multiple enemies. Excellent for handling groups of weaker enemies.",
+        levelAbilities: {
+          1: "Piercing projectiles that hit multiple enemies in a line",
+          2: "Burn effect that deals damage over time",
+          3: "Immune to stun effects from Bomb enemies",
+          4: "Faster reload and increased damage"
+        },
+        // Stat growth per level
+        statGrowth: {
+          range: level => 400 + (level * 25), // +25 range per level
+          damage: level => 3 + (level * 6),   // +6 damage per level
+          cooldown: level => Math.max(200, 280 - (level * 20)) // -20 cooldown per level, min 200
+        }
       },
       {
         name: "Froster",
@@ -92,7 +126,19 @@ function populateStats() {
         baseCooldown: 100,
         upgradeCost: (level) => (level + 1) * 270,
         ability: "Slow Enemies",
-        description: "Ice-based turret that slows enemies while dealing damage. Great for crowd control and supporting other turrets."
+        description: "Ice-based turret that slows enemies while dealing damage. Great for crowd control and supporting other turrets.",
+        levelAbilities: {
+          1: "Slows enemies by 30% for a short duration",
+          2: "Increased slow effect (40%) and longer duration",
+          3: "Freezes enemies completely for 0.8 seconds instead of slowing",
+          4: "Increased freeze duration (1 second)"
+        },
+        statGrowth: {
+          range: level => 300 + (level * 10),
+          damage: level => 2 + (level * 1),
+          cooldown: level => Math.max(70, 100 - (level * 10)),
+          slowEffect: level => 0.7 - (level * 0.1) 
+        }
       },
       {
         name: "Machinegun",
@@ -102,25 +148,48 @@ function populateStats() {
         baseCooldown: 7,
         upgradeCost: (level) => (level + 1) * 180,
         ability: "Targets Mouse Cursor",
-        description: "High-speed automatic turret that follows your mouse cursor. Requires manual aiming but offers rapid fire rate."
+        description: "High-speed automatic turret that follows your mouse cursor. Requires manual aiming but offers rapid fire rate.",
+        levelAbilities: {
+          1: "Manual targeting with unlimited range and rapid fire",
+          2: "Reduced recoil and improved accuracy",
+          3: "Lock Mode + improved accuracy",
+          4: "Even faster shooting and reload!"
+        },
+        statGrowth: {
+          range: level => Infinity,
+          damage: level => 0.6 + (level * 0.6), 
+          cooldown: level => Math.max(4, 7 - level) 
+        }
       },
     ];
   }
-
-
-  
-  function populateStatsTable() {
+function populateStatsTable() {
     const stats = populateStats();
     const statsSections = document.getElementById("stats-sections");
     statsSections.innerHTML = ''; 
-
-    // Create turret overview cards
     const turretGrid = document.createElement("div");
     turretGrid.className = "turret-overview-grid";
     
-    stats.forEach((turret) => {
+    stats.forEach((turret, index) => {
         const card = document.createElement("div");
         card.className = "turret-card";
+
+        const levelSelector = document.createElement("div");
+        levelSelector.className = "level-selector";
+        levelSelector.innerHTML = `
+            <h4>Upgrade Level</h4>
+            <div class="level-buttons">
+                <button class="level-btn active" data-level="1" data-turret="${index}">1</button>
+                <button class="level-btn" data-level="2" data-turret="${index}">2</button>
+                <button class="level-btn" data-level="3" data-turret="${index}">3</button>
+                <button class="level-btn" data-level="4" data-turret="${index}">4</button>
+            </div>
+        `;
+        
+        const statsContainer = document.createElement("div");
+        statsContainer.className = "turret-stats-container";
+        statsContainer.id = `turret-stats-${index}`;
+        updateTurretCardStats(statsContainer, turret, 1);
         
         card.innerHTML = `
             <div class="turret-card-header">
@@ -129,78 +198,92 @@ function populateStats() {
             </div>
             <div class="turret-card-content">
                 <p class="turret-description">${turret.description}</p>
-                <div class="turret-quick-stats">
-                    <div class="quick-stat">
-                        <span class="stat-label">Range:</span>
-                        <span class="stat-value">${turret.baseRange === Infinity ? '∞' : turret.baseRange}</span>
-                    </div>
-                    <div class="quick-stat">
-                        <span class="stat-label">Damage:</span>
-                        <span class="stat-value">${turret.baseStrength}</span>
-                    </div>
-                    <div class="quick-stat">
-                        <span class="stat-label">Speed:</span>
-                        <span class="stat-value">${Math.round(1000/turret.baseCooldown*10)/10}/s</span>
-                    </div>
-                    <div class="quick-stat">
-                        <span class="stat-label">Cost:</span>
-                        <span class="stat-value">$${turret.upgradeCost(1)}</span>
-                    </div>
-                </div>
-                <div class="turret-ability">
-                    <span class="ability-label">Special:</span>
-                    <span class="ability-text">${turret.ability}</span>
-                </div>
             </div>
         `;
+        
+        const cardContent = card.querySelector('.turret-card-content');
+        cardContent.appendChild(levelSelector);
+        cardContent.appendChild(statsContainer);
         
         turretGrid.appendChild(card);
     });
     
     statsSections.appendChild(turretGrid);
-
-    // Add detailed stats table
-    const detailsHeader = document.createElement("h2");
-    detailsHeader.textContent = "📊 Detailed Statistics";
-    detailsHeader.className = "section-header";
-    statsSections.appendChild(detailsHeader);
     
-    const table = document.createElement("table");
-    table.className = "stats-table"; 
-    table.innerHTML = `
-        <thead>
-            <tr>
-                <th>Turret</th>
-                <th>Base Range</th>
-                <th>Base Damage</th>
-                <th>Fire Rate (per sec)</th>
-                <th>Upgrade Cost</th>
-                <th>Special Ability</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    `;
-    const tbody = table.querySelector("tbody");
-
-    stats.forEach((turret) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-            <td>
-                <div class="table-turret-info">
-                    <img src="${turret.image}" alt="${turret.name}" class="table-turret-icon">
-                    <span>${turret.name}</span>
-                </div>
-            </td>
-            <td>${turret.baseRange === Infinity ? '∞' : turret.baseRange}</td>
-            <td>${turret.baseStrength}</td>
-            <td>${Math.round(1000/turret.baseCooldown*10)/10}</td>
-            <td>$${turret.upgradeCost(1)}</td>
-            <td>${turret.ability}</td>
-        `;
-        tbody.appendChild(row);
+    document.querySelectorAll('.level-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const level = parseInt(this.getAttribute('data-level'));
+            const turretIndex = parseInt(this.getAttribute('data-turret'));
+            const parentButtons = this.parentElement.querySelectorAll('.level-btn');
+            parentButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            const statsContainer = document.getElementById(`turret-stats-${turretIndex}`);
+            updateTurretCardStats(statsContainer, stats[turretIndex], level);
+        });
     });
-    statsSections.appendChild(table);
-}  
+}
+
+function updateTurretCardStats(container, turret, level) {
+    const range = turret.statGrowth.range(level - 1);
+    const damage = turret.statGrowth.damage(level - 1);
+    const cooldown = turret.statGrowth.cooldown(level - 1);
+    const cost = turret.upgradeCost(level - 1);
+
+    const levelAbility = turret.levelAbilities[level] || turret.ability;
+    
+    const slowEffect = turret.name === "Froster" 
+        ? `<div class="quick-stat">
+            <span class="stat-label">Slow Effect:</span>
+            <span class="stat-value">${(100 - turret.statGrowth.slowEffect(level - 1) * 100).toFixed(0)}% slower</span>
+           </div>` 
+        : '';
+    
+    container.innerHTML = `
+        <h4 class="stats-level-indicator">Level ${level} Stats</h4>
+        <div class="level-ability-display">
+            <span class="ability-label">Level ${level} Ability</span>
+            <span class="ability-text">${levelAbility}</span>
+        </div>
+        <div class="turret-quick-stats">
+            <div class="quick-stat">
+                <span class="stat-label">Range:</span>
+                <span class="stat-value">${range === Infinity ? '∞' : range}</span>
+            </div>
+            <div class="quick-stat">
+                <span class="stat-label">Damage:</span>
+                <span class="stat-value">${damage}</span>
+            </div>
+            <div class="quick-stat">
+                <span class="stat-label">Fire Rate:</span>
+                <span class="stat-value">${getSpeedRating(cooldown)}</span>
+            </div>
+            <div class="quick-stat">
+                <span class="stat-label">Cost:</span>
+                <span class="stat-value">$${cost}</span>
+            </div>
+            ${slowEffect}
+        </div>
+        <div class="shots-per-second">
+            <span>${getFireRateDescription(cooldown)}</span>
+        </div>
+    `;
+}
+
+
+function getSpeedRating(cooldown) {
+    if (cooldown < 10) return "Very Fast";
+    if (cooldown < 40) return "Fast";
+    if (cooldown < 120) return "Medium";
+    if (cooldown < 200) return "Slow";
+    return "Very Slow";
+}
+
+
+function getFireRateDescription(cooldown) {
+    const shotsPerSecond = Math.round((60 / cooldown) * 10) / 10;
+    return `${shotsPerSecond}/sec (${getSpeedRating(cooldown)})`;
+}
+
 function populatePowerUps() {
     const powerUps = [
         {
@@ -228,7 +311,6 @@ function populatePowerUps() {
     const container = document.getElementById("powerups-container");
     container.innerHTML = '';
 
-    // Create power-ups grid
     const powerUpGrid = document.createElement("div");
     powerUpGrid.className = "powerup-overview-grid";
 
@@ -273,7 +355,6 @@ function populatePowerUps() {
 
     container.appendChild(powerUpGrid);
 
-    // Add usage guide
     const usageGuide = document.createElement("div");
     usageGuide.className = "powerup-usage-guide";
     usageGuide.innerHTML = `
