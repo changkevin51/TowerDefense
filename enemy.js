@@ -103,8 +103,7 @@ class Enemy {
                 this.animationTimer = 0;
                 this.currentFrameSet = this.frontFrames;
                 this.size = 45;
-                break;
-            case 'boss':
+                break;            case 'boss':
                 this.frontFrames = bossFrontFrames;
                 this.rightFrames = bossRightFrames;
                 this.backFrames = bossBackFrames;
@@ -115,24 +114,31 @@ class Enemy {
                 this.maxHealth *= 3; 
                 this.strength = this.maxHealth;
                 this.speed *= 0.5;
-                  
+                this.canSpawnMinions = false;
+                break;
+            case 'ship':
+                this.frames = shipFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.size = 80; 
+                this.maxHealth *= 4; 
+                this.strength = this.maxHealth;
+                this.speed *= 0.4;
+                this.hasDirectionalFrames = false; 
                 this.canSpawnMinions = true;
-                this.spawnThresholds = [0.8, 0.5, 0.3]; 
-                this.spawnedAtThreshold = [false, false, false]; 
+                this.spawnThresholds = [0.8, 0.4]; 
+                this.spawnedAtThreshold = [false, false]; 
                 this.isSpawningMinions = false;
                 this.lastSpawnTime = 0;
                 this.needsToResumeMovement = false; 
-                
-                
                 const waveMultiplier = Math.floor(waveNumber / 5);
-                this.minionsPerSpawn = Math.min(6, 2 + waveMultiplier); 
-                
+                this.minionsPerSpawn = Math.min(4, 3 + waveMultiplier); 
                 
                 this.spawnCooldown = isEasyMode ? 2000 : isHardMode ? 1000 : 1500;
                 this.minionTypes = waveNumber <= 5 ? ['robo1', 'robo2', 'robo3'] : 
                                    waveNumber <= 15 ? ['robo1', 'robo2', 'robo3', 'heavy', 'fast'] : 
                                    ['robo1', 'robo2', 'robo3', 'heavy', 'fast', 'stealth', 'bomb'];
-                break;
+                break;            
             case 'miniboss1':
                 this.frontFrames = miniboss1FrontFrames;
                 this.rightFrames = miniboss1RightFrames;
@@ -144,6 +150,7 @@ class Enemy {
                 this.maxHealth *= 1.8;
                 this.strength = this.maxHealth;
                 this.speed *= 0.8;
+                this.canSpawnMinions = false; 
                 break;
             case 'miniboss2':
                 this.frontFrames = miniboss2FrontFrames;
@@ -156,6 +163,7 @@ class Enemy {
                 this.maxHealth *= 1.7;
                 this.strength = this.maxHealth;
                 this.speed *= 0.8;
+                this.canSpawnMinions = false; 
                 break;
             case 'miniboss3':
                 this.frontFrames = miniboss3FrontFrames;
@@ -168,6 +176,7 @@ class Enemy {
                 this.maxHealth *= 1.7;
                 this.strength = this.maxHealth;
                 this.speed *= 0.8;
+                this.canSpawnMinions = false; 
                 break;
             case 'bomb':
                 this.frames = bombFrames;
@@ -176,8 +185,23 @@ class Enemy {
                 this.animationTimer = 0;
                 this.size = 48; 
                 break;
+            case 'boss':
+                this.frontFrames = bossFrontFrames;
+                this.rightFrames = bossRightFrames;
+                this.backFrames = bossBackFrames;
+                this.animationIndex = 0;
+                this.animationTimer = 0;
+                this.currentFrameSet = this.frontFrames;
+                this.size = 64;
+                this.maxHealth *= 2.4; 
+                this.strength = this.maxHealth;
+                this.speed *= 0.6;
+                this.canSpawnMinions = false;
+                break;
             default:
                 console.error(`Unknown enemy type: ${type}`);
+
+                
         }
 
     }
@@ -248,9 +272,8 @@ class Enemy {
         if (this.isStealth) {
             tint(128, 128, 128);
         } else if (this.isSlowed) {
-            tint(89, 192, 225);
-        } else if (this.type === 'boss' && this.isSpawningMinions) {
-            
+            tint(89, 192, 225);        } else if (this.type === 'ship' && this.isSpawningMinions) {
+            // Ship spawning minions effect
             tint(255, 150, 0, 200 + sin(millis() / 100) * 55);
         } else if (this.isSpawned && millis() - this.spawnTime < this.spawnEffectDuration) {
             
@@ -258,12 +281,10 @@ class Enemy {
             tint(255, 200, 0, 255 * (1 - progress * 0.5));
             
             
-            this.spawnScale = 0.1 + progress * 0.9; 
-        } if (this.type === 'robo1' || this.type === 'robo2' || this.type === 'robo3' || 
+            this.spawnScale = 0.1 + progress * 0.9;        }        if (this.type === 'robo1' || this.type === 'robo2' || this.type === 'robo3' || 
             this.type === 'heavy' || this.type === 'fast' || this.type === 'stealth' ||
-            this.type === 'healer' ||
-            this.type === 'miniboss1' || this.type === 'miniboss2' || this.type === 'miniboss3' ||
-            this.type === 'boss') {
+            this.type === 'healer' || this.type === 'boss' ||
+            this.type === 'miniboss1' || this.type === 'miniboss2' || this.type === 'miniboss3') {
             
             if (abs(this.xSpeed) > abs(this.ySpeed)) {
                 this.currentFrameSet = this.xSpeed > 0 ? this.rightFrames : this.rightFrames;
@@ -293,6 +314,31 @@ class Enemy {
                       scaledSize);
             } else {
                 image(roboImg, this.x - this.size, this.y - this.size + floatOffset, this.size*2, this.size*2);
+            }
+        }        else if (this.type === 'ship') {
+            // Ship animation (no directional frames)
+            if (this.animationTimer % 12 === 0) {
+                if (!this.frames || !this.frames.length) {
+                    console.error('No animation frames for ship');
+                    pop();
+                    return;
+                }
+                this.animationIndex = (this.animationIndex + 1) % this.frames.length;
+            }
+            this.animationTimer++;
+            
+            let floatOffset = sin(millis() / 250) * 3;
+            let shipImg = this.frames[this.animationIndex];
+            
+            if (this.isSpawned && this.spawnScale < 1 && millis() - this.spawnTime < this.spawnEffectDuration) {
+                const scaledSize = this.size * 2 * this.spawnScale;
+                image(shipImg, 
+                      this.x - scaledSize/2, 
+                      this.y - scaledSize/2 + floatOffset, 
+                      scaledSize, 
+                      scaledSize);
+            } else {
+                image(shipImg, this.x - this.size, this.y - this.size + floatOffset, this.size*2, this.size*2);
             }
         }
         else if (this.type === 'bomb') {
@@ -540,7 +586,7 @@ class Enemy {
         }
     
         
-        if (this.type === 'boss' && this.canSpawnMinions && !this.isExploding) {
+        if (this.type === 'ship' && this.canSpawnMinions && !this.isExploding) {
             
             for (let i = 0; i < this.spawnThresholds.length; i++) {
                 const healthRatio = this.strength / this.maxHealth;

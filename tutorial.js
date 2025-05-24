@@ -295,8 +295,7 @@ function populateEnemies() {
       waves: "Every 3rd wave after wave 4",
       healthMultiplier: 1,
       speedMultiplier: 0.8,
-    },
-    {
+    },    {
       type: "Miniboss",
       frames: {
         front: "images/enemies/miniboss1/front00",
@@ -308,18 +307,30 @@ function populateEnemies() {
       waves: "Every 5th wave",
       healthMultiplier: 1.7,
       speedMultiplier: 0.8,
-    },
-    {
+    },    {
       type: "Boss",
       frames: {
         front: "images/enemies/boss/front00",
         right: "images/enemies/boss/right00",
-        back: "images/enemies/boss/back00"
+        back: "images/enemies/boss/back00" 
       },
       frameCount: 6,
-      abilities: "Extremely high health, spawns minions once in a while",
-      waves: "Every 8th wave",
-      healthMultiplier: 3,
+      abilities: "Very high health, Nonchalant",
+      waves: "Every 5th wave",
+      healthMultiplier: 2.2,
+      speedMultiplier: 0.6,
+    },
+    {
+      type: "Ship Boss",
+      frames: {
+        front: "images/enemies/ship/tile00",
+        right: "images/enemies/ship/tile00",
+        back: "images/enemies/ship/tile00"
+      },
+      frameCount: 6,
+      abilities: "Massive ship with extremely high health, spawns minions",
+      waves: "Every 10th wave",
+      healthMultiplier: 2.65,
       speedMultiplier: 0.5,
     }
   ];

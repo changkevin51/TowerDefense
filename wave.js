@@ -15,8 +15,7 @@ class Wave {
         this.gameSpeed = gameSpeed;
         this.isBossWave = false;
         this.bonusGiven = false; 
-        this.movementSpeed = 2.25
-        
+        this.movementSpeed = 2.25;
     }
 
     updateDifficulty() {
@@ -70,11 +69,10 @@ class Wave {
             const waveMultiplier = Math.floor(this.number / 5);
             const baseMinibossCount = 2 + Math.floor((this.number - 5) / 10);
             const isMegaBossWave = this.number % 10 === 0;
-            
-            if (this.timeToSpawn(this.currentGroup, this.currentMember)) {
+              if (this.timeToSpawn(this.currentGroup, this.currentMember)) {
                 let health = this.enemyMaxHealth;
-                
                 if (this.currentGroup === 0) {
+                    // spawn original minibosses
                     health *= (1.5 + (waveMultiplier * 0.2));
                     const enemyTypes = ['miniboss1', 'miniboss2', 'miniboss3'];
                     const randomType = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
@@ -84,13 +82,21 @@ class Wave {
                     if (this.currentMember >= baseMinibossCount) {
                         this.currentGroup++;
                         this.currentMember = 0;
-                        if (!isMegaBossWave) this.active = false;
                     }                
-                } else if (isMegaBossWave && this.currentGroup === 1) {
-                    health *= (waveMultiplier * 2);
-                    // Pass the current wave number for boss minion spawning logic
-                    waveNumber = this.number; // Ensure waveNumber is up to date
-                    enemies.push(new Enemy(health, 2.8, levelOneNodes, health, 'boss'));
+                } else if (this.currentGroup === 1) {
+                    if (isMegaBossWave) {
+                        // spawn the ship boss
+                        health *= (waveMultiplier * 2.65);
+                        waveNumber = this.number;
+                        enemies.push(new Enemy(health, 2.8, levelOneNodes, health, 'ship'));
+                    } else {
+                        // spawn the elite miniboss
+                        health *= (waveMultiplier * 2.5);
+                        enemies.push(new Enemy(health, 2.8, levelOneNodes, health, "boss"));
+
+                        waveNumber = this.number;
+                        console.log("spawning boss");
+                    }
                     this.currentGroup++;
                     this.active = false;
                 }

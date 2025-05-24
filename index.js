@@ -84,6 +84,7 @@ let healerBackFrames = [];
 let bossFrontFrames = [];
 let bossRightFrames = [];
 let bossBackFrames = [];
+let shipFrames = [];
 let miniboss1FrontFrames = [];
 let miniboss1RightFrames = [];
 let miniboss1BackFrames = [];
@@ -191,6 +192,10 @@ let hoveredTurret = null;
         bossFrontFrames.push(loadImage(`images/enemies/boss/front00${i}.png`));
         bossRightFrames.push(loadImage(`images/enemies/boss/right00${i}.png`));
         bossBackFrames.push(loadImage(`images/enemies/boss/back00${i}.png`));
+    }
+
+    for (let i = 0; i < 6; i++) {
+        shipFrames.push(loadImage(`images/enemies/ship/tile00${i}.png`));
     }
 
     for (let i = 0; i < 6; i++) {

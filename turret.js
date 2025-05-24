@@ -1044,7 +1044,7 @@ class MachineGunTurret extends Turret {
             strokeWeight(1);
             stroke('black');
             fill(255, 100, 100, 50);
-            ellipse(this.x, this.y, 1500, 1500); // Big visual indicator for infinite range
+            ellipse(this.x, this.y, 1500, 1500); 
             pop();
         }
 

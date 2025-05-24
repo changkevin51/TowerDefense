@@ -16,7 +16,7 @@ class Projectile {
     draw() {
         push();
         translate(this.x, this.y);
-        rotate(this.angle); // Add 90 degrees since image points down
+        rotate(this.angle); 
         imageMode(CENTER);
         image(projectileImg, 0, 0, this.size*2.4, this.size*3);
         pop();
@@ -48,7 +48,7 @@ class PiercingProjectile extends Projectile {
         this.parentTurret = parentTurret;
         this.angle = atan2(ySpeed, xSpeed);
         this.speedMultiplier = 1.0;
-        this.speedIncrement = 0.05; // Increase speed by 5% each frame
+        this.speedIncrement = 0.05; // increase speed by 5% each frame
     }
     move() {
         this.speedMultiplier += this.speedIncrement;
@@ -65,7 +65,6 @@ class PiercingProjectile extends Projectile {
             imageMode(CENTER);
             image(wizardProjectileImage, 0, 0, this.size, this.size);
         } else {
-            // Fallback if image not loaded
             fill(0, 255, 0);
             ellipse(0, 0, this.size, this.size);
         }
@@ -81,28 +80,18 @@ class PiercingProjectile extends Projectile {
 
         for (let enemy of enemies) {
             if (!this.hitEnemies.has(enemy) && CircleInCircle(this, enemy)) {
-                // Reduce enemy's strength
                 enemy.strength -= this.strength;
-
-                // Add to total damage dealt
                 this.totalDamageDealt += this.strength;
-
-                // Update turret's damage counter
                 if (this.parentTurret) {
                     this.parentTurret.totalDamage += this.strength;
                 }
-
-                // Handle enemy death
                 if (enemy.strength <= 0 && !enemy.isExploding) {
-                    enemy.strength = 0; // Ensure it doesn't go negative
-                    enemy.explode(); // Trigger the explosion
+                    enemy.strength = 0; 
+                    enemy.explode(); 
                 }
 
-                // Award money and update UI
                 money += Math.round(this.strength * 0.5);
                 updateInfo();
-
-                // Mark this enemy as hit
                 this.hitEnemies.add(enemy);
             }
         }
@@ -142,12 +131,12 @@ class SnowballProjectile extends Projectile {
 
                 enemy.isSlowed = true;
                 enemy.slowEndTime = millis() + this.slowDuration;
-                enemy.slowFactor = 0.6;
+                enemy.slowFactor = 0.65;
 
-                if (this.stunDuration > 0 && enemy.type !== 'boss' && enemy.type !== 'miniboss1' && enemy.type !== 'miniboss2' && enemy.type !== 'miniboss3') {
+                if (this.stunDuration > 0 && enemy.type !== 'ship' && enemy.type !== 'boss' && enemy.type !== 'miniboss1' && enemy.type !== 'miniboss2' && enemy.type !== 'miniboss3') {
                     enemy.isStunned = true;
                     enemy.stunEndTime = millis() + this.stunDuration;
-                } else if (this.stunDuration > 0 && (enemy.type === 'boss' || enemy.type === 'miniboss1' || enemy.type === 'miniboss2' || enemy.type === 'miniboss3')) {
+                } else if (this.stunDuration > 0 && (enemy.type === 'ship' || enemy.type === 'boss' || enemy.type === 'miniboss1' || enemy.type === 'miniboss2' || enemy.type === 'miniboss3')) {
                     // apply a stronger slow effect instead of stun for bosses
                     enemy.slowFactor = 0.5; 
                     enemy.slowEndTime = millis() + this.slowDuration; 
