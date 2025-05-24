@@ -208,11 +208,17 @@
           </div>
         </div>
         <div id="menuButtons">
-          
-          <button class="hoverButton" id="buyText" onclick="handleBuyTurretClick()"> <!-- MODIFIED onclick handler -->
+            <button class="hoverButton" id="buyText" onclick="handleBuyTurretClick()"> <!-- MODIFIED onclick handler -->
           </button>
 
           <div id="turretMenu" style="display: none;"> 
+          </div>
+
+          <button class="hoverButton" id="powerUpText" onclick="handleBuyPowerUpClick()">
+            Power-Up Store <img src="images/abilities/speedboost.png" alt="Power-Up Store" style="width: 20px; height: 20px; vertical-align: middle;">
+          </button>
+
+          <div id="powerUpMenu" style="display: none;">
           </div>
           
           <button id="startWaveButton" class="hoverButton" onclick="toggleAutoStart()" onmouseover="checkWave()">

@@ -1,5 +1,6 @@
 var playing = true;
 var sandImg
+var speedBoostEffectImg;
 var levelOneNodes = [
     {x: -100, y: 50},
     {x: 100, y: 50},
@@ -107,7 +108,7 @@ let hoveredTurret = null;
     sandImg = loadImage("images/sand.jpg");
     snowballImg = loadImage('images/snowball.png');
     projectileImg = loadImage('images/shooter/shooterProjectile.png');
-
+    speedBoostEffectImg = loadImage('images/effects/speedboost.png');
     bombEnemyImage = loadImage('images/enemies/bomb.png');
     explosionImage = loadImage('images/explosion.png');
 
@@ -414,6 +415,7 @@ function draw() {
         filterArrays();
         checkCollision();
         wave.update();
+        updateSpeedBoostEffect();
 
         if (enemies.length > 0 || wave.active) {
             showStartArrow = false;

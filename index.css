@@ -1820,3 +1820,24 @@ table td {
 .popup.minion-warning.show {
     opacity: 1;
 }
+
+
+#powerUpMenu.power-up-shop-active {
+    display: flex !important; 
+    flex-direction: column;
+    align-items: center;
+    /* justify-content: space-between; */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(20, 20, 20, 0.95); 
+    backdrop-filter: blur(8px);
+    border-radius: 0 15px 15px 0; 
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 150; 
+    font-family: 'Exo 2', sans-serif;
+    overflow: visible; 
+}

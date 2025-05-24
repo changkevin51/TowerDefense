@@ -9,8 +9,8 @@ let machinegunFrames = [];
 let machinegunHolderImg;
 
 class Turret {
-    constructor(type, x, y, projectileImgResource, idleFrameResource, animationFrames, holderImgResource, roadsData) { // Updated signature
-        this.type = type; // Added type initialization
+    constructor(type, x, y, projectileImgResource, idleFrameResource, animationFrames, holderImgResource, roadsData) {
+        this.type = type;
         this.roads = roadsData;
         this.x = x;
         this.y = y;
@@ -18,7 +18,7 @@ class Turret {
         this.gunSize = 37.5;
         this.range = 150;
         this.lookAngle = 0;
-        this.placed = true; // Turrets created via placeSelectedTurret are placed
+        this.placed = true;
         this.selected = false;
         this.projectileSpeed = 8.5;
         this.projectileStrength = 1;
@@ -30,14 +30,13 @@ class Turret {
         this.gameSpeed = gameSpeed;
         this.isStunned = false;
         this.stunEndTime = 0;
-        this.stunImg = stunImg; // Use preloaded stunImg from index.js
+        this.stunImg = stunImg;
         this.totalDamage = 0;
         this.frameNumber = 0;
         this.isAnimating = false;
         this.animationSpeed = 8;
         this.lastAngle = 0;
         
-        // Assign passed image resources
         this.projectileImg = projectileImgResource; 
         this.turretFrames = animationFrames;     // Animation frames
         this.turretHolderImg = holderImgResource; // Base/holder image
@@ -105,9 +104,19 @@ class Turret {
         if (this.isStunned) {
             image(this.stunImg, this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
         }
+        
+        if (activeSpeedBoost.active && this.placed) {
+            push();
+            tint(255, 255, 255, 150);
+            imageMode(CENTER);
+            image(speedBoostEffectImg, this.x, this.y, this.size * 1.8, this.size * 1.8);
+            noTint();
+            imageMode(CORNER);
+            pop();
+        }
     }
     
-    
+
     chooseColor() {
         if(this.selected) {
             return "blue";
@@ -490,6 +499,16 @@ function unselectAllTurrets() {
         if (this.isStunned) {
             image(this.stunImg, this.x - this.size/2, this.y - this.size/2, this.size, this.size);
         }
+
+        if (activeSpeedBoost.active && this.placed) {
+            push();
+            tint(255, 255, 255, 150);
+            imageMode(CENTER);
+            image(speedBoostEffectImg, this.x, this.y, this.size * 1.8, this.size * 1.8);
+            noTint();
+            imageMode(CORNER);
+            pop();
+        }
     }
 
     chooseColor() {
@@ -841,6 +860,16 @@ class WizardTurret extends Turret {
         if (this.isStunned) {
             image(this.stunImg, this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
         }
+
+        if (activeSpeedBoost.active && this.placed) {
+            push();
+            tint(255, 255, 255, 150);
+            imageMode(CENTER);
+            image(speedBoostEffectImg, this.x, this.y, this.size * 1.8, this.size * 1.8);
+            noTint();
+            imageMode(CORNER);
+            pop();
+        }
     }
 }
 
@@ -956,6 +985,16 @@ class FrosterTurret extends Turret {
         if (this.isStunned) {
             image(this.stunImg, this.x - this.size/2, this.y - this.size/2, this.size, this.size);
         }
+
+        if (activeSpeedBoost.active && this.placed) {
+            push();
+            tint(255, 255, 255, 150);
+            imageMode(CENTER);
+            image(speedBoostEffectImg, this.x, this.y, this.size * 1.8, this.size * 1.8);
+            noTint();
+            imageMode(CORNER);
+            pop();
+        }
     }
 
     targetEnemy() {
@@ -1000,9 +1039,7 @@ class FrosterTurret extends Turret {
             if (!this.placed) {
                 this.followMouse();
             } else {
-                if (millis() >= this.animationEndTime) {
-                    this.targetEnemy();
-                }
+                this.targetEnemy();
             }
         }
         this.draw();
@@ -1084,6 +1121,16 @@ class MachineGunTurret extends Turret {
 
         if (this.isStunned) {
             image(this.stunImg, this.x - this.size/2, this.y - this.size/2, this.size, this.size);
+        }
+
+        if (activeSpeedBoost.active && this.placed) {
+            push();
+            tint(255, 255, 255, 150);
+            imageMode(CENTER);
+            image(speedBoostEffectImg, this.x, this.y, this.size * 1.8, this.size * 1.8);
+            noTint();
+            imageMode(CORNER);
+            pop();
         }
     }
 

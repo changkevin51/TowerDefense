@@ -98,6 +98,15 @@ function updateInfo() {
     if (shopHealth) shopHealth.innerHTML = health;
     if (shopWave) shopWave.innerHTML = waveNumber;
     
+    // Update power-up shop displays
+    const powerUpShopMoney = document.getElementById("powerUpShopMoney");
+    const powerUpShopHealth = document.getElementById("powerUpShopHealth");
+    const powerUpShopWave = document.getElementById("powerUpShopWave");
+    
+    if (powerUpShopMoney) powerUpShopMoney.innerHTML = `$${money}`;
+    if (powerUpShopHealth) powerUpShopHealth.innerHTML = health;
+    if (powerUpShopWave) powerUpShopWave.innerHTML = waveNumber;
+    
     const turret = getTurretBeingSelected();
     if (turret) {
         showSelectedTurretInfo(turret);
@@ -642,11 +651,19 @@ function restartGame() {
     
     const turretInfo = document.getElementById('turretInfo');
     turretInfo.style.display = 'none';
-    
-    const turretMenu = document.getElementById('turretMenu');
+      const turretMenu = document.getElementById('turretMenu');
     if (turretMenu) {
        closeTurretShop(true); 
     }
+    
+    // Reset power-up states
+    const powerUpMenu = document.getElementById('powerUpMenu');
+    if (powerUpMenu) {
+        closePowerUpShop();
+    }
+    activeSpeedBoost.active = false;
+    activeSpeedBoost.endTime = 0;
+    activeSpeedBoost.originalCooldowns.clear();
     
     updateInfo();
     updateWaveButtonText();
@@ -801,4 +818,220 @@ function changeTargetMode() {
         turret.targetMode = (turret.targetMode + 1) % 4;  
         checkTargetMode();  
     }
+}
+
+// Power-up store
+let selectedPowerUpType = null;
+let isActivatingPowerUp = false;
+
+const powerUpsStaticInfo = {
+    'speedBoost': {
+        name: 'Speed Boost',
+        description: 'Makes all turrets shoot 50% faster for 5 seconds (scaled with game speed)',
+        getCost: () => 75 + wave.number * 20,
+        image: 'images/abilities/speedboost.png',
+        icon: 'speedboost.png',
+        type: 'speedBoost'
+    }
+};
+
+let activeSpeedBoost = {
+    active: false,
+    endTime: 0,
+    originalCooldowns: new Map()
+};
+
+function handleBuyPowerUpClick() {
+    const powerUpMenu = document.getElementById('powerUpMenu');
+    const gameMenu = document.getElementById('gameMenu');
+    const menuButtons = document.getElementById('menuButtons');
+    
+    if (powerUpMenu.classList.contains('power-up-shop-active')) {
+        closePowerUpShop();
+    } else {
+        if (isPopupActive) {
+            showSelectedTurretInfo(null);
+        }
+        turrets.forEach(t => t.selected = false);
+        powerUpMenu.innerHTML = '';
+        powerUpMenu.classList.add('power-up-shop-active');
+        if (gameMenu) gameMenu.classList.add('shop-open');
+        if (menuButtons) {
+            Array.from(menuButtons.children).forEach(button => {
+                if (button.id !== 'powerUpText' && button.id !== 'powerUpMenu') { 
+                    button.style.display = 'none';
+                }
+            });
+        }
+        const powerUpTextButton = document.getElementById('powerUpText');
+        if (powerUpTextButton) powerUpTextButton.style.display = 'none';
+        
+        const shopTitle = document.createElement('div');
+        shopTitle.className = 'shop-title';
+        shopTitle.textContent = 'POWER-UP STORE';
+        powerUpMenu.appendChild(shopTitle);
+        
+        const shopHeader = document.createElement('div');
+        shopHeader.className = 'turret-shop-header';
+        const moneyDisplay = document.createElement('div');
+        moneyDisplay.className = 'shop-stat';
+        moneyDisplay.innerHTML = `
+            <img src="images/money.png" alt="Money">
+            <div id="powerUpShopMoney" class="shop-stat-value">$${money}</div>
+        `;
+        const healthDisplay = document.createElement('div');
+        healthDisplay.className = 'shop-stat';
+        healthDisplay.innerHTML = `
+            <img src="images/health.png" alt="Health">
+            <div id="powerUpShopHealth" class="shop-stat-value">${health}</div>
+        `;
+        const waveDisplay = document.createElement('div');
+        waveDisplay.className = 'shop-stat';
+        waveDisplay.innerHTML = `
+            <img src="images/wave.png" alt="Wave">
+            <div id="powerUpShopWave" class="shop-stat-value">${waveNumber}</div>
+        `;
+        shopHeader.appendChild(moneyDisplay);
+        shopHeader.appendChild(healthDisplay);
+        shopHeader.appendChild(waveDisplay);
+        powerUpMenu.appendChild(shopHeader);
+        
+        const shopGrid = document.createElement('div');
+        shopGrid.className = 'turret-shop-grid';
+        
+        for (const type in powerUpsStaticInfo) {
+            const powerUpInfo = powerUpsStaticInfo[type];
+            const currentCost = powerUpInfo.getCost();
+            const canAfford = money >= currentCost;
+            const isActive = (type === 'speedBoost' && activeSpeedBoost.active);
+            
+            const item = document.createElement('div');
+            item.className = 'turret-shop-item';
+            if (!canAfford || isActive) {
+                item.className += ' disabled';
+            }
+            item.onclick = (canAfford && !isActive) ? () => activatePowerUp(type) : null;
+            
+            const img = document.createElement('img');
+            img.src = powerUpInfo.image;
+            img.alt = powerUpInfo.name;
+            
+            const name = document.createElement('div');
+            name.className = 'turret-name';
+            name.textContent = powerUpInfo.name;
+            
+            const price = document.createElement('div');
+            price.className = 'price-tag';
+            if (isActive) {
+                price.textContent = 'ACTIVE';
+                price.style.color = '#4CAF50';
+            } else {
+                price.textContent = `$${currentCost}`;
+            }
+            
+            item.appendChild(img);
+            item.appendChild(name);
+            item.appendChild(price);
+            
+            const tooltip = document.createElement('div');
+            tooltip.className = 'turret-tooltip';
+            tooltip.innerHTML = `
+                <div class="tooltip-title">${powerUpInfo.name}</div>
+                <div class="tooltip-description">${powerUpInfo.description}</div>
+                <div class="tooltip-stats">
+                    <div class="stat-label">Cost:</div>
+                    <div class="stat-value">$${currentCost}</div>
+                    
+                    <div class="stat-label">Duration:</div>
+                    <div class="stat-value">5 seconds</div>
+                    
+                    <div class="stat-label">Effect:</div>
+                    <div class="stat-value">+50% fire rate</div>
+                </div>
+            `;
+            item.appendChild(tooltip);
+            shopGrid.appendChild(item);
+        }
+        powerUpMenu.appendChild(shopGrid);
+        
+        const cancelButton = document.createElement('button');
+        cancelButton.id = 'cancelPowerUpSelectionButton';
+        cancelButton.textContent = 'Cancel';
+        cancelButton.onclick = closePowerUpShop;
+        powerUpMenu.appendChild(cancelButton);
+    }
+}
+
+function activatePowerUp(type) {
+    const powerUpInfo = powerUpsStaticInfo[type];
+    const currentCost = powerUpInfo.getCost();
+    
+    if (money >= currentCost) {
+        if (type === 'speedBoost') {
+            activateSpeedBoost();
+        }
+        money -= currentCost;
+        updateInfo();
+        closePowerUpShop();
+        showTemporaryMessage(`${powerUpInfo.name} activated!`, "info");
+    } else {
+        showTemporaryMessage(`Not enough money for ${powerUpInfo.name}`, "error");
+    }
+}
+
+function activateSpeedBoost() {
+    if (activeSpeedBoost.active) return;
+    
+    activeSpeedBoost.active = true;
+    activeSpeedBoost.endTime = millis() + (5000 / gameSpeed); // Scale duration with game speed
+    activeSpeedBoost.originalCooldowns.clear();
+    
+    // Store original cooldowns and reduce them by 50%
+    for (let turret of turrets) {
+        if (turret.placed) {
+            activeSpeedBoost.originalCooldowns.set(turret, turret.shootCooldown);
+            turret.shootCooldown = turret.shootCooldown * 0.5; // 50% faster
+        }
+    }
+}
+
+function updateSpeedBoostEffect() {
+    if (activeSpeedBoost.active && millis() >= activeSpeedBoost.endTime) {
+        for (let turret of turrets) {
+            if (activeSpeedBoost.originalCooldowns.has(turret)) {
+                turret.shootCooldown = activeSpeedBoost.originalCooldowns.get(turret);
+            }
+        }
+        activeSpeedBoost.active = false;
+        activeSpeedBoost.originalCooldowns.clear();
+        showTemporaryMessage("Speed Boost ended", "info");
+    }
+    
+    if (activeSpeedBoost.active) {
+        for (let turret of turrets) {
+            if (turret.placed && !activeSpeedBoost.originalCooldowns.has(turret)) {
+                activeSpeedBoost.originalCooldowns.set(turret, turret.shootCooldown);
+                turret.shootCooldown = turret.shootCooldown * 0.5;
+            }
+        }
+    }
+}
+
+function closePowerUpShop() {
+    const powerUpMenu = document.getElementById('powerUpMenu');
+    const gameMenu = document.getElementById('gameMenu');
+    const menuButtons = document.getElementById('menuButtons');
+
+    powerUpMenu.classList.remove('power-up-shop-active');
+    if (gameMenu) gameMenu.classList.remove('shop-open');
+    powerUpMenu.innerHTML = '';
+    if (menuButtons) {
+        Array.from(menuButtons.children).forEach(button => {
+            if (button.id !== 'powerUpMenu') {
+                button.style.display = '';
+            }
+        });
+    }
+    const powerUpTextButton = document.getElementById('powerUpText');
+    if (powerUpTextButton) powerUpTextButton.style.display = '';
 }
