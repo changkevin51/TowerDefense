@@ -660,10 +660,13 @@ function restartGame() {
     const powerUpMenu = document.getElementById('powerUpMenu');
     if (powerUpMenu) {
         closePowerUpShop();
-    }
-    activeSpeedBoost.active = false;
+    }    activeSpeedBoost.active = false;
     activeSpeedBoost.endTime = 0;
     activeSpeedBoost.originalCooldowns.clear();
+    
+    activeHealthReduction.active = false;
+    activeHealthReduction.affectedEnemies.clear();
+    activeHealthReduction.tintEndTime = 0;
     
     updateInfo();
     updateWaveButtonText();
@@ -784,7 +787,6 @@ function getTurretTypeSize(type) {
     }
 }
 
-// Wave and game state UI functions
 function checkWave() {
     var text = "";
     if (wave.active == false && enemies.length == 0) {
@@ -804,11 +806,10 @@ function toggleAutoStart() {
     }
 }
 
-// Turret management UI functions
 function unselectAllTurrets() {
     turrets.forEach(t => t.selected = false);
 
-    updateInfo(); // Update UI if deselection affects it
+    updateInfo(); 
     // console.log("All turrets deselected / Unplaced turrets removed (if any).");
 }
 
@@ -832,6 +833,14 @@ const powerUpsStaticInfo = {
         image: 'images/abilities/speedboost.png',
         icon: 'speedboost.png',
         type: 'speedBoost'
+    },
+    'healthReduction': {
+        name: 'Health Reduction',
+        description: 'Reduces health of all enemies by 70% (30% for bosses/minibosses)',
+        getCost: () => 150 + wave.number * 35,
+        image: 'images/abilities/healthreduced.png',
+        icon: 'healthreduced.png',
+        type: 'healthReduction'
     }
 };
 
@@ -839,6 +848,12 @@ let activeSpeedBoost = {
     active: false,
     endTime: 0,
     originalCooldowns: new Map()
+};
+
+let activeHealthReduction = {
+    active: false,
+    affectedEnemies: new Set(),
+    tintEndTime: 0
 };
 
 function handleBuyPowerUpClick() {
@@ -898,12 +913,12 @@ function handleBuyPowerUpClick() {
         
         const shopGrid = document.createElement('div');
         shopGrid.className = 'turret-shop-grid';
-        
-        for (const type in powerUpsStaticInfo) {
+          for (const type in powerUpsStaticInfo) {
             const powerUpInfo = powerUpsStaticInfo[type];
             const currentCost = powerUpInfo.getCost();
             const canAfford = money >= currentCost;
-            const isActive = (type === 'speedBoost' && activeSpeedBoost.active);
+            const isActive = (type === 'speedBoost' && activeSpeedBoost.active) || 
+                            (type === 'healthReduction' && activeHealthReduction.active);
             
             const item = document.createElement('div');
             item.className = 'turret-shop-item';
@@ -932,9 +947,28 @@ function handleBuyPowerUpClick() {
             item.appendChild(img);
             item.appendChild(name);
             item.appendChild(price);
-            
-            const tooltip = document.createElement('div');
+              const tooltip = document.createElement('div');
             tooltip.className = 'turret-tooltip';
+            
+            let tooltipStats = '';
+            if (type === 'speedBoost') {
+                tooltipStats = `
+                    <div class="stat-label">Duration:</div>
+                    <div class="stat-value">5 seconds</div>
+                    
+                    <div class="stat-label">Effect:</div>
+                    <div class="stat-value">+50% fire rate</div>
+                `;
+            } else if (type === 'healthReduction') {
+                tooltipStats = `
+                    <div class="stat-label">Duration:</div>
+                    <div class="stat-value">Instant</div>
+                    
+                    <div class="stat-label">Effect:</div>
+                    <div class="stat-value">-70% enemy HP (-30% bosses)</div>
+                `;
+            }
+            
             tooltip.innerHTML = `
                 <div class="tooltip-title">${powerUpInfo.name}</div>
                 <div class="tooltip-description">${powerUpInfo.description}</div>
@@ -942,11 +976,7 @@ function handleBuyPowerUpClick() {
                     <div class="stat-label">Cost:</div>
                     <div class="stat-value">$${currentCost}</div>
                     
-                    <div class="stat-label">Duration:</div>
-                    <div class="stat-value">5 seconds</div>
-                    
-                    <div class="stat-label">Effect:</div>
-                    <div class="stat-value">+50% fire rate</div>
+                    ${tooltipStats}
                 </div>
             `;
             item.appendChild(tooltip);
@@ -969,6 +999,8 @@ function activatePowerUp(type) {
     if (money >= currentCost) {
         if (type === 'speedBoost') {
             activateSpeedBoost();
+        } else if (type === 'healthReduction') {
+            activateHealthReduction();
         }
         money -= currentCost;
         updateInfo();
@@ -993,6 +1025,32 @@ function activateSpeedBoost() {
             turret.shootCooldown = turret.shootCooldown * 0.5; // 50% faster
         }
     }
+}
+
+function activateHealthReduction() {
+    activeHealthReduction.active = true;
+    activeHealthReduction.tintEndTime = millis() + 500; // Red tint for 0.5 seconds
+    activeHealthReduction.affectedEnemies.clear();
+    
+    for (let enemy of enemies) {
+        if (enemy.strength <= 0 || enemy.isExploding) continue;
+        
+        let reductionPercent = 0.7; 
+        
+        if (enemy.type === 'boss' || enemy.type === 'ship' || 
+            enemy.type === 'miniboss1' || enemy.type === 'miniboss2' || enemy.type === 'miniboss3') {
+            reductionPercent = 0.3; 
+        }
+
+        const healthReduction = Math.ceil(enemy.strength * reductionPercent);
+        enemy.strength = Math.max(1, enemy.strength - healthReduction);
+        activeHealthReduction.affectedEnemies.add(enemy);
+    }
+    
+    setTimeout(() => {
+        activeHealthReduction.active = false;
+        activeHealthReduction.affectedEnemies.clear();
+    }, 500);
 }
 
 function updateSpeedBoostEffect() {
@@ -1035,3 +1093,5 @@ function closePowerUpShop() {
     const powerUpTextButton = document.getElementById('powerUpText');
     if (powerUpTextButton) powerUpTextButton.style.display = '';
 }
+
+

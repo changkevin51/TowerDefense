@@ -266,14 +266,16 @@ class Enemy {
                 if (index > -1) enemies.splice(index, 1);
             }
             return;
-        }
-    
-        push();
+        }        push();
         if (this.isStealth) {
             tint(128, 128, 128);
         } else if (this.isSlowed) {
-            tint(89, 192, 225);        } else if (this.type === 'ship' && this.isSpawningMinions) {
-            // Ship spawning minions effect
+            tint(89, 192, 225);
+        } else if (activeHealthReduction && activeHealthReduction.active && activeHealthReduction.affectedEnemies.has(this)) {
+            // rred tint for health reduction effect
+            tint(255, 100, 100);
+        } else if (this.type === 'ship' && this.isSpawningMinions) {
+            // ship spawning minions effect
             tint(255, 150, 0, 200 + sin(millis() / 100) * 55);
         } else if (this.isSpawned && millis() - this.spawnTime < this.spawnEffectDuration) {
             
