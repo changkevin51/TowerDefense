@@ -1079,7 +1079,7 @@ const turretsStaticInfo = {
         image: 'images/turrets/sniper.png',
         pImage: null,
         size: 50,
-        stats: { damage: "4-28", range: "400-550", firerate: "Slow", effect: "Instant hit", baseRange: 150 }
+        stats: { damage: "4-28", range: "400-550", firerate: "Slow", effect: "Instant hit", baseRange: 400 }
     },
     wizard: {
         name: "Wizard Turret",

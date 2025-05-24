@@ -740,7 +740,7 @@ function drawPlacementPreview(x, y) {
     const turretImage = turretPreviewInfo.pImage; 
     
     const turretSize = getTurretTypeSize(selectedTurretType);
-    const range = turretPreviewInfo.stats.baseRange || parseFloat(turretPreviewInfo.stats.range.split('-')[0]) || 150;
+    const range = turretPreviewInfo.stats.baseRange;
 
     const canPlace = isValidPlacementLocation(x, y, selectedTurretType);
 

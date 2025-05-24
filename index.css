@@ -1319,7 +1319,7 @@ table td {
     max-width: 230px; 
     min-width: 220px; 
     background: linear-gradient(145deg, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.95));
-    color: #fff;
+    color: #FFD700 !important; 
     text-align: left;
     padding: 15px;
     border-radius: 10px;
@@ -1332,6 +1332,10 @@ table td {
     
     box-sizing: border-box; 
     margin: 0;
+}
+
+.turret-tooltip * {
+    color: #FFD700 !important;
 }
 
 
@@ -1373,7 +1377,7 @@ table td {
 }
 
 .tooltip-description {
-    color: #CCC;
+    color: #FFA500 !important;
     margin: 5px 0 8px 0;
     font-style: italic;
     font-size: 0.85em;
@@ -1389,13 +1393,13 @@ table td {
 }
 
 .stat-label {
-    color: #8BC34A;
+    color: #8BC34A !important; 
     font-weight: 600;
     text-align: right;
 }
 
 .stat-value {
-    color: white;
+    color: #FFD700 !important;
 }
 
 #cancelTurretSelectionButton {
