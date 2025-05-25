@@ -1063,13 +1063,13 @@ function showSuccessPopup(message) {
     }, 3000);
 }
 */
-var selectedTurretType = null; // To store the type of turret selected from the shop
-var isPlacingTurret = false; // Flag to indicate if user is in turret placement mode
+var selectedTurretType = null; 
+var isPlacingTurret = false; 
 
 const turretsStaticInfo = {
     shooter: {
         name: "Shooter Turret",
-        image: 'images/turrets/shooter.png', // Path for loadImage
+        image: 'images/turrets/shooter.png', 
         pImage: null, 
         size: 50, 
         stats: { damage: "1-4", range: "150-250", firerate: "Medium", effect: "None", baseRange: 150 } 

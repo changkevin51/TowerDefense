@@ -369,7 +369,7 @@
 .stat-value {
     font-size: 16px;
     font-weight: 700;
-    color: #2c3e50;
+    color: #e99042 !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
