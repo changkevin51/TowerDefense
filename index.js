@@ -424,10 +424,10 @@ function draw() {
         push();
         imageMode(CORNER);
         image(settingsImg, width - 60, 10, 60, 60);
-        pop();
-    }
+        pop();    }
 
     updateTurretHoverInfo();
+    updateCancelOverlayHoverEffect();
 }
 
 
@@ -778,12 +778,14 @@ function placeSelectedTurret(x, y) {
     money -= currentCost;
     updateDynamicTurretPrice(selectedTurretType);
     turrets.push(newTurret);
-    updateInfo();
-    // console.log(`${turretInfo.name} placed at (${x}, ${y}). Money left: ${money}. New price for ${selectedTurretType}: ${getCurrentTurretCost(selectedTurretType)}`);
+    updateInfo();    // console.log(`${turretInfo.name} placed at (${x}, ${y}). Money left: ${money}. New price for ${selectedTurretType}: ${getCurrentTurretCost(selectedTurretType)}`);
 
     isPlacingTurret = false;
     selectedTurretType = null;
     document.getElementById('gameCanvas').style.cursor = 'default';
+    if (typeof updateCancelSelectionOverlay === 'function') {
+        updateCancelSelectionOverlay();
+    }
 }
 
 function getTurretAt(x, y) {

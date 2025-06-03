@@ -1574,12 +1574,80 @@ table td {
   box-shadow: 0 0 20px rgba(255,255,255,0.3);
 }
 
+#cancelSelectionOverlay {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 290px;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(2px);
+    z-index: 1000;
+    display: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    pointer-events: none;
+    justify-content: center;
+    align-items: center;
+}
+
+#cancelSelectionOverlay.active {
+    display: flex;
+    pointer-events: auto;
+}
+
 .difficulty-btn.easy {
   background: linear-gradient(45deg, #4CAF50, #45a049);
 }
 
 .difficulty-btn.normal {
   background: linear-gradient(45deg, #ff9800, #f57c00);
+}
+
+#cancelSelectionOverlay.hover-red {
+    background-color: rgba(255, 0, 0, 0.4);
+}
+
+#gameMenu.red-blur {
+    filter: blur(1px);
+    background: rgba(255, 0, 0, 0.1);
+    border: 2px solid rgba(255, 0, 0, 0.3);
+}
+
+.overlay-content {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    animation: pulse 2s ease-in-out infinite;
+    pointer-events: none;
+}
+
+#cancelSelectionOverlay.hover-red .overlay-content {
+    color: #ffdddd;
+    background: rgba(139, 0, 0, 0.6);
+    border-color: rgba(255, 100, 100, 0.5);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 1);
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    100% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
 }
 
 .tooltip-container {
@@ -1686,6 +1754,8 @@ table td {
     border-radius: 8px;
     z-index: 1001;
     font-size: 24px;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     text-align: center;
     opacity: 0;
     transition: opacity 0.3s;
@@ -2048,4 +2118,3 @@ table td {
     margin: 8px 0;
     line-height: 1.4;
 }
-    

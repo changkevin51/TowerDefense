@@ -519,6 +519,7 @@ function selectTurretToPlace(type) {
         isPlacingTurret = true;
         closeTurretShop(false);
         document.getElementById('gameCanvas').style.cursor = 'copy';
+        updateCancelSelectionOverlay(); // Update overlay visibility
     } else {
         showTemporaryMessage(`Not enough money for ${turretsStaticInfo[type].name}`, "error");
     }
@@ -550,6 +551,7 @@ function closeTurretShop(resetPlacement = true) {
         isPlacingTurret = false;
         selectedTurretType = null;
         document.getElementById('gameCanvas').style.cursor = 'default';
+        updateCancelSelectionOverlay(); // Update overlay visibility
     }
 }
 
@@ -1092,6 +1094,86 @@ function closePowerUpShop() {
     }
     const powerUpTextButton = document.getElementById('powerUpText');
     if (powerUpTextButton) powerUpTextButton.style.display = '';
+}
+
+function updateCancelSelectionOverlay() {
+    const overlay = document.getElementById('cancelSelectionOverlay');
+    if (!overlay) return;
+    
+    const gameMenuButtons = [
+        document.getElementById('buyText'),
+        document.getElementById('powerUpText'),
+        document.getElementById('startWaveButton'),
+        ...Array.from(document.querySelectorAll('#menuButtons .hoverButton')).filter(btn => 
+            btn.id !== 'buyText' && btn.id !== 'powerUpText' && btn.id !== 'startWaveButton'
+        )
+    ].filter(btn => btn !== null);  
+    if (isPlacingTurret && selectedTurretType) {
+        overlay.style.display = 'flex';
+        overlay.classList.add('active');
+        gameMenuButtons.forEach(button => {
+            button.disabled = true;
+            button.style.pointerEvents = 'none';
+            button.style.opacity = '0.5';
+        });
+    } else {
+        overlay.style.display = 'none';
+        overlay.classList.remove('active');
+        gameMenuButtons.forEach(button => {
+            button.disabled = false;
+            button.style.pointerEvents = 'auto';
+            button.style.opacity = '1';
+        });
+    }
+}
+
+let currentMouseX = 0;
+let currentMouseY = 0;
+
+function updateCancelOverlayHoverEffect() {
+    const overlay = document.getElementById('cancelSelectionOverlay');
+    const gameMenu = document.getElementById('gameMenu');
+    if (!overlay || !gameMenu) return;
+    if (isPlacingTurret && selectedTurretType && overlay.classList.contains('active')) {
+        const rect = overlay.getBoundingClientRect();
+        const isHovering = currentMouseX >= rect.left && currentMouseX <= rect.right && 
+                          currentMouseY >= rect.top && currentMouseY <= rect.bottom;
+        
+        if (isHovering) {
+            overlay.classList.add('hover-red');
+            gameMenu.classList.add('red-blur');
+        } else {
+            overlay.classList.remove('hover-red');
+            gameMenu.classList.remove('red-blur');
+        }
+    } else {
+        overlay.classList.remove('hover-red');
+        gameMenu.classList.remove('red-blur');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const overlay = document.getElementById('cancelSelectionOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            closeTurretShop(true); 
+        });
+        
+        overlay.addEventListener('contextmenu', function(event) {
+            event.preventDefault();
+        });
+    }
+    
+    document.addEventListener('mousemove', function(event) {
+        currentMouseX = event.clientX;
+        currentMouseY = event.clientY;
+    });
+});
+
+function checkOverlayVisibility() {
+    updateCancelSelectionOverlay();
 }
 
 

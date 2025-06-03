@@ -624,7 +624,7 @@ class Enemy {
                     const randomType = this.minionTypes[Math.floor(Math.random() * this.minionTypes.length)];
                     
                     
-                    let minionHealth = this.maxHealth * 0.1; 
+                    let minionHealth = this.maxHealth * 0.06; 
                     let minionSpeed = 2.5;
                     
                     
