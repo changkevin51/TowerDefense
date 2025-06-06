@@ -21,6 +21,7 @@ window.userDisplayName = '';
 
  var isEasyMode = false;
  var isHardMode = false;
+ var pendingDifficulty = null; // Track difficulty changes to apply next wave
  var settingsImg;
  var resumeImg;
  var isPaused = false;
@@ -362,50 +363,128 @@ function draw() {
 
     if (health <= 0) {
         drawGameOver();
-    }
-
-    if (isPaused) {
+    }    if (isPaused) {
         push();
         fill(0, 0, 0, 150);
         rect(0, 0, width, height);
         pop();
         
-        // Draw pause menu
+        // pause menu
         push();
         fill(50, 50, 50, 200);
         stroke(255, 165, 0);
         strokeWeight(3);
-        rect(width/2 - 150, height/2 - 150, 300, 300, 15);
+        rect(width/2 - 200, height/2 - 200, 400, 400, 15);
         
         fill(255);
         textSize(32);
         textAlign(CENTER);
-        text("GAME PAUSED", width/2, height/2 - 100);
+        text("GAME PAUSED", width/2, height/2 - 160);   
+        fill(0, 0, 0, 100); 
+        rect(width/2 - 150, height/2 - 135, 300, 25, 5);
         
-        if (mouseX > width/2 - 100 && mouseX < width/2 + 100 && 
-            mouseY > height/2 - 50 && mouseY < height/2) {
+        fill(255, 255, 255);
+        noStroke();
+        textSize(18);
+        let currentDiff = isEasyMode ? "EASY" : isHardMode ? "HARD" : "NORMAL";
+        text(`Current Difficulty: ${currentDiff}`, width/2, height/2 - 120);
+        
+        noStroke();
+        fill(255);
+        textSize(16);
+        text("Change Difficulty:", width/2, height/2 - 95);
+        if (mouseX > width/2 - 180 && mouseX < width/2 - 70 && 
+            mouseY > height/2 - 75 && mouseY < height/2 - 35) {
             fill(76, 175, 80);  
         } else {
             fill(56, 142, 60);  
         }
-        rect(width/2 - 100, height/2 - 50, 200, 50, 10);
+        if (isEasyMode) {
+            stroke(255, 255, 0); 
+            strokeWeight(3);
+        } else if (pendingDifficulty === 'easy') {
+            stroke(0, 255, 255); 
+            strokeWeight(3);
+        } else {
+            noStroke();
+        }
+        rect(width/2 - 180, height/2 - 75, 110, 40, 8);
         
         fill(255);
-        textSize(20);
-        text("RESUME", width/2, height/2 - 25);
+        textSize(14);
+        text("EASY", width/2 - 125, height/2 - 55);
+        if (mouseX > width/2 - 55 && mouseX < width/2 + 55 && 
+            mouseY > height/2 - 75 && mouseY < height/2 - 35) {
+            fill(255, 152, 0);  
+        } else {
+            fill(230, 126, 34);  
+        }
+        if (!isEasyMode && !isHardMode) {
+            stroke(255, 255, 0); 
+            strokeWeight(3);
+        } else if (pendingDifficulty === 'normal') {
+            stroke(0, 255, 255); 
+            strokeWeight(3);
+        } else {
+            noStroke();
+        }
+        rect(width/2 - 55, height/2 - 75, 110, 40, 8);
         
-        // Restart button
-        if (mouseX > width/2 - 100 && mouseX < width/2 + 100 && 
-            mouseY > height/2 + 20 && mouseY < height/2 + 70) {
+        fill(255);
+        textSize(14);
+        text("NORMAL", width/2, height/2 - 55);
+        
+        if (mouseX > width/2 + 70 && mouseX < width/2 + 180 && 
+            mouseY > height/2 - 75 && mouseY < height/2 - 35) {
             fill(244, 67, 54);  
         } else {
             fill(198, 40, 40);  
         }
-        rect(width/2 - 100, height/2 + 20, 200, 50, 10);
+        if (isHardMode) {
+            stroke(255, 255, 0); 
+            strokeWeight(3);
+        } else if (pendingDifficulty === 'hard') {
+            stroke(0, 255, 255); 
+            strokeWeight(3);
+        } else {
+            noStroke();
+        }
+        rect(width/2 + 70, height/2 - 75, 110, 40, 8);
+        
+        fill(255);
+        textSize(14);
+        text("HARD", width/2 + 125, height/2 - 55);
+        
+        if (mouseX > width/2 - 100 && mouseX < width/2 + 100 && 
+            mouseY > height/2 - 10 && mouseY < height/2 + 40) {
+            fill(76, 175, 80);  
+        } else {
+            fill(56, 142, 60);  
+        }
+        noStroke();
+        rect(width/2 - 100, height/2 - 10, 200, 50, 10);
         
         fill(255);
         textSize(20);
-        text("RESTART", width/2, height/2 + 45);
+        text("RESUME", width/2, height/2 + 15);
+
+        if (mouseX > width/2 - 100 && mouseX < width/2 + 100 && 
+            mouseY > height/2 + 60 && mouseY < height/2 + 110) {
+            fill(244, 67, 54);  
+        } else {
+            fill(198, 40, 40);  
+        }
+        rect(width/2 - 100, height/2 + 60, 200, 50, 10);
+          fill(255);
+        textSize(20);
+        text("RESTART", width/2, height/2 + 85);
+        
+        if (pendingDifficulty) {
+            fill(0, 255, 255);
+            textSize(14);
+            let pendingDiffText = pendingDifficulty.toUpperCase();
+            text(`Difficulty will change to ${pendingDiffText} next wave`, width/2, height/2 + 160);
+        }
         
         pop();
         return;
@@ -514,11 +593,16 @@ function drawGameOver() {
 }
 
  
-
  function startWave() {
     if (wave.active || enemies.length > 0) {
         return; 
     }
+    
+    // Apply pending difficulty change if any
+    if (pendingDifficulty) {
+        applyDifficultyChange(pendingDifficulty);
+    }
+    
     isWaveCooldown = true; 
     setTimeout(() => {
         isWaveCooldown = false;
@@ -668,23 +752,42 @@ function mousePressed() {
             restartGame();
             return;
         }
-    }
-
-    if (isPaused) {
-        // Resume button
+    }    if (isPaused) {
+        // Easy difficulty button
+        if (mouseX > width/2 - 180 && mouseX < width/2 - 70 && 
+            mouseY > height/2 - 75 && mouseY < height/2 - 35) {
+            changeDifficulty('easy');
+            return;
+        }
+        
+        // Normal difficulty button
+        if (mouseX > width/2 - 55 && mouseX < width/2 + 55 && 
+            mouseY > height/2 - 75 && mouseY < height/2 - 35) {
+            changeDifficulty('normal');
+            return;
+        }
+        
+        // Hard difficulty button
+        if (mouseX > width/2 + 70 && mouseX < width/2 + 180 && 
+            mouseY > height/2 - 75 && mouseY < height/2 - 35) {
+            changeDifficulty('hard');
+            return;
+        }
+        
+        // Resume button (fixed coordinates)
         if (mouseX > width/2 - 100 && mouseX < width/2 + 100 && 
-            mouseY > height/2 - 50 && mouseY < height/2) {
+            mouseY > height/2 - 10 && mouseY < height/2 + 40) {
             togglePause();
             return;
         }
         
-        // Restart button
+        // Restart button (fixed coordinates)
         if (mouseX > width/2 - 100 && mouseX < width/2 + 100 && 
-            mouseY > height/2 + 20 && mouseY < height/2 + 70) {
+            mouseY > height/2 + 60 && mouseY < height/2 + 110) {
             restartGame();
             return;
         }
-        
+
         return; // Prevent other actions while paused
     }
 
@@ -848,40 +951,61 @@ function toggleSpeed() {
     wave.gameSpeed = gameSpeed;
     turrets.forEach(t => t.gameSpeed = gameSpeed);
     projectiles.forEach(p => p.gameSpeed = gameSpeed);
-    enemies.forEach(enemy => enemy.updateGameSpeed(gameSpeed));
-
-    updateSpeedText();
+    enemies.forEach(enemy => enemy.updateGameSpeed(gameSpeed));    updateSpeedText();
 }
 
+function changeDifficulty(newDifficulty) {
+    const currentDiff = isEasyMode ? "easy" : isHardMode ? "hard" : "normal";
 
+    if (newDifficulty === currentDiff && !pendingDifficulty) {
+        return;
+    }
 
+    pendingDifficulty = newDifficulty;
+    
+    const difficultyNames = {
+        'easy': 'Easy',
+        'normal': 'Normal', 
+        'hard': 'Hard'
+    };
 
+    if (wave.active || enemies.length > 0) {
+        showTemporaryMessage(`Difficulty will change to ${difficultyNames[newDifficulty]} next wave!`, "info");
+        return;
+    }
+
+    applyDifficultyChange(newDifficulty);
+}
+
+function applyDifficultyChange(newDifficulty) {
+    isEasyMode = false;
+    isHardMode = false;
+    if (newDifficulty === 'easy') {
+        isEasyMode = true;
+    } else if (newDifficulty === 'hard') {
+        isHardMode = true;
+    }
+    const difficultyNames = {
+        'easy': 'Easy',
+        'normal': 'Normal', 
+        'hard': 'Hard'
+    };
+    
+    showTemporaryMessage(`Difficulty changed to ${difficultyNames[newDifficulty]}!`, "info");
+
+    pendingDifficulty = null;
+
+    updateInfo();
+}
 
 function mouseDragged() {
-    // console.log('mouseDragged called'); // Keep for debugging if needed
+    // console.log('mouseDragged called'); 
     if (isPlacingTurret && selectedTurretType) { 
         if (mouseX < 0 || mouseY < 0 || mouseX > width || mouseY > height) {
-            // console.log('Cancelling turret selection due to dragging outside map');
-            closeTurretShop(true); // Cancel placement
+            closeTurretShop(true);
         }
     }
 }
-
-
-
-
-/* // Old showTurretMenu - new shop uses handleBuyTurretClick
-function showTurretMenu() {
-    const menu = document.getElementById('turretMenu');
-    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
-}
-*/
-
-
-
-
-
-
 
 document.addEventListener('DOMContentLoaded', () => {
     const upgradeButton = document.getElementById('upgradeButton');
@@ -928,143 +1052,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-
 window.totalDamage = 0;
-
-/*
-function openLeaderboard() {
-    const popup = document.getElementById('leaderboardPopup');
-    popup.style.display = 'block';
-    fetchLeaderboardEntries();
-}
-
-async function fetchLeaderboardEntries() {
-    const loadingDiv = document.querySelector('.leaderboard-loading');
-    if (loadingDiv) {
-        loadingDiv.style.display = 'block';
-    }
-    
-    try {
-        const response = await fetch('/api/leaderboard', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        
-        const data = await response.json();
-        displayLeaderboardEntries(data);
-    } catch (err) {
-        console.error('Error fetching leaderboard:', err);
-        document.getElementById('leaderboardContents').innerHTML = 
-            '<div class="error-message">Failed to load leaderboard</div>';
-    } finally {
-        if (loadingDiv) {
-            loadingDiv.style.display = 'none';
-        }
-    }
-}
-
-function closeLeaderboard() {
-    const popup = document.getElementById('leaderboardPopup');
-    popup.style.display = 'none';
-}
-
-function displayLeaderboardEntries(entries) {
-    const container = document.getElementById('leaderboardContents');
-    container.innerHTML = '';
-    
-    // Check if user has an entry
-    const userEntry = entries.find(entry => entry.player_name === window.userDisplayName);
-    if (userEntry) {
-        window.userSubmittedScore = true;
-        const addEntryButton = document.getElementById('addEntryButton');
-        addEntryButton.textContent = '🔄 Update Score';
-    }
-    
-    entries.forEach((entry, index) => {
-        const entryDiv = document.createElement('div');
-        entryDiv.className = 'leaderboard-entry';
-        entryDiv.innerHTML = `
-            <span class="entry-rank">#${index + 1}</span>
-            <span class="entry-name">${entry.player_name}</span>
-            <span class="entry-score">Wave ${entry.wave} | DMG: ${entry.damage}</span>
-            <span class="entry-date">${new Date(entry.created_at).toLocaleDateString()}</span>
-        `;
-        container.appendChild(entryDiv);
-    });
-}
-function filterLeaderboard(event) {
-    const difficulty = event.target.value;
-    const entries = document.querySelectorAll('.leaderboard-entry');
-    
-    entries.forEach(entry => {
-        const entryDifficulty = entry.querySelector('.entry-score').textContent.split('|')[1].trim();
-        entry.style.display = (difficulty === 'all' || entryDifficulty === difficulty) ? '' : 'none';
-    });
-}
-
-
-function promptLeaderboardIfEligible() {
-    if (waveNumber >= 1) {
-        const prompt = document.getElementById('leaderboardPrompt');
-        prompt.classList.add('show');
-        // Hide after 3 seconds
-        setTimeout(() => prompt.classList.remove('show'), 3000);
-    }
-}
-
-async function submitLeaderboardEntry() {
-    if (waveNumber < 1) {
-        alert('You must reach wave 25 to submit a score!');
-        return;
-    }
-
-    if (!window.userSubmittedScore) {
-        const displayName = prompt('Enter your display name:');
-        if (!displayName) return;
-        window.userDisplayName = displayName;
-    }
-
-    try {
-        const response = await fetch('/api/leaderboard', {
-            method: window.userSubmittedScore ? 'PUT' : 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                player_name: window.userDisplayName,
-                wave: waveNumber,
-                damage: window.totalDamage,
-                difficulty: isHardMode ? 'hard' : (isEasyMode ? 'easy' : 'normal')
-            })
-        });
-
-        if (response.ok) {
-            await fetchLeaderboardEntries();
-            showSuccessPopup(window.userSubmittedScore ? 'Score updated!' : 'Score submitted!');
-            window.userSubmittedScore = true;
-        } else {
-            throw new Error('Failed to submit score');
-        }
-    } catch (err) {
-        console.error('Error:', err);
-        alert('Failed to submit score. Please try again.');
-    }
-}
-
-function showSuccessPopup(message) {
-    const popup = document.createElement('div');
-    popup.className = 'success-popup'; 
-    popup.textContent = message;
-    document.body.appendChild(popup);
-    setTimeout(() => {
-        popup.remove();
-    }, 3000);
-}
-*/
 var selectedTurretType = null; 
 var isPlacingTurret = false; 
 
