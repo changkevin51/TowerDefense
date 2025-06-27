@@ -6,10 +6,12 @@ class Path {
         this.arrowDrawn = false;
         this.createRoads();
     }
-    draw() {
-        imageMode(CORNER);
+    draw(pg) {
+        const p = pg || window; 
+        
+        p.imageMode(CORNER);
 
-        this.drawBorders();
+        this.drawBorders(p);
 
         
         for (let road of this.roads) {
@@ -19,35 +21,36 @@ class Path {
             let fullTileCount = Math.floor(fullLength / this.size);
             let remainingLength = fullLength % this.size;
             
-            push();
-            translate(road.x, road.y);
+            p.push();
+            p.translate(road.x, road.y);
             
             if (!isHorizontal) {
-                translate(this.size/2, this.size/2);
-                rotate(PI/2);
-                translate(-this.size/2, -this.size/2);
+                p.translate(this.size/2, this.size/2);
+                p.rotate(PI/2);
+                p.translate(-this.size/2, -this.size/2);
             }
             
             for (let i = 0; i < fullTileCount; i++) {
-                image(this.texture, i * this.size, 0, this.size, this.size);
+                p.image(this.texture, i * this.size, 0, this.size, this.size);
             }
             
             if (remainingLength > 0) {
-                image(this.texture, 
+                p.image(this.texture, 
                     fullTileCount * this.size, 0, 
                     remainingLength, this.size);
             }
             
-            pop();
+            p.pop();
         }
 
         for (let corner of this.corners) {
-            push();
-            translate(corner.x - this.size/2, corner.y - this.size/2);
-            image(this.texture, 0, 0, this.size, this.size);
-            pop();
+            p.push();
+            p.translate(corner.x - this.size/2, corner.y - this.size/2);
+            p.image(this.texture, 0, 0, this.size, this.size);
+            p.pop();
         }
-        if (!this.arrowDrawn) {
+        
+        if (!pg && !this.arrowDrawn) {
             this.drawStartArrow();
             this.arrowDrawn = true;
         }
@@ -126,17 +129,19 @@ class Path {
     }
 
 
-    drawBorders() {
-        stroke('black');
-        strokeWeight(5);
-        noFill();
+    drawBorders(pg) {
+        const p = pg || window; // Use the graphics buffer or default to global p5 instance
+        
+        p.stroke('black');
+        p.strokeWeight(5);
+        p.noFill();
         for (let road of this.roads) {
-            rect(road.x, road.y, road.w, road.h);
+            p.rect(road.x, road.y, road.w, road.h);
         }
         for (let corner of this.corners) {
             let cornerX = corner.x - this.size / 2;
             let cornerY = corner.y - this.size / 2;
-            rect(cornerX, cornerY, this.size, this.size);
+            p.rect(cornerX, cornerY, this.size, this.size);
         }
     }
 
@@ -165,7 +170,9 @@ class Path {
                 closeY = roadSegment.y + roadSegment.h;
             }
 
-            if (dist(checkCircle.x, checkCircle.y, closeX, closeY) < checkCircle.size / 2) {
+            const distanceSq = (checkCircle.x - closeX) ** 2 + (checkCircle.y - closeY) ** 2;
+            const radiusSq = (checkCircle.size / 2) ** 2;
+            if (distanceSq < radiusSq) {
                 return true; // Collision detected
             }
         }

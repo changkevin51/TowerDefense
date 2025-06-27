@@ -540,8 +540,9 @@ class Enemy {
             this.isExploding = true;
             this.explosionStartTime = millis();
             turrets.forEach(turret => {
-                const distance = dist(this.x, this.y, turret.x, turret.y);
-                if (distance <= EXPLOSION_RADIUS) { 
+                const distanceSq = (this.x - turret.x) ** 2 + (this.y - turret.y) ** 2;
+                const explosionRadiusSq = EXPLOSION_RADIUS ** 2;
+                if (distanceSq <= explosionRadiusSq) { 
                     turret.stun(2500 / this.gameSpeed); 
                 }
             });
@@ -647,9 +648,9 @@ class Enemy {
                     let closestDistance = Infinity;
                     
                     for (let i = 0; i < this.nodes.length; i++) {
-                        const nodeDistance = dist(this.x, this.y, this.nodes[i].x, this.nodes[i].y);
-                        if (nodeDistance < closestDistance) {
-                            closestDistance = nodeDistance;
+                        const nodeDistanceSq = (this.x - this.nodes[i].x) ** 2 + (this.y - this.nodes[i].y) ** 2;
+                        if (nodeDistanceSq < closestDistance) {
+                            closestDistance = nodeDistanceSq;
                             closestNodeIndex = i;
                         }
                     }

@@ -107,6 +107,8 @@ function updateInfo() {
     if (powerUpShopHealth) powerUpShopHealth.innerHTML = health;
     if (powerUpShopWave) powerUpShopWave.innerHTML = waveNumber;
     
+    updatePowerUpCosts();
+    
     const turret = getTurretBeingSelected();
     if (turret) {
         showSelectedTurretInfo(turret);
@@ -391,7 +393,9 @@ function updateTurretHoverInfo() {
 
 function getTurretBeingHovered() {
     for (var turret of turrets) {
-        if (dist(mouseX, mouseY, turret.x, turret.y) < turret.size/2 && turret.placed) {
+        const distanceSq = (mouseX - turret.x) ** 2 + (mouseY - turret.y) ** 2;
+        const radiusSq = (turret.size / 2) ** 2;
+        if (distanceSq < radiusSq && turret.placed) {
             return turret;
         }
     }
@@ -831,7 +835,7 @@ const powerUpsStaticInfo = {
     'speedBoost': {
         name: 'Speed Boost',
         description: 'Makes all turrets shoot 50% faster for 5 seconds (scaled with game speed)',
-        getCost: () => 75 + wave.number * 20,
+        getCost: () => 75 + waveNumber * 20,
         image: 'images/abilities/speedboost.png',
         icon: 'speedboost.png',
         type: 'speedBoost'
@@ -839,7 +843,7 @@ const powerUpsStaticInfo = {
     'healthReduction': {
         name: 'Health Reduction',
         description: 'Reduces health of all enemies by 70% (30% for bosses/minibosses)',
-        getCost: () => 150 + wave.number * 35,
+        getCost: () => 150 + waveNumber * 35,
         image: 'images/abilities/healthreduced.png',
         icon: 'healthreduced.png',
         type: 'healthReduction'
@@ -1174,6 +1178,55 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function checkOverlayVisibility() {
     updateCancelSelectionOverlay();
+}
+
+function updatePowerUpCosts() {
+    const powerUpMenu = document.getElementById('powerUpMenu');
+    if (!powerUpMenu || !powerUpMenu.classList.contains('power-up-shop-active')) {
+        return; 
+    }
+    
+    const shopItems = powerUpMenu.querySelectorAll('.turret-shop-item');
+    
+    let itemIndex = 0;
+    for (const type in powerUpsStaticInfo) {
+        if (itemIndex >= shopItems.length) break;
+        
+        const powerUpInfo = powerUpsStaticInfo[type];
+        const currentCost = powerUpInfo.getCost();
+        const canAfford = money >= currentCost;
+        const isActive = (type === 'speedBoost' && activeSpeedBoost.active) || 
+                        (type === 'healthReduction' && activeHealthReduction.active);
+        
+        const item = shopItems[itemIndex];
+        const priceTag = item.querySelector('.price-tag');
+        const tooltip = item.querySelector('.turret-tooltip');
+        
+        if (isActive) {
+            priceTag.textContent = 'ACTIVE';
+            priceTag.style.color = '#4CAF50';
+        } else {
+            priceTag.textContent = `$${currentCost}`;
+            priceTag.style.color = ''; 
+        }
+        
+        if (!canAfford || isActive) {
+            item.className = 'turret-shop-item disabled';
+            item.onclick = null;
+        } else {
+            item.className = 'turret-shop-item';
+            item.onclick = () => activatePowerUp(type);
+        }
+        
+        if (tooltip) {
+            const costStatValue = tooltip.querySelector('.stat-value');
+            if (costStatValue) {
+                costStatValue.textContent = `$${currentCost}`;
+            }
+        }
+        
+        itemIndex++;
+    }
 }
 
 

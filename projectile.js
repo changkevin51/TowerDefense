@@ -76,25 +76,7 @@ class PiercingProjectile extends Projectile {
     update() {
         this.move();
         this.draw();
-        if (!this.inWorld()) return;
-
-        for (let enemy of enemies) {
-            if (!this.hitEnemies.has(enemy) && CircleInCircle(this, enemy)) {
-                enemy.strength -= this.strength;
-                this.totalDamageDealt += this.strength;
-                if (this.parentTurret) {
-                    this.parentTurret.totalDamage += this.strength;
-                }
-                if (enemy.strength <= 0 && !enemy.isExploding) {
-                    enemy.strength = 0; 
-                    enemy.explode(); 
-                }
-
-                money += Math.round(this.strength * 0.5);
-                updateInfo();
-                this.hitEnemies.add(enemy);
-            }
-        }
+        // Collision detection is now handled in the main checkCollision() function
     }
 }
 
@@ -119,36 +101,6 @@ class SnowballProjectile extends Projectile {
 
     update() {
         this.move();
-        if (!this.inWorld()) return;
-
         this.draw();
-
-        for (let enemy of enemies) {
-            if (CircleInCircle(this, enemy)) {
-                enemy.strength -= this.strength;
-                money += Math.round(this.strength * 0.5);
-                updateInfo();
-
-                enemy.isSlowed = true;
-                enemy.slowEndTime = millis() + this.slowDuration;
-                enemy.slowFactor = 0.65;
-
-                if (this.stunDuration > 0 && enemy.type !== 'ship' && enemy.type !== 'boss' && enemy.type !== 'miniboss1' && enemy.type !== 'miniboss2' && enemy.type !== 'miniboss3') {
-                    enemy.isStunned = true;
-                    enemy.stunEndTime = millis() + this.stunDuration;
-                } else if (this.stunDuration > 0 && (enemy.type === 'ship' || enemy.type === 'boss' || enemy.type === 'miniboss1' || enemy.type === 'miniboss2' || enemy.type === 'miniboss3')) {
-                    // apply a stronger slow effect instead of stun for bosses
-                    enemy.slowFactor = 0.5; 
-                    enemy.slowEndTime = millis() + this.slowDuration; 
-                }
-
-                if (enemy.strength <= 0 && !enemy.isExploding) {
-                    enemy.strength = 0;
-                    enemy.explode();
-                }
-                projectiles.splice(projectiles.indexOf(this), 1);
-                break;
-            }
-        }
     }
 }

@@ -225,20 +225,21 @@ class Turret {
     
 
     getEnemyClosestToTurret() {
-        var closestDistance = Infinity;
+        var closestDistanceSq = Infinity;
         var closestEnemy = null;
 
         for(var enemy of enemies) {
             if(enemy.isStealth) { 
                 continue; 
             }
-            var distance = dist(enemy.x, enemy.y, this.x, this.y);
-            if(distance > this.range + enemy.size/2) {
+            const distanceSq = (enemy.x - this.x) ** 2 + (enemy.y - this.y) ** 2;
+            const maxRangeSq = (this.range + enemy.size/2) ** 2;
+            if(distanceSq > maxRangeSq) {
                 continue;
             }
 
-            if(distance < closestDistance) {
-                closestDistance = distance;
+            if(distanceSq < closestDistanceSq) {
+                closestDistanceSq = distanceSq;
                 closestEnemy = enemy;
             }
         }
@@ -253,8 +254,9 @@ class Turret {
             if(enemy.isStealth) { 
                 continue; 
             }
-            var distance = dist(enemy.x, enemy.y, this.x, this.y);
-            if (distance > this.range + enemy.size/2) {
+            const distanceSq = (enemy.x - this.x) ** 2 + (enemy.y - this.y) ** 2;
+            const maxRangeSq = (this.range + enemy.size/2) ** 2;
+            if (distanceSq > maxRangeSq) {
                 continue;
             }
 
@@ -273,8 +275,9 @@ class Turret {
             if(enemy.isStealth) { 
                 continue; 
             }
-            var distance = dist(enemy.x, enemy.y, this.x, this.y);
-            if (distance > this.range + enemy.size/2) {
+            const distanceSq = (enemy.x - this.x) ** 2 + (enemy.y - this.y) ** 2;
+            const maxRangeSq = (this.range + enemy.size/2) ** 2;
+            if (distanceSq > maxRangeSq) {
                 continue;
             }
             var travel = enemy.distanceTraveled();
@@ -295,9 +298,10 @@ class Turret {
             if(enemy.isStealth) { 
                 continue; 
             }
-            let distance = dist(enemy.x, enemy.y, this.x, this.y);
+            const distanceSq = (enemy.x - this.x) ** 2 + (enemy.y - this.y) ** 2;
+            const maxRangeSq = (this.range + enemy.size / 2) ** 2;
     
-            if (distance <= this.range + enemy.size / 2) {
+            if (distanceSq <= maxRangeSq) {
                 lastEnemy = enemy;
                 break;
             }
@@ -387,7 +391,9 @@ function CircleInRect(c, r) {
         closeY = r.y + r.h;
     }
 
-    if(dist(c.x, c.y, closeX, closeY) < c.size / 2) {
+    const distanceSq = (c.x - closeX) ** 2 + (c.y - closeY) ** 2;
+    const radiusSq = (c.size / 2) ** 2;
+    if(distanceSq < radiusSq) {
         return true;
     } else {
         return false;
@@ -395,7 +401,9 @@ function CircleInRect(c, r) {
 }
 
 function CircleInCircle(c1, c2) {
-    return dist(c1.x, c1.y, c2.x, c2.y) < (c1.size/2) + (c2.size/2);
+    const distanceSq = (c1.x - c2.x) ** 2 + (c1.y - c2.y) ** 2;
+    const radiiSq = ((c1.size / 2) + (c2.size / 2)) ** 2;
+    return distanceSq < radiiSq;
 }
 
 function getTurretBeingPlaced() {
@@ -418,7 +426,9 @@ function getTurretBeingSelected() {
 
 function getTurretBeingClicked() {
     for(var turret of turrets) {
-        if(dist(mouseX, mouseY, turret.x, turret.y) < turret.size/2) {
+        const distanceSq = (mouseX - turret.x) ** 2 + (mouseY - turret.y) ** 2;
+        const radiusSq = (turret.size / 2) ** 2;
+        if(distanceSq < radiusSq) {
             return turret;
         }
     }
@@ -561,13 +571,14 @@ function unselectAllTurrets() {
     }
 
     getEnemyClosestToTurret() {
-        let closestDistance = Infinity;
+        let closestDistanceSq = Infinity;
         let closestEnemy = null;
         for (let enemy of enemies) {
             if (enemy.strength <= 0) continue;
-            let distance = dist(enemy.x, enemy.y, this.x, this.y);
-            if (distance <= this.range + enemy.size/2 && distance < closestDistance) {
-                closestDistance = distance;
+            const distanceSq = (enemy.x - this.x) ** 2 + (enemy.y - this.y) ** 2;
+            const maxRangeSq = (this.range + enemy.size/2) ** 2;
+            if (distanceSq <= maxRangeSq && distanceSq < closestDistanceSq) {
+                closestDistanceSq = distanceSq;
                 closestEnemy = enemy;
             }
         }
@@ -579,8 +590,9 @@ function unselectAllTurrets() {
         let strongestStrength = 0;
         for (let enemy of enemies) {
             if (enemy.strength <= 0) continue;
-            let distance = dist(enemy.x, enemy.y, this.x, this.y);
-            if (distance <= this.range + enemy.size/2 && enemy.strength > strongestStrength) {
+            const distanceSq = (enemy.x - this.x) ** 2 + (enemy.y - this.y) ** 2;
+            const maxRangeSq = (this.range + enemy.size/2) ** 2;
+            if (distanceSq <= maxRangeSq && enemy.strength > strongestStrength) {
                 strongestStrength = enemy.strength;
                 strongestEnemy = enemy;
             }
@@ -593,8 +605,9 @@ function unselectAllTurrets() {
         let farthestEnemy = null;
         for (let enemy of enemies) {
             if (enemy.strength <= 0) continue;
-            let distance = dist(enemy.x, enemy.y, this.x, this.y);
-            if (distance > this.range + enemy.size/2) continue;
+            const distanceSq = (enemy.x - this.x) ** 2 + (enemy.y - this.y) ** 2;
+            const maxRangeSq = (this.range + enemy.size/2) ** 2;
+            if (distanceSq > maxRangeSq) continue;
             let travel = enemy.distanceTraveled();
             if (travel > farthestDistance) {
                 farthestDistance = travel;
@@ -609,8 +622,9 @@ function unselectAllTurrets() {
         for (let i = enemies.length - 1; i >= 0; i--) {
             let enemy = enemies[i];
             if (enemy.strength <= 0) continue;
-            let distance = dist(enemy.x, enemy.y, this.x, this.y);
-            if (distance <= this.range + enemy.size / 2) {
+            const distanceSq = (enemy.x - this.x) ** 2 + (enemy.y - this.y) ** 2;
+            const maxRangeSq = (this.range + enemy.size / 2) ** 2;
+            if (distanceSq <= maxRangeSq) {
                 lastEnemy = enemy;
                 break;
             }
@@ -626,8 +640,9 @@ function unselectAllTurrets() {
         }
     
         if (this.currentTarget) {
-            let distance = dist(this.currentTarget.x, this.currentTarget.y, this.x, this.y);
-            if (distance > this.range + this.currentTarget.size / 2 || this.currentTarget.strength <= 0) {
+            const distanceSq = (this.currentTarget.x - this.x) ** 2 + (this.currentTarget.y - this.y) ** 2;
+            const maxRangeSq = (this.range + this.currentTarget.size / 2) ** 2;
+            if (distanceSq > maxRangeSq || this.currentTarget.strength <= 0) {
                 this.currentTarget = null; // Reset target if out of range or dead
             }
         }

@@ -1,6 +1,7 @@
 var playing = true;
 var sandImg
 var speedBoostEffectImg;
+var prerenderedBackground;
 var levelOneNodes = [
     {x: -100, y: 50},
     {x: 100, y: 50},
@@ -21,7 +22,7 @@ window.userDisplayName = '';
 
  var isEasyMode = false;
  var isHardMode = false;
- var pendingDifficulty = null; // Track difficulty changes to apply next wave
+ var pendingDifficulty = null; 
  var settingsImg;
  var resumeImg;
  var isPaused = false;
@@ -233,6 +234,10 @@ let hoveredTurret = null;
     turrets = [];
     projectiles = [];
     wave = new Wave();
+    
+    // Pre-render the static background
+    prerenderBackground();
+    
     updateInfo();
 
     document.getElementById('turretInfo').style.display = 'none';
@@ -260,7 +265,9 @@ let hoveredTurret = null;
     let hoveredTurret = null;
 }
 
-function drawBackground() {
+function prerenderBackground() {
+    prerenderedBackground = createGraphics(width, height);
+    
     const tileSize = 50; 
     const tilesX = Math.ceil(width / tileSize);
     const tilesY = Math.ceil(height / tileSize);
@@ -270,7 +277,7 @@ function drawBackground() {
             let tileWidth = (x === tilesX - 1) ? width - x * tileSize : tileSize;
             let tileHeight = (y === tilesY - 1) ? height - y * tileSize : tileSize;
             
-            image(backgroundTile, 
+            prerenderedBackground.image(backgroundTile, 
                   x * tileSize, y * tileSize,
                   tileWidth, tileHeight,
                   0, 0,
@@ -278,38 +285,45 @@ function drawBackground() {
         }
     }
     
+    drawDecorationsToBuffer(prerenderedBackground);
+    
+    path.draw(prerenderedBackground);
 }
 
-function drawDecorations() {
-    push(); 
-    translate(300 + water.width / 2, 590 + water.height / 2); 
-    image(water, -water.width / 2, -water.height / 2); 
-    pop(); 
+function drawDecorationsToBuffer(buffer) {
+    buffer.push(); 
+    buffer.translate(300 + water.width / 2, 590 + water.height / 2); 
+    buffer.image(water, -water.width / 2, -water.height / 2); 
+    buffer.pop(); 
 
-    push();
-    translate(280 + rocks.width / 2, 580 + water.height + rocks.height / 2); 
-    image(rocks, -rocks.width / 2, -rocks.height / 2);
-    pop();
+    buffer.push();
+    buffer.translate(280 + rocks.width / 2, 580 + water.height + rocks.height / 2); 
+    buffer.image(rocks, -rocks.width / 2, -rocks.height / 2);
+    buffer.pop();
 
-    push();
-    translate(460, 200); 
-    image(cactus, 0, 0, cactus.width*0.9, cactus.height*0.9);
-    pop();
+    buffer.push();
+    buffer.translate(460, 200); 
+    buffer.image(cactus, 0, 0, cactus.width*0.9, cactus.height*0.9);
+    buffer.pop();
 
-    push();
-    translate(650, 490); 
-    image(cactus2, 0, 0, cactus2.width*0.9, cactus2.height*0.9);
-    pop();
+    buffer.push();
+    buffer.translate(650, 490); 
+    buffer.image(cactus2, 0, 0, cactus2.width*0.9, cactus2.height*0.9);
+    buffer.pop();
 
-    push();
-    translate(275, 80); 
-    image(sign, 0, 0, sign.width*0.7, sign.height*0.7);
-    pop();
+    buffer.push();
+    buffer.translate(275, 80); 
+    buffer.image(sign, 0, 0, sign.width*0.7, sign.height*0.7);
+    buffer.pop();
 
-    push();
-    translate(200, 320); 
-    image(bigRock, 0, 0, bigRock.width*0.8, bigRock.height*0.8);
-    pop();
+    buffer.push();
+    buffer.translate(200, 320); 
+    buffer.image(bigRock, 0, 0, bigRock.width*0.8, bigRock.height*0.8);
+    buffer.pop();
+}
+
+function drawBackground() {
+    image(prerenderedBackground, 0, 0);
 }
 
 function getDecorationBounds() {
@@ -334,9 +348,8 @@ function onDecoration(x, y) {
 }
 
 function draw() {
+    // Draw the pre-rendered background (includes tiles, decorations, and path)
     drawBackground();
-    drawDecorations();
-    path.draw();
 
     if (showStartArrow) {
         path.drawStartArrow();
@@ -511,10 +524,22 @@ function draw() {
 
 
 function filterArrays() {
-    enemies = enemies.filter(e => e.finished == false && e.strength > 0);
-    projectiles = projectiles.filter(p => p.inWorld() && p.strength > 0);
-}
+    // Filter enemies
+    for (let i = enemies.length - 1; i >= 0; i--) {
+        const enemy = enemies[i];
+        if (enemy.finished || enemy.strength <= 0) {
+            enemies.splice(i, 1);
+        }
+    }
 
+    // Filter projectiles
+    for (let i = projectiles.length - 1; i >= 0; i--) {
+        const projectile = projectiles[i];
+        if (!projectile.inWorld() || projectile.strength <= 0) {
+            projectiles.splice(i, 1);
+        }
+    }
+}
 
 
 function isValidPlacementLocation(x, y, turretType) {
@@ -695,14 +720,22 @@ function showMinionWarning() {
 }
 
 function checkCollision() {
-    for (var enemy of enemies) {
-        for (var projectile of projectiles) {
+    for (let i = enemies.length - 1; i >= 0; i--) {
+        const enemy = enemies[i];
+        if (!enemy) continue; // Safety check
+
+        for (let j = projectiles.length - 1; j >= 0; j--) {
+            const projectile = projectiles[j];
+            if (!projectile) continue; // Safety check
+
             if (CircleInCircle(enemy, projectile)) {
+                // Handle Piercing Projectiles
                 if (projectile instanceof PiercingProjectile) {
                     if (!projectile.hitEnemies.has(enemy)) {
                         const damage = Math.min(enemy.strength, projectile.strength);
-
                         enemy.strength -= damage;
+                        
+                        // Apply difficulty-based money calculation
                         if (isEasyMode) {
                             money += Math.round(damage * 0.7);
                         } else if (isHardMode) {
@@ -710,31 +743,58 @@ function checkCollision() {
                         } else {
                             money += Math.round(damage * 0.5);
                         }
-                        updateInfo();
-
+                        
                         projectile.hitEnemies.add(enemy);
-
-                        if (enemy.strength <= 0 && !enemy.isExploding) {
-                            enemy.explode(); 
+                        projectile.totalDamageDealt += damage;
+                        if (projectile.parentTurret) {
+                            projectile.parentTurret.totalDamage += damage;
                         }
-
                     }
+                // Handle Snowball Projectiles (which are destroyed on impact)
+                } else if (projectile instanceof SnowballProjectile) {
+                    const damage = Math.min(enemy.strength, projectile.strength);
+                    enemy.strength -= damage;
+                    money += Math.round(damage * 0.5);
+                    
+                    // Apply slow effect
+                    enemy.isSlowed = true;
+                    enemy.slowEndTime = millis() + projectile.slowDuration;
+                    enemy.slowFactor = 0.65;
+                    
+                    // Apply stun effect (except for bosses)
+                    if (projectile.stunDuration > 0 && enemy.type !== 'ship' && enemy.type !== 'boss' && 
+                        enemy.type !== 'miniboss1' && enemy.type !== 'miniboss2' && enemy.type !== 'miniboss3') {
+                        enemy.isStunned = true;
+                        enemy.stunEndTime = millis() + projectile.stunDuration;
+                    } else if (projectile.stunDuration > 0 && (enemy.type === 'ship' || enemy.type === 'boss' || 
+                        enemy.type === 'miniboss1' || enemy.type === 'miniboss2' || enemy.type === 'miniboss3')) {
+                        // Apply stronger slow effect instead of stun for bosses
+                        enemy.slowFactor = 0.5; 
+                        enemy.slowEndTime = millis() + projectile.slowDuration; 
+                    }
+                    
+                    projectiles.splice(j, 1); // Remove snowball from game
+
+                // Handle Regular Projectiles
                 } else {
                     const damage = Math.min(enemy.strength, projectile.strength);
-
                     enemy.strength -= damage;
                     projectile.strength -= damage;
                     money += Math.round(damage * 0.5);
-                    updateInfo();
-
-                    if (enemy.strength <= 0 && !enemy.isExploding) {
-                        enemy.explode(); 
-                    }
-
+                    
                     if (projectile.strength <= 0) {
-                        projectiles.splice(projectiles.indexOf(projectile), 1);
+                        projectiles.splice(j, 1); // Remove regular projectile
                     }
                 }
+
+                updateInfo(); // Call this once after damage is dealt
+
+                if (enemy.strength <= 0 && !enemy.isExploding) {
+                    enemy.explode();
+                }
+                
+                // If projectile was destroyed, no need to check it against other enemies
+                if (!projectiles[j]) break; 
             }
         }
     }
@@ -893,7 +953,9 @@ function placeSelectedTurret(x, y) {
 
 function getTurretAt(x, y) {
     for (var turret of turrets) {
-        if (dist(x, y, turret.x, turret.y) < turret.size / 2) { 
+        const distanceSq = (x - turret.x) ** 2 + (y - turret.y) ** 2;
+        const radiusSq = (turret.size / 2) ** 2;
+        if (distanceSq < radiusSq) { 
             return turret;
         }
     }
@@ -1124,4 +1186,3 @@ function updateDynamicTurretPrice(type) {
             break;
     }
 }
-
