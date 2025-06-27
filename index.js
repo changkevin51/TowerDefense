@@ -99,6 +99,14 @@ let miniboss3RightFrames = [];
 let miniboss3BackFrames = [];
 let bombFrames = [];
 let explosionFrames = [];
+let campfireFrames = [];
+let campfireCurrentFrame = 0;
+let campfireAnimationSpeed = 10; 
+let campfireFrameCounter = 0;
+let flagFrames = [];
+let flagCurrentFrame = 0;
+let flagAnimationSpeed = 8; 
+let flagFrameCounter = 0;
 let hoveredTurret = null;
 
  function preload() {
@@ -219,6 +227,16 @@ let hoveredTurret = null;
         bombFrames.push(loadImage(`images/enemies/bomb/frame${i}.png`));
     }
 
+    // Load campfire animation frames
+    for (let i = 0; i < 6; i++) {
+        campfireFrames.push(loadImage(`images/map/animations/campfire/frame${i}.png`));
+    }
+
+    // Load flag animation frames
+    for (let i = 0; i < 6; i++) {
+        flagFrames.push(loadImage(`images/map/animations/flag/frame${i}.png`));
+    }
+
     for (const type in turretsStaticInfo) {
         if (turretsStaticInfo.hasOwnProperty(type)) {
             turretsStaticInfo[type].pImage = loadImage(turretsStaticInfo[type].image);
@@ -317,13 +335,54 @@ function drawDecorationsToBuffer(buffer) {
     buffer.pop();
 
     buffer.push();
-    buffer.translate(200, 320); 
-    buffer.image(bigRock, 0, 0, bigRock.width*0.8, bigRock.height*0.8);
+    buffer.translate(540, 120); 
+    buffer.image(bigRock, 0, 0, bigRock.width*0.65, bigRock.height*0.65);
     buffer.pop();
+}
+
+function drawAnimatedDecorations() {
+    if (!isPaused) {
+        campfireFrameCounter++;
+        if (campfireFrameCounter >= campfireAnimationSpeed) {
+            campfireCurrentFrame = (campfireCurrentFrame + 1) % campfireFrames.length;
+            campfireFrameCounter = 0;
+        }
+    }
+    
+    // Draw campfire
+    push();
+    translate(220, 320);
+    if (campfireFrames[campfireCurrentFrame]) {
+        image(campfireFrames[campfireCurrentFrame], 0, 0, 
+              campfireFrames[campfireCurrentFrame].width * 2, 
+              campfireFrames[campfireCurrentFrame].height * 2);
+    }
+    pop();
+
+    // Update flag animation
+    if (!isPaused) {
+        flagFrameCounter++;
+        if (flagFrameCounter >= flagAnimationSpeed) {
+            flagCurrentFrame = (flagCurrentFrame + 1) % flagFrames.length;
+            flagFrameCounter = 0;
+        }
+    }
+    
+    // Draw flag (bottom left of canvas, left of water)
+    push();
+    translate(60, 570);
+    if (flagFrames[flagCurrentFrame]) {
+        image(flagFrames[flagCurrentFrame], 0, 0, 
+              flagFrames[flagCurrentFrame].width * 1.6, 
+              flagFrames[flagCurrentFrame].height * 1.6);
+    }
+    pop();
 }
 
 function drawBackground() {
     image(prerenderedBackground, 0, 0);
+    
+    drawAnimatedDecorations();
 }
 
 function getDecorationBounds() {
@@ -331,9 +390,11 @@ function getDecorationBounds() {
         { x: 300, y: 590, width: water.width, height: water.height },
         { x: 280, y: 580 + water.height, width: rocks.width, height: rocks.height },
         { x: 460, y: 200, width: cactus.width*0.9, height: cactus.height*0.9 },
-        { x: 670, y: 490, width: cactus2.width*0.9, height: cactus2.height*0.9 },
+        { x: 650, y: 490, width: cactus2.width*0.9, height: cactus2.height*0.9 },
         { x: 275, y: 80, width: sign.width * 0.7, height: sign.height * 0.7 },
-        { x: 200, y: 320, width: bigRock.width * 0.8, height: bigRock.height * 0.8 },
+        { x: 540, y: 120, width: bigRock.width * 0.5, height: bigRock.height * 0.5 }, 
+        { x: 200, y: 320, width: (campfireFrames[0] ? campfireFrames[0].width * 2 : 64), height: (campfireFrames[0] ? campfireFrames[0].height * 2 : 64) }, // Campfire bounds
+        { x: 60, y: 570, width: (flagFrames[0] ? flagFrames[0].width * 1.6 : 64), height: (flagFrames[0] ? flagFrames[0].height * 1.6 : 64) }, // Flag bounds
     ];
 }
 
@@ -348,7 +409,6 @@ function onDecoration(x, y) {
 }
 
 function draw() {
-    // Draw the pre-rendered background (includes tiles, decorations, and path)
     drawBackground();
 
     if (showStartArrow) {

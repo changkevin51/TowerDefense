@@ -156,16 +156,6 @@ class Turret {
     }
 
     isValid() {
-        let garbageX = 20; 
-        let garbageY = 600; 
-        let garbageWidth = 90; 
-        let garbageHeight = 90; 
-    
-        if (this.x > garbageX && this.x < garbageX + garbageWidth &&
-            this.y > garbageY && this.y < garbageY + garbageHeight) {
-            return false; 
-        }
-
         if (this.x < 0 || this.x > 800 || this.y < 0 || this.y > 700) {
             return false; 
         }
