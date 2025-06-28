@@ -16,6 +16,7 @@ class Wave {
         this.isBossWave = false;
         this.bonusGiven = false; 
         this.movementSpeed = 2.25;
+        this.useMainPath = true; // Track which path to use for spawning
     }
 
     updateDifficulty() {
@@ -47,6 +48,7 @@ class Wave {
             this.isBossWave = this.number % 5 === 0;
             this.groupAmount = this.isBossWave ? (this.number % 10 === 0 ? 2 : 1) : 10;
             this.bonusGiven = false;
+            this.useMainPath = true; 
 
             this.updateDifficulty();
             checkWave();
@@ -118,7 +120,9 @@ class Wave {
             bombGroups.includes(this.currentGroup) && 
             this.currentMember === 0 
         ) {
-            enemies.push(new Enemy(this.enemyMaxHealth, 3.2, levelOneNodes, this.enemyMaxHealth, 'bomb'));
+            const pathToUse = (isEasyMode || this.useMainPath) ? levelOneNodes : this.getMergedPath();
+            enemies.push(new Enemy(this.enemyMaxHealth, 3.2, pathToUse, this.enemyMaxHealth, 'bomb'));
+            if (!isEasyMode) this.useMainPath = !this.useMainPath; // Alternate paths for Normal/Hard
             this.currentMember++; 
             return;
         }
@@ -132,7 +136,9 @@ class Wave {
             this.currentMember === 0 
         ) {
             let stealthHealth = Math.ceil(this.enemyMaxHealth * 0.75);
-            enemies.push(new Enemy(stealthHealth, 2, levelOneNodes, stealthHealth, 'stealth'));
+            const pathToUse = (isEasyMode || this.useMainPath) ? levelOneNodes : this.getMergedPath();
+            enemies.push(new Enemy(stealthHealth, 2, pathToUse, stealthHealth, 'stealth'));
+            if (!isEasyMode) this.useMainPath = !this.useMainPath; // Alternate paths for Normal/Hard
             this.currentMember++; 
             return;
         }
@@ -145,7 +151,9 @@ class Wave {
             healerGroups.includes(this.currentGroup) && 
             this.currentMember === 0 
         ) {
-            enemies.push(new Enemy(this.enemyMaxHealth, 2, levelOneNodes, this.enemyMaxHealth, 'healer'));
+            const pathToUse = (isEasyMode || this.useMainPath) ? levelOneNodes : this.getMergedPath();
+            enemies.push(new Enemy(this.enemyMaxHealth, 2, pathToUse, this.enemyMaxHealth, 'healer'));
+            if (!isEasyMode) this.useMainPath = !this.useMainPath; // Alternate paths for Normal/Hard
             this.currentMember++; 
             return;
         }
@@ -157,17 +165,20 @@ class Wave {
             const type = this.determineEnemyType();
             let speed = isEasyMode ? this.movementSpeed-0.2 : isHardMode ? this.movementSpeed+0.15 : this.movementSpeed;
             let health = this.enemyMaxHealth;
+            
+            // Determine which path to use - alternate for Normal/Hard, always main for Easy
+            const pathToUse = (isEasyMode || this.useMainPath) ? levelOneNodes : this.getMergedPath();
     
             switch (type) {
                 case 'heavy':
                     speed *= 0.5;
                     health *= 1.3;
-                    enemies.push(new Enemy(health, speed, levelOneNodes, health, 'heavy'));
+                    enemies.push(new Enemy(health, speed, pathToUse, health, 'heavy'));
                     break;
                 case 'fast':
                     speed *= 1.5;
                     health *= 0.5;
-                    enemies.push(new Enemy(health, speed, levelOneNodes, health, 'fast'));
+                    enemies.push(new Enemy(health, speed, pathToUse, health, 'fast'));
                     break;
                 case 'boss':
                     health *= (this.number*this.bossHealthMultiplyer);
@@ -175,8 +186,13 @@ class Wave {
                 case 'normal':
                     const enemyTypes = ['robo1', 'robo2', 'robo3'];
                     const randomType = enemyTypes[Math.floor(Math.random() * enemyTypes.length)];
-                    enemies.push(new Enemy(health, speed, levelOneNodes, health, randomType));
+                    enemies.push(new Enemy(health, speed, pathToUse, health, randomType));
                     break;
+            }
+            
+            // Alternate paths for Normal/Hard mode (but not Easy mode)
+            if (!isEasyMode) {
+                this.useMainPath = !this.useMainPath;
             }
     
             if (isEasyMode) {
@@ -199,7 +215,27 @@ class Wave {
         }
     }
 
-    
+    getMergedPath() {
+        // Find the merge point in the main path
+        const mergePoint = {x: 150, y: 500};
+        const mainPathMergeIndex = levelOneNodes.findIndex(node => 
+            node.x === mergePoint.x && node.y === mergePoint.y
+        );
+        
+        if (mainPathMergeIndex === -1) {
+            console.error("Merge point not found in main path");
+            return levelOneNodes;
+        }
+        
+        // Create merged path: secondPath + remaining main path from merge point
+        const mergedPath = [...secondPath];
+        // Add the remaining nodes from the main path after the merge point
+        for (let i = mainPathMergeIndex + 1; i < levelOneNodes.length; i++) {
+            mergedPath.push(levelOneNodes[i]);
+        }
+        
+        return mergedPath;
+    }
 
     update() {
         if (this.active) {

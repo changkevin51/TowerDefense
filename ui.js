@@ -652,6 +652,9 @@ function restartGame() {
     isEasyMode = false;
     isHardMode = false;
     
+    hasSeenDualPathWarning = false;
+    isDualPathWarningActive = false;
+    
     const difficultyScreen = document.getElementById('difficultyScreen');
     difficultyScreen.style.display = 'flex';
     

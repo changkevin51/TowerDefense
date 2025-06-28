@@ -2,10 +2,28 @@ var playing = true;
 var sandImg
 var speedBoostEffectImg;
 var prerenderedBackground;
+// var levelOneNodes = [
+//     {x: -100, y: 50},
+//     {x: 100, y: 50},
+//     {x: 100, y: 500},
+//     {x: 400, y: 500},
+//     {x: 400, y: 200},
+//     {x: 250, y: 200},
+//     {x: 250, y: 50},
+//     {x: 700, y: 50},
+//     {x: 700, y: 250},
+//     {x: 600, y: 250},
+//     {x: 600, y: 650},
+//     {x: 800, y: 650},
+// ];
+
+
 var levelOneNodes = [
     {x: -100, y: 50},
     {x: 100, y: 50},
-    {x: 100, y: 500},
+    {x: 100, y: 300},
+    {x: 150, y: 300},
+    {x: 150, y: 500},
     {x: 400, y: 500},
     {x: 400, y: 200},
     {x: 250, y: 200},
@@ -16,6 +34,17 @@ var levelOneNodes = [
     {x: 600, y: 650},
     {x: 800, y: 650},
 ];
+
+
+var secondPath = [
+    {x: 200, y: 750},
+    {x: 200, y: 650},
+    {x: 50, y: 650},
+    {x: 50, y: 500},
+    {x: 97, y: 500}
+];
+
+
 // console.log('Database URL:', process.env.DATABASE_URL);
 window.userSubmittedScore = false;
 window.userDisplayName = '';
@@ -28,6 +57,7 @@ window.userDisplayName = '';
  var isPaused = false;
  var canvas;
  var path;
+ var secondaryPath;
  var enemies;
  var powImage;
  var orbImage;
@@ -62,6 +92,10 @@ window.userDisplayName = '';
  var showStartArrow = true; 
  var isPopupActive = false;
  var isGameOver = false;
+ var isDualPathWarningActive = false;
+ var arrowAnimationOffset = 0;
+ var arrowAnimationSpeed = 2;
+ var hasSeenDualPathWarning = false;
 
 let robo1FrontFrames = [];
 let robo1RightFrames = [];
@@ -248,6 +282,10 @@ let hoveredTurret = null;
     canvas = createCanvas(800, 700).parent("gameCanvas");
     frameRate(frameRateBase); 
     path = new Path(levelOneNodes, pathTile);
+    
+    // Secondary path will be created when difficulty is selected
+    secondaryPath = null;
+    
     enemies = [];
     turrets = [];
     projectiles = [];
@@ -306,6 +344,10 @@ function prerenderBackground() {
     drawDecorationsToBuffer(prerenderedBackground);
     
     path.draw(prerenderedBackground);
+    
+    if (!isEasyMode && secondaryPath) {
+        secondaryPath.draw(prerenderedBackground);
+    }
 }
 
 function drawDecorationsToBuffer(buffer) {
@@ -349,7 +391,6 @@ function drawAnimatedDecorations() {
         }
     }
     
-    // Draw campfire
     push();
     translate(220, 320);
     if (campfireFrames[campfireCurrentFrame]) {
@@ -359,7 +400,6 @@ function drawAnimatedDecorations() {
     }
     pop();
 
-    // Update flag animation
     if (!isPaused) {
         flagFrameCounter++;
         if (flagFrameCounter >= flagAnimationSpeed) {
@@ -368,9 +408,8 @@ function drawAnimatedDecorations() {
         }
     }
     
-    // Draw flag (bottom left of canvas, left of water)
     push();
-    translate(60, 570);
+    translate(150, 10);
     if (flagFrames[flagCurrentFrame]) {
         image(flagFrames[flagCurrentFrame], 0, 0, 
               flagFrames[flagCurrentFrame].width * 1.6, 
@@ -394,7 +433,7 @@ function getDecorationBounds() {
         { x: 275, y: 80, width: sign.width * 0.7, height: sign.height * 0.7 },
         { x: 540, y: 120, width: bigRock.width * 0.5, height: bigRock.height * 0.5 }, 
         { x: 200, y: 320, width: (campfireFrames[0] ? campfireFrames[0].width * 2 : 64), height: (campfireFrames[0] ? campfireFrames[0].height * 2 : 64) }, // Campfire bounds
-        { x: 60, y: 570, width: (flagFrames[0] ? flagFrames[0].width * 1.6 : 64), height: (flagFrames[0] ? flagFrames[0].height * 1.6 : 64) }, // Flag bounds
+        { x: 150, y: 10, width: (flagFrames[0] ? flagFrames[0].width * 1.6 : 64), height: (flagFrames[0] ? flagFrames[0].height * 1.6 : 64) }, // Flag bounds
     ];
 }
 
@@ -412,7 +451,16 @@ function draw() {
     drawBackground();
 
     if (showStartArrow) {
-        path.drawStartArrow();
+        // Update arrow animation
+        if (!isPaused) {
+            arrowAnimationOffset = sin(millis() / 200) * 15;
+        }
+        
+        path.drawStartArrow('green', arrowAnimationOffset);
+        // Draw start arrow for secondary path too if it exists
+        if (secondaryPath) {
+            secondaryPath.drawStartArrow('orange', arrowAnimationOffset);
+        }
     }
 
     for (var enemy of enemies) {
@@ -580,6 +628,9 @@ function draw() {
 
     updateTurretHoverInfo();
     updateCancelOverlayHoverEffect();
+    
+    // Draw dual path warning popup if active
+    drawDualPathWarningPopup();
 }
 
 
@@ -608,6 +659,11 @@ function isValidPlacementLocation(x, y, turretType) {
     if (path.onPath(x, y, turretSize / 2)) {
         return false;
     }
+    
+    if (!isEasyMode && secondaryPath && secondaryPath.onPath(x, y, turretSize / 2)) {
+        return false;
+    }
+    
     if (onDecoration(x - turretSize / 2, y - turretSize / 2) || onDecoration(x + turretSize / 2, y - turretSize / 2) || onDecoration(x - turretSize / 2, y + turretSize / 2) || onDecoration(x + turretSize / 2, y + turretSize / 2) || onDecoration(x,y)) {
         return false;
     }
@@ -862,6 +918,16 @@ function checkCollision() {
 
 
 function mousePressed() {
+    // Handle dual path warning popup
+    if (isDualPathWarningActive) {
+        // Check if clicked on dismiss button
+        if (mouseX > width/2 - 100 && mouseX < width/2 + 100 && 
+            mouseY > height/2 + 80 && mouseY < height/2 + 130) {
+            dismissDualPathWarning();
+        }
+        return; // Block other interactions while popup is active
+    }
+    
     if (isGameOver) {
         let btnWidth = 200;
         let btnHeight = 60;
@@ -911,7 +977,7 @@ function mousePressed() {
         return; // Prevent other actions while paused
     }
 
-    if (mouseX > width - 60 && mouseX < width && mouseY > 10 && mouseY < 70 && !isPopupActive && !isGameOver) {
+    if (mouseX > width - 60 && mouseX < width && mouseY > 10 && mouseY < 70 && !isPopupActive && !isGameOver && !isDualPathWarningActive) {
         togglePause();
         return;
     }
@@ -924,6 +990,11 @@ function mousePressed() {
         } else {
             closeTurretShop(true); // Cancel placement
         }
+        return;
+    }
+
+    // Block other interactions if dual path warning is active
+    if (isDualPathWarningActive) {
         return;
     }
 
@@ -1025,7 +1096,11 @@ function getTurretAt(x, y) {
 
 function keyPressed() {
     if (keyCode === ESCAPE) {
-        isPaused = !isPaused;
+        if (isDualPathWarningActive) {
+            dismissDualPathWarning();
+        } else {
+            isPaused = !isPaused;
+        }
         return;
     }
     
@@ -1107,6 +1182,18 @@ function applyDifficultyChange(newDifficulty) {
     } else if (newDifficulty === 'hard') {
         isHardMode = true;
     }
+    
+    if (!isEasyMode && !secondaryPath) {
+        secondaryPath = new Path(secondPath, pathTile);
+        prerenderBackground();
+        if (!isPaused) {
+            showPathWarning();
+        }
+    } else if (isEasyMode && secondaryPath) {
+        secondaryPath = null;
+        prerenderBackground();
+    }
+    
     const difficultyNames = {
         'easy': 'Easy',
         'normal': 'Normal', 
@@ -1141,12 +1228,19 @@ document.addEventListener('DOMContentLoaded', () => {
       isEasyMode = true;
       health = 200;
       difficultyScreen.style.display = 'none';
+      secondaryPath = null;
+      prerenderBackground();
       updateInfo();
     });
   
     normalButton.addEventListener('click', () => {
       isEasyMode = false;
       difficultyScreen.style.display = 'none';
+      if (!secondaryPath) {
+        secondaryPath = new Path(secondPath, pathTile);
+        prerenderBackground();
+      }
+      showPathWarning();
       updateInfo();
     });
 
@@ -1155,6 +1249,11 @@ document.addEventListener('DOMContentLoaded', () => {
         isEasyMode = false;
         health = 20;
         difficultyScreen.style.display = 'none';
+        if (!secondaryPath) {
+          secondaryPath = new Path(secondPath, pathTile);
+          prerenderBackground();
+        }
+        showPathWarning();
         updateInfo();
     });
 
@@ -1245,4 +1344,72 @@ function updateDynamicTurretPrice(type) {
             turretPriceMachinegun = Math.round(turretPriceMachinegun * machinegunPriceIncreaseFactor);
             break;
     }
+}
+
+function showPathWarning() {
+    if (!hasSeenDualPathWarning) {
+        isDualPathWarningActive = true;
+        isPopupActive = true;
+        hasSeenDualPathWarning = true;
+    }
+}
+
+function dismissDualPathWarning() {
+    isDualPathWarningActive = false;
+    isPopupActive = false;
+}
+
+function drawDualPathWarningPopup() {
+    if (!isDualPathWarningActive) return;
+    
+    push();
+    fill(0, 0, 0, 150);
+    rect(0, 0, width, height);
+    pop();
+
+    push();
+    fill(50, 50, 50, 220);
+    stroke(255, 165, 0);
+    strokeWeight(4);
+    rect(width/2 - 250, height/2 - 150, 500, 300, 15);
+    
+    fill(255, 165, 0, 100);
+    noStroke();
+    rect(width/2 - 240, height/2 - 140, 480, 50, 10);
+    
+    fill(255, 255, 255);
+    textAlign(CENTER, CENTER);
+    textSize(24);
+    textStyle(BOLD);
+    text("WARNING", width/2, height/2 - 115);
+    
+    fill(255, 255, 255);
+    textSize(16);
+    textStyle(NORMAL);
+    text("In Normal and Hard mode, enemies will spawn", width/2, height/2 - 60);
+    text("from BOTH entrances!", width/2, height/2 - 35);
+    
+    fill(76, 175, 80); 
+    text("🟢 Main Path (Green Arrow)", width/2, height/2 - 5);
+    
+    fill(255, 152, 0); 
+    text("🟠 Secondary Path (Orange Arrow)", width/2, height/2 + 20);
+    
+    fill(255, 255, 255);
+    text("Plan your turret placement accordingly!", width/2, height/2 + 50);
+    
+    if (mouseX > width/2 - 100 && mouseX < width/2 + 100 && 
+        mouseY > height/2 + 80 && mouseY < height/2 + 130) {
+        fill(76, 175, 80);
+    } else {
+        fill(56, 142, 60);
+    }
+    noStroke();
+    rect(width/2 - 100, height/2 + 80, 200, 50, 10);
+    
+    fill(255);
+    textSize(18);
+    text("GOT IT!", width/2, height/2 + 105);
+    
+    pop();
 }

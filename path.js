@@ -58,25 +58,36 @@ class Path {
 
     
 
-    drawStartArrow() {
+    drawStartArrow(color = 'green', animationOffset = 0) {
         let startNode = this.nodes[0];
         let endNode = this.nodes[1];
     
         push();
-        stroke('green');
+        stroke(color);
         strokeWeight(8);
-        fill('green');
-    
+        fill(color);
+        
+        // Calculate base position
         let midX = (startNode.x + endNode.x) / 2;
         let midY = (startNode.y + endNode.y) / 2;
-    
+        
+        // Apply animation offset along the path direction
         let angle = atan2(endNode.y - startNode.y, endNode.x - startNode.x);
-        translate(midX, midY);
+        let animatedX = midX + cos(angle) * animationOffset;
+        let animatedY = midY + sin(angle) * animationOffset;
+    
+        translate(animatedX, animatedY);
         rotate(angle);
+        
+        // Add glow effect for animation
+        drawingContext.shadowBlur = 15;
+        drawingContext.shadowColor = color;
     
         line(-20, 0, 40, 0);
         line(40, 0, 25, -15);
         line(40, 0, 25, 15);
+        
+        drawingContext.shadowBlur = 0;
     
         pop();
     }
