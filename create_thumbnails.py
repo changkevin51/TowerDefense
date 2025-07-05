@@ -31,10 +31,10 @@ def create_thumbnail(holder_path, gun_path, output_path):
         print(f"An unexpected error occurred while creating {output_path}: {e}")
 
 turrets_data = {
-    "machinegun": {
-        "holder": "images/machinegun/redHolder.png",
-        "gun": "images/machinegun/tile000.png",
-        "output": "images/turrets/machinegun.png"
+    "shooter2": {
+        "holder": "images/shooter2/greenHolder.png",
+        "gun": "images/shooter2/tile000.png",
+        "output": "images/turrets/shooter2.png"
     }
 }
 
