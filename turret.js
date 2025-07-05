@@ -1025,7 +1025,7 @@ class FrosterTurret extends Turret {
                 this.shootingTimer = 0;
                 this.animationEndTime = millis() + this.animationDelay/this.gameSpeed;
             } else {
-                this.shootingTimer += this.gameSpeed;
+                this.shootingTimer += 1;
             }
         }
     }
