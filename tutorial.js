@@ -162,12 +162,12 @@ function populateStats() {
         }
       },
       {
-        name: "Shooter Evolution I",
+        name: "shooter2",
         image: "images/turrets/shooter2.png",
         baseRange: 150,
         baseStrength: 1, 
         baseCooldown: 15, 
-        upgradeCost: (level) => evolvedShooterUpgradePrice + (level * 150),
+        upgradeCost: (level) => (level + 1) * 200,
         ability: "Dual Gun System",
         description: "Enhanced shooter with dual guns that fire alternately at double speed. Each shot deals 35% less damage but fires twice as fast.",
         levelAbilities: {

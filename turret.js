@@ -1221,13 +1221,13 @@ class EvolvedShooterTurret extends Turret {
     }
 
     upgrade() {
-        let upgradePrice = evolvedShooterUpgradePrice + (this.upgrades * 150);
+        let upgradePrice = 200 + (this.upgrades * 150);
         if (this.upgrades < this.maxUpgrades && money >= upgradePrice) {
             money -= upgradePrice;
             updateInfo();
             this.upgrades += 1;
-            this.shootCooldown -= 2;
-            this.projectileStrength += 1; // Base damage increase
+            this.shootCooldown -= 3;
+            this.projectileStrength += 0.65; // Consistent with evolved shooter damage scaling
             this.range += 50;
         }
     }
@@ -1270,10 +1270,6 @@ class EvolvedShooterTurret extends Turret {
     
             projectiles.push(new Projectile(x, y, xSpeed, ySpeed, actualDamage, this.gameSpeed, 10, this));
             this.shootingTimer = 0;
-            this.totalDamage += actualDamage;
-            
-            // Update total shooter damage tracking
-            totalShooterDamage += actualDamage;
             
             // Toggle between left and right gun
             this.isLeftGun = !this.isLeftGun;

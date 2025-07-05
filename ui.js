@@ -84,7 +84,8 @@ function showTemporaryMessage(message, type = "info") {
     }, 3000);
 }
 
-// Info and display functions
+const EVOLUTION_DAMAGE_THRESHOLD = 4000; // CHANGE THIS
+
 function updateInfo() {
     document.getElementById("Money").innerHTML = money;
     document.getElementById("Wave").innerHTML = wave.number;
@@ -98,7 +99,6 @@ function updateInfo() {
     if (shopHealth) shopHealth.innerHTML = health;
     if (shopWave) shopWave.innerHTML = waveNumber;
     
-    // Update power-up shop displays
     const powerUpShopMoney = document.getElementById("powerUpShopMoney");
     const powerUpShopHealth = document.getElementById("powerUpShopHealth");
     const powerUpShopWave = document.getElementById("powerUpShopWave");
@@ -130,6 +130,8 @@ function checkUpgrade() {
                 text += (turret.upgrades + 2) * 260;
             } else if (turret instanceof FrosterTurret) {
                 text += (turret.upgrades + 2) * 270;
+            } else if (turret instanceof EvolvedShooterTurret) {
+                text += 200 + (turret.upgrades * 150);
             } else {
                 text += (turret.upgrades + 2) * 120; 
             }
@@ -141,15 +143,25 @@ function checkUpgrade() {
     const upgradeButton = document.getElementById("upgradeButton");
     upgradeButton.textContent = text;
     
-    const upgradeCost = (turret.upgrades + 2) * (turret instanceof SniperTurret ? 250 : turret instanceof WizardTurret ? 260 : 120);
-    if (turret.upgrades >= turret.maxUpgrades || money < upgradeCost) {
+    if (turret !== null) {
+        const upgradeCost = turret instanceof SniperTurret ? (turret.upgrades + 2) * 250 : 
+                            turret instanceof WizardTurret ? (turret.upgrades + 2) * 260 : 
+                            turret instanceof FrosterTurret ? (turret.upgrades + 2) * 270 : 
+                            turret instanceof EvolvedShooterTurret ? 200 + (turret.upgrades * 150) : 
+                            (turret.upgrades + 2) * 120;
+        if (turret.upgrades >= turret.maxUpgrades || money < upgradeCost) {
+            upgradeButton.classList.remove('blue');
+            upgradeButton.classList.add('red');
+            upgradeButton.disabled = true;
+        } else {
+            upgradeButton.classList.remove('red');
+            upgradeButton.classList.add('blue');
+            upgradeButton.disabled = false;
+        }
+    } else {
         upgradeButton.classList.remove('blue');
         upgradeButton.classList.add('red');
         upgradeButton.disabled = true;
-    } else {
-        upgradeButton.classList.remove('red');
-        upgradeButton.classList.add('blue');
-        upgradeButton.disabled = false;
     }
 }
 
@@ -206,7 +218,8 @@ function showSelectedTurretInfo(turret) {
 
     infoDiv.style.display = 'flex';
     isPopupActive = true;
-    header.textContent = `${turret.type.charAt(0).toUpperCase() + turret.type.slice(1)} Details`;
+    const displayName = turret.type === 'shooter2' ? 'Evolved Turret' : turret.type.charAt(0).toUpperCase() + turret.type.slice(1);
+    header.textContent = `${displayName} Details`;
     const stats = populateStats(); 
     const turretStats = stats.find(s => s.name.toLowerCase() === turret.type);
     if (!turretStats) {
@@ -216,12 +229,19 @@ function showSelectedTurretInfo(turret) {
 
     const level = turret.upgrades + 1;
     const range = turretStats.baseRange + turret.upgrades * (turret.type === "wizard" ? 30 : 50);
-    const strength = turretStats.baseStrength + turret.upgrades *
-        (turret.type === "sniper" ? (4 + level) : turret.type === "wizard" ? (2 + level) : turret.type === "froster" ? 1 : 1);
+    const strength = Math.round((turretStats.baseStrength + turret.upgrades *
+        (turret.type === "sniper" ? (4 + level) : 
+         turret.type === "wizard" ? (2 + level) : 
+         turret.type === "froster" ? 1 : 
+         turret.type === "shooter2" ? 0.65 : 1)) * 100) / 100; // Round to 2 decimal places
     const cooldown = turretStats.baseCooldown - turret.upgrades *
-        (turret.type === "sniper" ? 8 : turret.type === "wizard" ? 5 : turret.type === "froster" ? 8 : 3);
+        (turret.type === "sniper" ? 8 : 
+         turret.type === "wizard" ? 5 : 
+         turret.type === "froster" ? 8 : 
+         turret.type === "shooter2" ? 3 : 3);
     const specialAbility = (turret.type === "wizard" && turret.upgrades >= 2) ? "+ Immune to Stun" :
                            (turret.type === "froster" && turret.upgrades >= 2) ? "+ Stun Enemies" :
+                           (turret.type === "shooter2") ? "Dual Gun System" :
                            turretStats.ability;
 
     document.getElementById('turretCurrentStats').innerHTML = `
@@ -235,8 +255,16 @@ function showSelectedTurretInfo(turret) {
     let nextText = "Maxed Out";
     if (level < 4) {
         const nextRange = range + (turret.type === "wizard" ? 30 : turret.type === "froster" ? 10 : 50);
-        const nextStrength = strength + (turret.type === "sniper" ? (4 + level + 1) : turret.type === "wizard" ? (2 + level + 1) : turret.type === "froster" ? 1 : turret.type === "machinegun" ? 0.6: 1);
-        const nextCooldown = cooldown - (turret.type === "sniper" ? 8 : turret.type === "wizard" ? 5 : turret.type === "froster" ? 8 : turret.type === "machinegun" ? 0.5 : 3);
+        const nextStrength = Math.round((strength + (turret.type === "sniper" ? (4 + level + 1) : 
+                                         turret.type === "wizard" ? (2 + level + 1) : 
+                                         turret.type === "froster" ? 1 : 
+                                         turret.type === "machinegun" ? 0.6 : 
+                                         turret.type === "shooter2" ? 0.65 : 1)) * 100) / 100; // Round to 2 decimal places
+        const nextCooldown = cooldown - (turret.type === "sniper" ? 8 : 
+                                        turret.type === "wizard" ? 5 : 
+                                        turret.type === "froster" ? 8 : 
+                                        turret.type === "machinegun" ? 0.5 : 
+                                        turret.type === "shooter2" ? 3 : 3);
         let nextSpecialAbility = turretStats.ability;
         if (turret.type === "wizard" && level === 2) {
             nextSpecialAbility = "+ Immune to Stun";
@@ -269,7 +297,7 @@ function showSelectedTurretInfo(turret) {
         } else if (turret.type === 'machinegun') {
             upgradeCost = (turret.upgrades + 2) * 180; 
         } else if (turret.type === 'shooter2') {
-            upgradeCost = evolvedShooterUpgradePrice + (turret.upgrades * 150);
+            upgradeCost = 200 + (turret.upgrades * 150);
         } else {
             upgradeCost = (turret.upgrades + 2) * 120;
         }
@@ -297,13 +325,23 @@ function showSelectedTurretInfo(turret) {
     const initialPrice = turret.type === 'sniper' ? 300 : 
                          turret.type === 'wizard' ? 400 : 
                          turret.type === 'froster' ? 350 : 
-                         turret.type === 'machinegun' ? 360 : 150;
+                         turret.type === 'machinegun' ? 360 : 
+                         turret.type === 'shooter2' ? 400 : 150;
     const upgradeFactor = turret.type === 'sniper' ? 250 : 
                           turret.type === 'wizard' ? 260 : 
                           turret.type === 'froster' ? 270 : 
                           turret.type === 'machinegun' ? 180 : 120;
     
-    const totalSpent = initialPrice + turret.upgrades * upgradeFactor;
+    let totalSpent;
+    if (turret.type === 'shooter2') {
+        // Special calculation for evolved shooter: 200 + (150 * 1) + (150 * 2) + ... 
+        totalSpent = initialPrice;
+        for (let i = 0; i < turret.upgrades; i++) {
+            totalSpent += 200 + (i * 150);
+        }
+    } else {
+        totalSpent = initialPrice + turret.upgrades * upgradeFactor;
+    }
     const sellPrice = Math.round(totalSpent * 0.8);
     sellButton.textContent = `Sell for $${sellPrice}`;
 
@@ -337,17 +375,19 @@ function updateTurretHoverInfo() {
         }
         
         // Handle strength (damage) calculation
-        const strength = turretStats.baseStrength + mouseOverTurret.upgrades *
+        const strength = Math.round((turretStats.baseStrength + mouseOverTurret.upgrades *
             (turretType === "sniper" ? (4 + level) : 
              turretType === "wizard" ? (2 + level) : 
              turretType === "froster" ? 1 : 
-             turretType === "machinegun" ? 0.3 : 1);
+             turretType === "machinegun" ? 0.3 : 
+             turretType === "shooter2" ? 0.65 : 1)) * 100) / 100; // Round to 2 decimal places
                // Handle cooldown calculation
         const cooldown = turretStats.baseCooldown - mouseOverTurret.upgrades *
             (turretType === "sniper" ? 8 : 
              turretType === "wizard" ? 5 : 
              turretType === "froster" ? 8 : 
-             turretType === "machinegun" ? 1 : 3);
+             turretType === "machinegun" ? 1 : 
+             turretType === "shooter2" ? 3 : 3);
         
         let fireRateText = "Medium";
         if (cooldown < 10) fireRateText = "Very Fast";
@@ -358,10 +398,12 @@ function updateTurretHoverInfo() {
             "Immune to Stun" : (turretType === "froster" && mouseOverTurret.upgrades >= 2) ? 
             "Freeze Enemies" : (turretType === "sniper" && mouseOverTurret.upgrades >= 2) ? 
             "Target Invisible" : (turretType === "machinegun" && mouseOverTurret.upgrades >= 1) ? 
-            "Improved Accuracy" : "None";
+            "Improved Accuracy" : (turretType === "shooter2") ? 
+            "Dual Gun System" : "None";
+        const displayTitle = turretType === 'shooter2' ? 'Evolved Turret' : turretType.charAt(0).toUpperCase() + turretType.slice(1) + ' Turret';
         
         turretHoverInfo.innerHTML = `
-            <div class="turret-hover-title">${turretType.charAt(0).toUpperCase() + turretType.slice(1)} Turret</div>
+            <div class="turret-hover-title">${displayTitle}</div>
             <div class="turret-hover-stats">
                 <div class="turret-hover-label">Level:</div>
                 <div class="turret-hover-value">${level}</div>
@@ -481,7 +523,7 @@ function handleBuyTurretClick() {
                 canAfford: canAfford,
                 description: turretDescriptions[type],
                 hasEvolution: turretInfo.canEvolve,
-                evolutionUnlocked: type === 'shooter' && totalShooterDamage >= 4000
+                evolutionUnlocked: type === 'shooter' && totalShooterDamage >= EVOLUTION_DAMAGE_THRESHOLD
             };
             
             turretsToShow.push(turretData);
@@ -591,8 +633,8 @@ function selectTurretToPlace(type) {
     const currentCost = getCurrentTurretCost(type);
     
     // Check evolution requirement for shooter2
-    if (type === 'shooter2' && totalShooterDamage < 4000) {
-        showTemporaryMessage(`Evolution requirement not met! Need ${4000 - Math.round(totalShooterDamage)} more shooter damage.`, "error");
+    if (type === 'shooter2' && totalShooterDamage < EVOLUTION_DAMAGE_THRESHOLD) {
+        showTemporaryMessage(`Evolution requirement not met! Need ${EVOLUTION_DAMAGE_THRESHOLD - Math.round(totalShooterDamage)} more shooter damage.`, "error");
         return;
     }
     
@@ -686,11 +728,11 @@ function sellTurret() {
                     : turret.type === 'shooter2'
                         ? 400
                         : 150;
-    const upgradeCost = turret.type === 'shooter2' 
-        ? 200 
-        : (turret.type === 'sniper' || turret.type === 'wizard' || turret.type === 'froster' || turret.type === 'machinegun') 
-            ? 250 
-            : 120;
+    const upgradeCost = turret.type === 'sniper' ? 250 : 
+                        turret.type === 'wizard' ? 260 : 
+                        turret.type === 'froster' ? 270 : 
+                        turret.type === 'machinegun' ? 180 : 
+                        turret.type === 'shooter2' ? 200 : 120;
     const totalSpent = initialPrice + turret.upgrades * upgradeCost;
 
     const sellPrice = Math.round(totalSpent * 0.8);
@@ -876,6 +918,8 @@ function drawPlacementPreview(x, y) {
 function getTurretTypeSize(type) {
     switch(type) {
         case 'shooter':
+            return 100;  
+        case 'shooter2':
             return 100;  
         case 'sniper':
             return 120;  
@@ -1330,7 +1374,7 @@ function toggleEvolutionCard(cardElement, turretType) {
     if (turretType !== 'shooter') return;
     
     const isEvolved = cardElement.classList.contains('evolved');
-    const evolutionUnlocked = totalShooterDamage >= 4000;
+    const evolutionUnlocked = totalShooterDamage >= EVOLUTION_DAMAGE_THRESHOLD;
     
     if (isEvolved) {
         // Flip back to normal shooter
@@ -1402,13 +1446,13 @@ function toggleEvolutionCard(cardElement, turretType) {
                 <div class="evolution-progress">
                     <div class="evolution-progress-title">Evolution Requirement</div>
                     <div class="evolution-progress-bar">
-                        <div class="evolution-progress-fill" style="width: ${Math.min(100, (totalShooterDamage / 4000) * 100)}%"></div>
+                        <div class="evolution-progress-fill" style="width: ${Math.min(100, (totalShooterDamage / EVOLUTION_DAMAGE_THRESHOLD) * 100)}%"></div>
                     </div>
-                    <div class="evolution-progress-text">${Math.round(totalShooterDamage)}/4000 damage</div>
+                    <div class="evolution-progress-text">${Math.round(totalShooterDamage)}/${EVOLUTION_DAMAGE_THRESHOLD} damage</div>
                 </div>
             `;
             cardElement.onclick = () => {
-                showTemporaryMessage(`Evolution requirement not met! Need ${4000 - Math.round(totalShooterDamage)} more shooter damage.`, "error");
+                showTemporaryMessage(`Evolution requirement not met! Need ${EVOLUTION_DAMAGE_THRESHOLD - Math.round(totalShooterDamage)} more shooter damage.`, "error");
             };
         }
     }
