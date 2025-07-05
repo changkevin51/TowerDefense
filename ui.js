@@ -84,7 +84,7 @@ function showTemporaryMessage(message, type = "info") {
     }, 3000);
 }
 
-const EVOLUTION_DAMAGE_THRESHOLD = 4000; // CHANGE THIS
+const EVOLUTION_DAMAGE_THRESHOLD = 3000; // CHANGE THIS
 
 function updateInfo() {
     document.getElementById("Money").innerHTML = money;

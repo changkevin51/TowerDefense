@@ -77,13 +77,12 @@ class PiercingProjectile extends Projectile {
     update() {
         this.move();
         this.draw();
-        // Collision detection is now handled in the main checkCollision() function
     }
 }
 
 class SnowballProjectile extends Projectile {
-    constructor(x, y, xSpeed, ySpeed, strength, gameSpeed, size, slowDuration, stunDuration) {
-        super(x, y, xSpeed, ySpeed, strength, gameSpeed, size);
+    constructor(x, y, xSpeed, ySpeed, strength, gameSpeed, size, slowDuration, stunDuration, parentTurret = null) {
+        super(x, y, xSpeed, ySpeed, strength, gameSpeed, size, parentTurret);
         this.slowDuration = slowDuration;
         this.stunDuration = stunDuration;
     }

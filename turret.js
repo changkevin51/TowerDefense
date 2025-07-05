@@ -207,12 +207,6 @@ class Turret {
     
             projectiles.push(new Projectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 10, this));
             this.shootingTimer = 0;
-            this.totalDamage += this.projectileStrength;
-            
-            // Update total shooter damage tracking (for evolution requirement)
-            if (this.type === 'shooter') {
-                totalShooterDamage += this.projectileStrength;
-            }
         }
     }
     
@@ -936,11 +930,11 @@ class FrosterTurret extends Turret {
                 this.gameSpeed,
                 30,
                 slowTime,
-                applyStun ? this.stunDuration : 0
+                applyStun ? this.stunDuration : 0,
+                this
             );
             projectiles.push(snowball);
             this.shootingTimer = 0;
-            this.totalDamage += this.projectileStrength;
         }
     }
 
@@ -1161,7 +1155,6 @@ class MachineGunTurret extends Turret {
             
             projectiles.push(new Projectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 8, this));
             this.shootingTimer = 0;
-            this.totalDamage += this.projectileStrength;
         }
     }
 

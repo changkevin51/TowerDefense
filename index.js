@@ -894,7 +894,20 @@ function checkCollision() {
                 } else if (projectile instanceof SnowballProjectile) {
                     const damage = Math.min(enemy.strength, projectile.strength);
                     enemy.strength -= damage;
-                    money += Math.round(damage * 0.5);
+                    
+                    // Apply difficulty-based money calculation
+                    if (isEasyMode) {
+                        money += Math.round(damage * 0.7);
+                    } else if (isHardMode) {
+                        money += Math.round(damage * 0.4);
+                    } else {
+                        money += Math.round(damage * 0.5);
+                    }
+                    
+                    // Track turret damage
+                    if (projectile.parentTurret) {
+                        projectile.parentTurret.totalDamage += damage;
+                    }
                     
                     // Apply slow effect
                     enemy.isSlowed = true;
