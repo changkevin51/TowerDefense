@@ -268,6 +268,8 @@ function showSelectedTurretInfo(turret) {
             upgradeCost = (turret.upgrades + 2) * 270;
         } else if (turret.type === 'machinegun') {
             upgradeCost = (turret.upgrades + 2) * 180; 
+        } else if (turret.type === 'shooter2') {
+            upgradeCost = evolvedShooterUpgradePrice + (turret.upgrades * 150);
         } else {
             upgradeCost = (turret.upgrades + 2) * 120;
         }
@@ -347,13 +349,11 @@ function updateTurretHoverInfo() {
              turretType === "froster" ? 8 : 
              turretType === "machinegun" ? 1 : 3);
         
-        // Determine fire rate text based on cooldown
         let fireRateText = "Medium";
         if (cooldown < 10) fireRateText = "Very Fast";
         else if (cooldown < 20) fireRateText = "Fast";
         else if (cooldown < 50) fireRateText = "Medium";
         else if (cooldown > 80) fireRateText = "Slow";
-          // Calculate special ability
         const specialAbility = (turretType === "wizard" && mouseOverTurret.upgrades >= 2) ? 
             "Immune to Stun" : (turretType === "froster" && mouseOverTurret.upgrades >= 2) ? 
             "Freeze Enemies" : (turretType === "sniper" && mouseOverTurret.upgrades >= 2) ? 
@@ -458,52 +458,123 @@ function handleBuyTurretClick() {
         shopGrid.className = 'turret-shop-grid';
         const turretDescriptions = {
             shooter: "Basic turret with balanced stats. Good for early waves.",
+            shooter2: "Enhanced dual-gun turret. Fires twice as fast with lower damage per shot.",
             sniper: "Long-range turret with high damage. Best against strong enemies.",
             wizard: "Area damage turret. Effective against groups of enemies.",
             froster: "Slows down enemies. Great for strategic control.",
             machinegun: "Infinite range, rapid fire turret that shoots where your cursor points. Low damage but very fast."
         };
+        
+        // Process turrets for display, handling evolution cards
+        const turretsToShow = [];
         for (const type in turretsStaticInfo) {
+            if (type === 'shooter2') continue; // Handle evolved shooter specially
+            
             const turretInfo = turretsStaticInfo[type];
             const currentCost = getCurrentTurretCost(type);
             const canAfford = money >= currentCost;
+            
+            const turretData = {
+                type: type,
+                info: turretInfo,
+                cost: currentCost,
+                canAfford: canAfford,
+                description: turretDescriptions[type],
+                hasEvolution: turretInfo.canEvolve,
+                evolutionUnlocked: type === 'shooter' && totalShooterDamage >= 4000
+            };
+            
+            turretsToShow.push(turretData);
+        }
+        
+        for (const turretData of turretsToShow) {
             const item = document.createElement('div');
             item.className = 'turret-shop-item';
-            if (!canAfford) {
+            if (!turretData.canAfford) {
                 item.className += ' disabled';
             }
-            item.onclick = canAfford ? () => selectTurretToPlace(type) : null;
+            
+            // Add evolution badge if this turret can evolve
+            if (turretData.hasEvolution) {
+                const evolutionBadge = document.createElement('div');
+                evolutionBadge.className = 'evolution-badge';
+                evolutionBadge.textContent = 'Evolved';
+                evolutionBadge.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleEvolutionCard(item, turretData.type);
+                };
+                
+                // Apply locked/unlocked styling based on requirement
+                if (turretData.evolutionUnlocked) {
+                    evolutionBadge.classList.add('unlocked');
+                } else {
+                    evolutionBadge.classList.add('locked');
+                }
+                
+                item.appendChild(evolutionBadge);
+            }
+            
+            item.onclick = turretData.canAfford ? () => selectTurretToPlace(turretData.type) : null;
+            
             const img = document.createElement('img');
-            img.src = turretInfo.image;
-            img.alt = turretInfo.name;
+            img.src = turretData.info.image;
+            img.alt = turretData.info.name;
+            img.className = 'turret-image';
+            
             const name = document.createElement('div');
             name.className = 'turret-name';
-            name.textContent = turretInfo.name;
+            name.textContent = turretData.info.name;
+            
             const price = document.createElement('div');
             price.className = 'price-tag';
-            price.textContent = `$${currentCost}`;
+            price.textContent = `$${turretData.cost}`;
+            
             item.appendChild(img);
             item.appendChild(name);
             item.appendChild(price);
+            
             const tooltip = document.createElement('div');
             tooltip.className = 'turret-tooltip';
-            tooltip.innerHTML = `
-                <div class="tooltip-title">${turretInfo.name}</div>
-                <div class="tooltip-description">${turretDescriptions[type]}</div>
-                <div class="tooltip-stats">
-                    <div class="stat-label">Damage:</div>
-                    <div class="stat-value">${turretInfo.stats.damage}</div>
-                    
-                    <div class="stat-label">Range:</div>
-                    <div class="stat-value">${turretInfo.stats.range}</div>
-                    
-                    <div class="stat-label">Fire Rate:</div>
-                    <div class="stat-value">${turretInfo.stats.firerate}</div>
-                    
-                    <div class="stat-label">Effect:</div>
-                    <div class="stat-value">${turretInfo.stats.effect}</div>
-                </div>
-            `;
+            
+            // Handle tooltip for evolution progress
+            if (turretData.type === 'shooter' && !turretData.evolutionUnlocked) {
+                tooltip.innerHTML = `
+                    <div class="tooltip-title">${turretData.info.name}</div>
+                    <div class="tooltip-description">${turretData.description}</div>
+                    <div class="tooltip-stats">
+                        <div class="stat-label">Damage:</div>
+                        <div class="stat-value">${turretData.info.stats.damage}</div>
+                        
+                        <div class="stat-label">Range:</div>
+                        <div class="stat-value">${turretData.info.stats.range}</div>
+                        
+                        <div class="stat-label">Fire Rate:</div>
+                        <div class="stat-value">${turretData.info.stats.firerate}</div>
+                        
+                        <div class="stat-label">Effect:</div>
+                        <div class="stat-value">${turretData.info.stats.effect}</div>
+                    </div>
+                `;
+            } else {
+                tooltip.innerHTML = `
+                    <div class="tooltip-title">${turretData.info.name}</div>
+                    <div class="tooltip-description">${turretData.description}</div>
+                    <div class="tooltip-stats">
+                        <div class="stat-label">Damage:</div>
+                        <div class="stat-value">${turretData.info.stats.damage}</div>
+                        
+                        <div class="stat-label">Range:</div>
+                        <div class="stat-value">${turretData.info.stats.range}</div>
+                        
+                        <div class="stat-label">Fire Rate:</div>
+                        <div class="stat-value">${turretData.info.stats.firerate}</div>
+                        
+                        <div class="stat-label">Effect:</div>
+                        <div class="stat-value">${turretData.info.stats.effect}</div>
+                    </div>
+                `;
+            }
+            
             item.appendChild(tooltip);
             shopGrid.appendChild(item);
         }
@@ -518,6 +589,13 @@ function handleBuyTurretClick() {
 
 function selectTurretToPlace(type) {
     const currentCost = getCurrentTurretCost(type);
+    
+    // Check evolution requirement for shooter2
+    if (type === 'shooter2' && totalShooterDamage < 4000) {
+        showTemporaryMessage(`Evolution requirement not met! Need ${4000 - Math.round(totalShooterDamage)} more shooter damage.`, "error");
+        return;
+    }
+    
     if (money >= currentCost) {
         selectedTurretType = type;
         isPlacingTurret = true;
@@ -562,6 +640,7 @@ function closeTurretShop(resetPlacement = true) {
 function getCurrentTurretCost(type) {
     switch (type) {
         case 'shooter': return turretPrice;
+        case 'shooter2': return evolvedShooterPrice;
         case 'sniper': return turretPriceSniper;
         case 'wizard': return turretPriceWizard;
         case 'froster': return turretPriceFroster;
@@ -574,6 +653,9 @@ function updateDynamicTurretPrice(type) {
     switch (type) {
         case 'shooter':
             turretPrice = Math.round(turretPrice * turretPriceIncreaseFactor);
+            break;
+        case 'shooter2':
+            evolvedShooterPrice = Math.round(evolvedShooterPrice * evolvedShooterPriceIncreaseFactor);
             break;
         case 'sniper':
             turretPriceSniper = Math.round(turretPriceSniper * sniperPriceIncreaseFactor);
@@ -601,8 +683,14 @@ function sellTurret() {
                 ? 350
                 : turret.type === 'machinegun'
                     ? 250
-                    : 150;
-    const upgradeCost = (turret.type === 'sniper' || turret.type === 'wizard' || turret.type === 'froster' || turret.type === 'machinegun') ? 250 : 120;
+                    : turret.type === 'shooter2'
+                        ? 400
+                        : 150;
+    const upgradeCost = turret.type === 'shooter2' 
+        ? 200 
+        : (turret.type === 'sniper' || turret.type === 'wizard' || turret.type === 'froster' || turret.type === 'machinegun') 
+            ? 250 
+            : 120;
     const totalSpent = initialPrice + turret.upgrades * upgradeCost;
 
     const sellPrice = Math.round(totalSpent * 0.8);
@@ -613,6 +701,8 @@ function sellTurret() {
         turrets.splice(turretIndex, 1);
     }    if (turret.type === 'shooter') {
         turretPrice = Math.round(turretPrice / turretPriceIncreaseFactor);
+    } else if (turret.type === 'shooter2') {
+        evolvedShooterPrice = Math.round(evolvedShooterPrice / evolvedShooterPriceIncreaseFactor);
     } else if (turret.type === 'sniper') {
         turretPriceSniper = Math.round(turretPriceSniper / sniperPriceIncreaseFactor);
     } else if (turret.type === 'wizard') {
@@ -648,6 +738,10 @@ function restartGame() {
     turretPriceSniper = 300;
     turretPriceWizard = 400;
     turretPriceFroster = 350;
+    turretPriceMachinegun = 350;
+    
+    totalShooterDamage = 0;
+    evolvedShooterPrice = 400;
     
     isEasyMode = false;
     isHardMode = false;
@@ -1230,6 +1324,100 @@ function updatePowerUpCosts() {
         
         itemIndex++;
     }
+}
+
+function toggleEvolutionCard(cardElement, turretType) {
+    if (turretType !== 'shooter') return;
+    
+    const isEvolved = cardElement.classList.contains('evolved');
+    const evolutionUnlocked = totalShooterDamage >= 4000;
+    
+    if (isEvolved) {
+        // Flip back to normal shooter
+        cardElement.classList.remove('evolved');
+        const img = cardElement.querySelector('.turret-image');
+        const name = cardElement.querySelector('.turret-name');
+        const price = cardElement.querySelector('.price-tag');
+        const tooltip = cardElement.querySelector('.turret-tooltip');
+        
+        img.src = turretsStaticInfo.shooter.image;
+        name.textContent = turretsStaticInfo.shooter.name;
+        price.textContent = `$${getCurrentTurretCost('shooter')}`;
+        
+        // Update tooltip - normal shooter stats
+        tooltip.innerHTML = `
+            <div class="tooltip-title">${turretsStaticInfo.shooter.name}</div>
+            <div class="tooltip-description">Basic turret with balanced stats. Good for early waves.</div>
+            <div class="tooltip-stats">
+                <div class="stat-label">Damage:</div>
+                <div class="stat-value">${turretsStaticInfo.shooter.stats.damage}</div>
+                
+                <div class="stat-label">Range:</div>
+                <div class="stat-value">${turretsStaticInfo.shooter.stats.range}</div>
+                
+                <div class="stat-label">Fire Rate:</div>
+                <div class="stat-value">${turretsStaticInfo.shooter.stats.firerate}</div>
+                
+                <div class="stat-label">Effect:</div>
+                <div class="stat-value">${turretsStaticInfo.shooter.stats.effect}</div>
+            </div>
+        `;
+        
+        cardElement.onclick = money >= getCurrentTurretCost('shooter') ? () => selectTurretToPlace('shooter') : null;
+    } else {
+        // Flip to evolved shooter
+        cardElement.classList.add('evolved');
+        const img = cardElement.querySelector('.turret-image');
+        const name = cardElement.querySelector('.turret-name');
+        const price = cardElement.querySelector('.price-tag');
+        const tooltip = cardElement.querySelector('.turret-tooltip');
+        
+        img.src = turretsStaticInfo.shooter2.image;
+        name.textContent = turretsStaticInfo.shooter2.name;
+        price.textContent = `$${getCurrentTurretCost('shooter2')}`;
+        
+        if (evolutionUnlocked) {
+            tooltip.innerHTML = `
+                <div class="tooltip-title">${turretsStaticInfo.shooter2.name}</div>
+                <div class="tooltip-description">Enhanced dual-gun turret. Fires twice as fast with lower damage per shot.</div>
+                <div class="tooltip-stats">
+                    <div class="stat-label">Damage:</div>
+                    <div class="stat-value">${turretsStaticInfo.shooter2.stats.damage}</div>
+                    
+                    <div class="stat-label">Range:</div>
+                    <div class="stat-value">${turretsStaticInfo.shooter2.stats.range}</div>
+                    
+                    <div class="stat-label">Fire Rate:</div>
+                    <div class="stat-value">${turretsStaticInfo.shooter2.stats.firerate}</div>
+                    
+                    <div class="stat-label">Effect:</div>
+                    <div class="stat-value">${turretsStaticInfo.shooter2.stats.effect}</div>
+                </div>
+            `;
+            cardElement.onclick = money >= getCurrentTurretCost('shooter2') ? () => selectTurretToPlace('shooter2') : null;
+        } else {
+            tooltip.innerHTML = `
+                <div class="tooltip-title">${turretsStaticInfo.shooter2.name}</div>
+                <div class="tooltip-description">Enhanced dual-gun turret. Fires twice as fast with lower damage per shot.</div>
+                <div class="evolution-progress">
+                    <div class="evolution-progress-title">Evolution Requirement</div>
+                    <div class="evolution-progress-bar">
+                        <div class="evolution-progress-fill" style="width: ${Math.min(100, (totalShooterDamage / 4000) * 100)}%"></div>
+                    </div>
+                    <div class="evolution-progress-text">${Math.round(totalShooterDamage)}/4000 damage</div>
+                </div>
+            `;
+            cardElement.onclick = () => {
+                showTemporaryMessage(`Evolution requirement not met! Need ${4000 - Math.round(totalShooterDamage)} more shooter damage.`, "error");
+            };
+        }
+    }
+    
+    // Add flip animation
+    cardElement.classList.add('flipping');
+    setTimeout(() => {
+        cardElement.classList.remove('flipping');
+    }, 600);
 }
 
 

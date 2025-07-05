@@ -143,6 +143,15 @@ let flagAnimationSpeed = 8;
 let flagFrameCounter = 0;
 let hoveredTurret = null;
 
+// Evolution system variables
+var evolvedShooterFrames = [];
+var evolvedShooterHolderImg;
+var evolvedShooterProjectileImg;
+var totalShooterDamage = 0; // Track total damage done by all shooters
+var evolvedShooterPrice = 400;
+const evolvedShooterPriceIncreaseFactor = 1.5;
+var evolvedShooterUpgradePrice = 200;
+
  function preload() {
     backgroundTile = loadImage('images/map/tile2.png');
     pathTile = loadImage('images/map/pathTile.png');
@@ -159,6 +168,14 @@ let hoveredTurret = null;
     turretHolderImg = loadImage('images/shooter/greenHolder.png');
     for (let i = 1; i <= 7; i++) {
         turretFrames.push(loadImage(`images/shooter/tile00${i}.png`));
+    }
+    
+    // Load evolved shooter frames and assets
+    evolvedShooterHolderImg = loadImage('images/shooter2/greenHolder.png');
+    evolvedShooterProjectileImg = loadImage('images/shooter2/shooterProjectile.png');
+    for (let i = 0; i <= 7; i++) {
+        let frameFile = i === 0 ? 'tile000.png' : `tile00${i}.png`;
+        evolvedShooterFrames.push(loadImage(`images/shooter2/${frameFile}`));
     }
 
     for (let i = 0; i < 11; i++) {
@@ -864,6 +881,13 @@ function checkCollision() {
                         projectile.totalDamageDealt += damage;
                         if (projectile.parentTurret) {
                             projectile.parentTurret.totalDamage += damage;
+                            
+                            // Track total shooter damage for evolution
+                            if (projectile.parentTurret.type === 'shooter') {
+                                totalShooterDamage += damage;
+                            } else if (projectile.parentTurret.type === 'shooter2') {
+                                totalShooterDamage += damage;
+                            }
                         }
                     }
                 // Handle Snowball Projectiles (which are destroyed on impact)
@@ -896,7 +920,26 @@ function checkCollision() {
                     const damage = Math.min(enemy.strength, projectile.strength);
                     enemy.strength -= damage;
                     projectile.strength -= damage;
-                    money += Math.round(damage * 0.5);
+                    
+                    // Apply difficulty-based money calculation
+                    if (isEasyMode) {
+                        money += Math.round(damage * 0.7);
+                    } else if (isHardMode) {
+                        money += Math.round(damage * 0.4);
+                    } else {
+                        money += Math.round(damage * 0.5);
+                    }
+                    
+                    // Track turret damage and total shooter damage
+                    if (projectile.parentTurret) {
+                        projectile.parentTurret.totalDamage += damage;
+                        
+                        if (projectile.parentTurret.type === 'shooter') {
+                            totalShooterDamage += damage;
+                        } else if (projectile.parentTurret.type === 'shooter2') {
+                            totalShooterDamage += damage;
+                        }
+                    }
                     
                     if (projectile.strength <= 0) {
                         projectiles.splice(j, 1); // Remove regular projectile
@@ -1049,6 +1092,9 @@ function placeSelectedTurret(x, y) {
     switch (selectedTurretType) {
         case 'shooter':
             newTurret = new Turret('shooter', x, y, projectileImg, turretFrames[0], turretFrames, turretHolderImg, path.roads);
+            break;
+        case 'shooter2':
+            newTurret = new EvolvedShooterTurret(x, y, evolvedShooterFrames, evolvedShooterHolderImg, evolvedShooterProjectileImg, path.roads);
             break;
         case 'sniper':
             newTurret = new SniperTurret(x, y, sniperFrames, path.roads);
@@ -1283,7 +1329,15 @@ const turretsStaticInfo = {
         image: 'images/turrets/shooter.png', 
         pImage: null, 
         size: 50, 
-        stats: { damage: "1-4", range: "150-250", firerate: "Medium", effect: "None", baseRange: 150 } 
+        stats: { damage: "1-4", range: "150-250", firerate: "Medium", effect: "None", baseRange: 150 },
+        canEvolve: true
+    },
+    shooter2: {
+        name: "Evolved Shooter",
+        image: 'images/turrets/shooter2.png',
+        pImage: null,
+        size: 50,
+        stats: { damage: "0.65-2.6", range: "150-250", firerate: "Very Fast", effect: "Dual gun system", baseRange: 150 }
     },
     sniper: {
         name: "Sniper Turret",

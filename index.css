@@ -1209,7 +1209,7 @@ table td {
     border-radius: 10px;
     padding: 10px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease, background 0.3s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -2106,4 +2106,129 @@ table td {
     color: #155724;
     margin: 8px 0;
     line-height: 1.4;
+}
+
+/* Evolution badge styles */
+.evolution-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: linear-gradient(45deg, #FF5722, #FF8A50);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.7em;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.evolution-badge.unlocked {
+    background: linear-gradient(45deg, #4CAF50, #8BC34A);
+    animation: evolutionPulse 2s infinite;
+}
+
+.evolution-badge.locked {
+    background: linear-gradient(45deg, #FF5722, #FF8A50);
+    cursor: pointer;
+}
+
+.evolution-badge:hover.unlocked {
+    background: linear-gradient(45deg, #45a049, #7CB342);
+    transform: scale(1.1);
+}
+
+.evolution-badge:hover.locked {
+    background: linear-gradient(45deg, #E64A19, #FF7043);
+    transform: scale(1.05);
+}
+
+.evolution-badge:hover {
+    transform: scale(1.05);
+}
+
+@keyframes evolutionPulse {
+    0%, 100% { 
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 0 0 rgba(76, 175, 80, 0.7);
+    }
+    50% { 
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 0 0 10px rgba(76, 175, 80, 0);
+    }
+}
+
+/* Evolution progress styles */
+.evolution-progress {
+    margin-top: 10px;
+    padding: 8px;
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    border-radius: 5px;
+    background: rgba(255, 165, 0, 0.1);
+}
+
+.evolution-progress-title {
+    color: #FFB347 !important;
+    font-weight: bold;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+.evolution-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 5px 0;
+}
+
+.evolution-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FF6B35, #FFB347);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.evolution-progress-text {
+    color: #FFD700 !important;
+    font-size: 0.8em;
+    text-align: center;
+    margin-top: 3px;
+}
+
+/* Evolution requirement styling for locked cards */
+.turret-shop-item.evolved .evolution-progress {
+    border-color: rgba(255, 99, 71, 0.5);
+    background: rgba(255, 99, 71, 0.1);
+}
+
+.turret-shop-item.evolved .evolution-progress-title {
+    color: #FF6347 !important;
+}
+
+.turret-shop-item.evolved .evolution-progress-fill {
+    background: linear-gradient(90deg, #FF4500, #FF6347);
+}
+
+.turret-shop-item.evolved {
+    background: linear-gradient(145deg, rgba(75, 85, 150, 0.9), rgba(55, 65, 130, 0.9));
+    border-color: #6C7B95;
+}
+
+.turret-shop-item.evolved:hover {
+    border-color: #8A9BB8;
+    box-shadow: 0 8px 20px rgba(108, 123, 149, 0.5);
+}
+
+/* Evolution card flip animation */
+@keyframes flipCard {
+    0% { transform: rotateY(0deg); }
+    50% { transform: rotateY(90deg); }
+    100% { transform: rotateY(0deg); }
+}
+
+.turret-shop-item.flipping {
+    animation: flipCard 0.6s ease-in-out;
 }

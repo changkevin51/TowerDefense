@@ -205,10 +205,14 @@ class Turret {
             let xSpeed = this.projectileSpeed * cos(this.lookAngle) * this.gameSpeed;
             let ySpeed = this.projectileSpeed * sin(this.lookAngle) * this.gameSpeed;
     
-            projectiles.push(new Projectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 10));
+            projectiles.push(new Projectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 10, this));
             this.shootingTimer = 0;
             this.totalDamage += this.projectileStrength;
-            dealDamage(this.projectileStrength); // Increment global damage counter
+            
+            // Update total shooter damage tracking (for evolution requirement)
+            if (this.type === 'shooter') {
+                totalShooterDamage += this.projectileStrength;
+            }
         }
     }
     
@@ -547,7 +551,6 @@ function unselectAllTurrets() {
             this.totalDamage += damage;
             money += Math.round(damage * 0.5);
             updateInfo();
-            dealDamage(damage); // Increment global damage counter
     
             if (enemy.strength <= 0) {
                 enemy.strength = 0;
@@ -938,7 +941,6 @@ class FrosterTurret extends Turret {
             projectiles.push(snowball);
             this.shootingTimer = 0;
             this.totalDamage += this.projectileStrength;
-            dealDamage(this.projectileStrength); // Increment global damage counter
         }
     }
 
@@ -1157,10 +1159,9 @@ class MachineGunTurret extends Turret {
             let xSpeed = this.projectileSpeed * cos(spreadAngle) * this.gameSpeed;
             let ySpeed = this.projectileSpeed * sin(spreadAngle) * this.gameSpeed;
             
-            projectiles.push(new Projectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 8));
+            projectiles.push(new Projectile(x, y, xSpeed, ySpeed, this.projectileStrength, this.gameSpeed, 8, this));
             this.shootingTimer = 0;
             this.totalDamage += this.projectileStrength;
-            dealDamage(this.projectileStrength);
         }
     }
 
@@ -1203,8 +1204,152 @@ class MachineGunTurret extends Turret {
     }
 }
 
-function dealDamage(amount) {
-    if (typeof window.totalDamage === 'number') {
-        window.totalDamage += amount;
+class EvolvedShooterTurret extends Turret {
+    constructor(x, y, evolvedShooterFrames, evolvedShooterHolderImg, evolvedShooterProjectileImg, roadsData) {
+        super("shooter2", x, y, evolvedShooterProjectileImg, evolvedShooterFrames[0], evolvedShooterFrames, evolvedShooterHolderImg, roadsData);
+        this.range = 150;
+        this.size = 50;
+        this.gunSize = 37.5;
+        this.shootCooldown = 15; // Half of normal shooter (30), so 2x speed
+        this.projectileStrength = 1; // Base damage, will be modified by 0.65 when actually dealing damage
+        this.baseDamageReduction = 0.65; // 35% damage reduction
+        this.targetMode = 0;
+        this.animationSpeed = 8;
+        this.isLeftGun = true; // Track which gun should fire next
+        this.leftGunOffset = -8; // Offset for left gun
+        this.rightGunOffset = 8; // Offset for right gun
+    }
+
+    upgrade() {
+        let upgradePrice = evolvedShooterUpgradePrice + (this.upgrades * 150);
+        if (this.upgrades < this.maxUpgrades && money >= upgradePrice) {
+            money -= upgradePrice;
+            updateInfo();
+            this.upgrades += 1;
+            this.shootCooldown -= 2;
+            this.projectileStrength += 1; // Base damage increase
+            this.range += 50;
+        }
+    }
+
+    shootProjectile() {
+        let enemy = null;
+    
+        if (this.targetMode === 0) {
+            enemy = this.getEnemyClosestToTurret();
+        } else if (this.targetMode === 1) {
+            enemy = this.getStrongestEnemy();
+        } else if (this.targetMode === 2) {
+            enemy = this.getEnemyFarthestFromStart();
+        } else if (this.targetMode === 3) {
+            enemy = this.getLastEnemyInRange();
+        }
+    
+        if (enemy) {
+            this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
+            
+            // Start animation when shooting
+            if (!this.isAnimating) {
+                this.isAnimating = true;
+                this.frameNumber = 0;
+            }
+            this.lastAngle = this.lookAngle;
+
+            // Calculate gun position based on which gun is firing
+            let gunOffset = this.isLeftGun ? this.leftGunOffset : this.rightGunOffset;
+            let offsetX = gunOffset * cos(this.lookAngle + PI/2);
+            let offsetY = gunOffset * sin(this.lookAngle + PI/2);
+            
+            let x = this.x + (this.gunSize * cos(this.lookAngle)) + offsetX;
+            let y = this.y + (this.gunSize * sin(this.lookAngle)) + offsetY;
+            let xSpeed = this.projectileSpeed * cos(this.lookAngle) * this.gameSpeed;
+            let ySpeed = this.projectileSpeed * sin(this.lookAngle) * this.gameSpeed;
+            
+            // Calculate actual damage with reduction and round up
+            let actualDamage = Math.ceil(this.projectileStrength * this.baseDamageReduction);
+    
+            projectiles.push(new Projectile(x, y, xSpeed, ySpeed, actualDamage, this.gameSpeed, 10, this));
+            this.shootingTimer = 0;
+            this.totalDamage += actualDamage;
+            
+            // Update total shooter damage tracking
+            totalShooterDamage += actualDamage;
+            
+            // Toggle between left and right gun
+            this.isLeftGun = !this.isLeftGun;
+        }
+    }
+
+    draw() {
+        if (this.selected) {
+            push();
+            strokeWeight(1);
+            stroke('black');
+            fill(255, 255, 0, 50);
+            ellipse(this.x, this.y, this.range * 2, this.range * 2);
+            pop();
+        }
+    
+        push();
+        imageMode(CENTER);
+        if (!this.placed && !this.isValid()) {
+            tint(238, 75, 43); 
+        }
+        image(this.turretHolderImg, this.x, this.y, this.size, this.size);
+    
+        push();
+        translate(this.x, this.y);
+        rotate(this.lookAngle + PI/2);
+        
+        let turretBodySize = this.size * 2;
+        if (this.isAnimating) {
+            image(this.turretFrames[this.frameNumber], 0, 0, turretBodySize, turretBodySize);
+            if (frameCount % Math.floor(this.animationSpeed / this.gameSpeed) === 0) {
+                this.frameNumber++;
+                if (this.frameNumber >= this.turretFrames.length) {
+                    this.frameNumber = 0;
+                    this.isAnimating = false;
+                }
+            }
+        } else {
+            image(this.idleFrame, 0, 0, turretBodySize, turretBodySize);
+        }
+        pop();
+        pop();
+    
+        push();
+        strokeWeight(2); 
+        fill('yellow');
+        textSize(12);
+        textAlign(CENTER, CENTER);
+        text("level " + (this.upgrades+1), this.x, this.y - this.size / 2 - 10);
+        pop();
+    
+        if (this.isStunned) {
+            image(this.stunImg, this.x - this.size / 2, this.y - this.size / 2, this.size, this.size);
+        }
+        
+        if (activeSpeedBoost.active && this.placed) {
+            push();
+            tint(255, 255, 255, 150);
+            imageMode(CENTER);
+            image(speedBoostEffectImg, this.x, this.y, this.size * 1.8, this.size * 1.8);
+            noTint();
+            imageMode(CORNER);
+            pop();
+        }
+    }
+
+    chooseColor() {
+        if(this.selected) {
+            return "blue";
+        }
+        if(this.placed || this.isValid()) {
+            return "white";
+        } else {
+            return "red";
+        }
     }
 }
+
+//...existing code...

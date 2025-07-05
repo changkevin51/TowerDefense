@@ -2,7 +2,7 @@ let projectileImg;
 let wizardProjectileImage;
 
 class Projectile {
-    constructor(x, y, xSpeed, ySpeed, strength, gameSpeed, size) {
+    constructor(x, y, xSpeed, ySpeed, strength, gameSpeed, size, parentTurret = null) {
         this.x = x;
         this.y = y;
         this.xSpeed = xSpeed;
@@ -11,6 +11,7 @@ class Projectile {
         this.size = size;
         this.gameSpeed = gameSpeed;
         this.angle = atan2(ySpeed, xSpeed);
+        this.parentTurret = parentTurret;
     }
 
     draw() {
