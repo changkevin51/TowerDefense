@@ -199,13 +199,18 @@ function updateSpeedText() {
     speedText.textContent = `Current Speed: ${gameSpeed}x`;
 }
 
-// Turret UI functions
 function showSelectedTurretInfo(turret) {
     const infoDiv = document.getElementById('turretInfo');
     const header = document.getElementById('turretDetailsHeader');
+    window.currentlySelectedTurret = turret;
+    
     if (!turret) {
         infoDiv.style.display = 'none';
         isPopupActive = false;
+        if (window.isPlacingTarget) {
+            window.isPlacingTarget = false;
+            window.targetingTurret = null;
+        }
         return;
     }
 
@@ -349,6 +354,73 @@ function showSelectedTurretInfo(turret) {
     if (damageCounter) {
         damageCounter.textContent = `Damage: ${Math.round(turret.totalDamage)}`;
     }
+
+    const infoContainer = document.querySelector('.info-container');
+    let targetButton = document.getElementById('setTargetButton');
+    
+    if (turret.type === 'machinegun' || turret.type === 'wizard') {
+        if (!targetButton) {
+            targetButton = document.createElement('button');
+            targetButton.id = 'setTargetButton';
+            targetButton.style.cssText = `
+                margin-top: 10px;
+                padding: 8px 16px;
+                background-color: #ffa500;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: bold;
+                width: 100%;
+                transition: background-color 0.3s;
+            `;
+            
+            const upgradeSection = document.querySelector('.upgrade-section');
+            if (upgradeSection) {
+                upgradeSection.appendChild(targetButton);
+            }
+        }
+        
+        const newTargetButton = targetButton.cloneNode(true);
+        targetButton.parentNode.replaceChild(newTargetButton, targetButton);
+        targetButton = newTargetButton;
+        
+        targetButton.addEventListener('click', () => {
+            if (turret.hasFixedTarget) {
+                turret.clearFixedTarget();
+                window.isPlacingTarget = false;
+                window.targetingTurret = null;
+                if (typeof showSelectedTurretInfo === 'function') {
+                    showSelectedTurretInfo(turret);
+                }
+            } else {
+                window.isPlacingTarget = true;
+                window.targetingTurret = turret;
+                targetButton.textContent = 'Click on map to set target';
+                targetButton.style.backgroundColor = '#007bff';
+                targetButton.onmouseover = () => targetButton.style.backgroundColor = '#0056b3';
+                targetButton.onmouseout = () => targetButton.style.backgroundColor = '#007bff';
+            }
+        });
+        
+        if (turret.hasFixedTarget) {
+            targetButton.textContent = 'Clear Target';
+            targetButton.style.backgroundColor = '#dc3545';
+            targetButton.onmouseover = () => targetButton.style.backgroundColor = '#c82333';
+            targetButton.onmouseout = () => targetButton.style.backgroundColor = '#dc3545';
+        } else {
+            targetButton.textContent = 'Set Target';
+            targetButton.style.backgroundColor = '#ffa500';
+            targetButton.onmouseover = () => targetButton.style.backgroundColor = '#ff8c00';
+            targetButton.onmouseout = () => targetButton.style.backgroundColor = '#ffa500';
+        }
+        
+        targetButton.style.display = 'block';
+    } else {
+        if (targetButton) {
+            targetButton.style.display = 'none';
+        }
+    }
 }
 
 function updateTurretHoverInfo() {
@@ -358,14 +430,12 @@ function updateTurretHoverInfo() {
     if (!turretHoverInfo) return;
     
     if (mouseOverTurret && !isPlacingTurret && !isPopupActive) {
-        // Update the hover info content
         const turretType = mouseOverTurret.type || 'shooter';
         const turretStats = populateStats().find(s => s.name.toLowerCase() === turretType);
           if (!turretStats) return;
         
         const level = mouseOverTurret.upgrades + 1;
         
-        // Handle range display for different turret types
         let range;
         if (turretType === "machinegun") {
             range = "Infinite";
@@ -374,14 +444,12 @@ function updateTurretHoverInfo() {
                 (turretType === "wizard" ? 30 : turretType === "froster" ? 10 : 50);
         }
         
-        // Handle strength (damage) calculation
         const strength = Math.round((turretStats.baseStrength + mouseOverTurret.upgrades *
             (turretType === "sniper" ? (4 + level) : 
              turretType === "wizard" ? (2 + level) : 
              turretType === "froster" ? 1 : 
              turretType === "machinegun" ? 0.3 : 
-             turretType === "shooter2" ? 0.65 : 1)) * 100) / 100; // Round to 2 decimal places
-               // Handle cooldown calculation
+             turretType === "shooter2" ? 0.65 : 1)) * 100) / 100; 
         const cooldown = turretStats.baseCooldown - mouseOverTurret.upgrades *
             (turretType === "sniper" ? 8 : 
              turretType === "wizard" ? 5 : 
@@ -420,14 +488,12 @@ function updateTurretHoverInfo() {
             </div>
         `;
         
-        // Position the hover info near the mouse
         turretHoverInfo.style.left = mouseX + 20 + 'px';
         turretHoverInfo.style.top = mouseY - 100 + 'px';
         turretHoverInfo.style.display = 'block';
         
         hoveredTurret = mouseOverTurret;
     } else if (hoveredTurret !== null) {
-        // Hide the hover info if not hovering over a turret
         turretHoverInfo.style.display = 'none';
         hoveredTurret = null;
     }
@@ -507,7 +573,6 @@ function handleBuyTurretClick() {
             machinegun: "Infinite range, rapid fire turret that shoots where your cursor points. Low damage but very fast."
         };
         
-        // Process turrets for display, handling evolution cards
         const turretsToShow = [];
         for (const type in turretsStaticInfo) {
             if (type === 'shooter2') continue; // Handle evolved shooter specially
@@ -536,7 +601,6 @@ function handleBuyTurretClick() {
                 item.className += ' disabled';
             }
             
-            // Add evolution badge if this turret can evolve
             if (turretData.hasEvolution) {
                 const evolutionBadge = document.createElement('div');
                 evolutionBadge.className = 'evolution-badge';
@@ -546,7 +610,6 @@ function handleBuyTurretClick() {
                     toggleEvolutionCard(item, turretData.type);
                 };
                 
-                // Apply locked/unlocked styling based on requirement
                 if (turretData.evolutionUnlocked) {
                     evolutionBadge.classList.add('unlocked');
                 } else {
@@ -632,7 +695,6 @@ function handleBuyTurretClick() {
 function selectTurretToPlace(type) {
     const currentCost = getCurrentTurretCost(type);
     
-    // Check evolution requirement for shooter2
     if (type === 'shooter2' && totalShooterDamage < EVOLUTION_DAMAGE_THRESHOLD) {
         showTemporaryMessage(`Evolution requirement not met! Need ${EVOLUTION_DAMAGE_THRESHOLD - Math.round(totalShooterDamage)} more shooter damage.`, "error");
         return;
@@ -643,7 +705,7 @@ function selectTurretToPlace(type) {
         isPlacingTurret = true;
         closeTurretShop(false);
         document.getElementById('gameCanvas').style.cursor = 'copy';
-        updateCancelSelectionOverlay(); // Update overlay visibility
+        updateCancelSelectionOverlay(); 
     } else {
         showTemporaryMessage(`Not enough money for ${turretsStaticInfo[type].name}`, "error");
     }
@@ -658,7 +720,6 @@ function closeTurretShop(resetPlacement = true) {
     if (gameMenu) gameMenu.classList.remove('shop-open');
     turretMenu.innerHTML = ''; 
 
-    // Restore other general game menu buttons
     if (menuButtons) {
         Array.from(menuButtons.children).forEach(button => {
             if (button.id !== 'turretMenu') {
@@ -666,7 +727,6 @@ function closeTurretShop(resetPlacement = true) {
             }
         });
     }
-    // Show the "Buy Turret" button again
     const buyTextButton = document.getElementById('buyText');
     if (buyTextButton) buyTextButton.style.display = '';
 
@@ -675,7 +735,7 @@ function closeTurretShop(resetPlacement = true) {
         isPlacingTurret = false;
         selectedTurretType = null;
         document.getElementById('gameCanvas').style.cursor = 'default';
-        updateCancelSelectionOverlay(); // Update overlay visibility
+        updateCancelSelectionOverlay(); 
     }
 }
 
@@ -740,6 +800,10 @@ function sellTurret() {
 
     const turretIndex = turrets.indexOf(turret);
     if (turretIndex > -1) {
+        // Clear target if this turret has one
+        if (turret.hasFixedTarget && typeof turret.clearFixedTarget === 'function') {
+            turret.clearFixedTarget();
+        }
         turrets.splice(turretIndex, 1);
     }    if (turret.type === 'shooter') {
         turretPrice = Math.round(turretPrice / turretPriceIncreaseFactor);
@@ -1377,7 +1441,6 @@ function toggleEvolutionCard(cardElement, turretType) {
     const evolutionUnlocked = totalShooterDamage >= EVOLUTION_DAMAGE_THRESHOLD;
     
     if (isEvolved) {
-        // Flip back to normal shooter
         cardElement.classList.remove('evolved');
         const img = cardElement.querySelector('.turret-image');
         const name = cardElement.querySelector('.turret-name');

@@ -152,6 +152,11 @@ var evolvedShooterPrice = 400;
 const evolvedShooterPriceIncreaseFactor = 1.5;
 var evolvedShooterUpgradePrice = 200;
 
+let isPlacingTarget = false;
+let targetingTurret = null;
+window.isPlacingTarget = false;
+window.targetingTurret = null;
+
  function preload() {
     backgroundTile = loadImage('images/map/tile2.png');
     pathTile = loadImage('images/map/pathTile.png');
@@ -164,13 +169,13 @@ var evolvedShooterUpgradePrice = 200;
     speedBoostEffectImg = loadImage('images/effects/speedboost.png');
     bombEnemyImage = loadImage('images/enemies/bomb.png');
     explosionImage = loadImage('images/explosion.png');
+    targetImg = loadImage('images/target.png');
 
     turretHolderImg = loadImage('images/shooter/greenHolder.png');
     for (let i = 1; i <= 7; i++) {
         turretFrames.push(loadImage(`images/shooter/tile00${i}.png`));
     }
     
-    // Load evolved shooter frames and assets
     evolvedShooterHolderImg = loadImage('images/shooter2/greenHolder.png');
     evolvedShooterProjectileImg = loadImage('images/shooter2/shooterProjectile.png');
     for (let i = 0; i <= 7; i++) {
@@ -499,6 +504,19 @@ function draw() {
         drawPlacementPreview(mouseX, mouseY);
     }
 
+    if (window.isPlacingTarget && window.targetingTurret) {
+        push();
+        imageMode(CENTER);
+        tint(255, 255, 255, 150);
+        image(targetImg, mouseX, mouseY, 60, 60);
+        noTint();
+        
+        stroke(255, 165, 0);
+        strokeWeight(2);
+        line(window.targetingTurret.x, window.targetingTurret.y, mouseX, mouseY);
+        pop();
+    }
+
     if (health <= 0) {
         drawGameOver();
     }    if (isPaused) {
@@ -650,7 +668,6 @@ function draw() {
     drawDualPathWarningPopup();
 }
 
-
 function filterArrays() {
     // Filter enemies
     for (let i = enemies.length - 1; i >= 0; i--) {
@@ -668,7 +685,6 @@ function filterArrays() {
         }
     }
 }
-
 
 function isValidPlacementLocation(x, y, turretType) {
     const turretSize = turretsStaticInfo[turretType]?.size || 50; 
@@ -689,8 +705,6 @@ function isValidPlacementLocation(x, y, turretType) {
     }
     return true;
 }
-
-
 
 function toggleAutoStart() {
     autoStart = !autoStart;
@@ -805,7 +819,6 @@ function showMoneyPopup(amount) {
         popup.classList.remove('show');
     }, 1000);
 }
-
 
 function showBossWarning(amount) {
     const popup = document.getElementById('bossWarningPopup');
@@ -1040,28 +1053,36 @@ function mousePressed() {
 
     if (isPaused) return;
 
-    if (isPlacingTurret && selectedTurretType) {
-        if (mouseX >= 0 && mouseX <= width && mouseY >= 0 && mouseY <= height) {
-            placeSelectedTurret(mouseX, mouseY);
-        } else {
-            closeTurretShop(true); // Cancel placement
+    // Handle target placement FIRST, before any other popup logic
+    if (window.isPlacingTarget && window.targetingTurret) {
+        // Handle target placement
+        if (mouseX >= 0 && mouseX <= 700 && mouseY >= 0 && mouseY <= 700) {
+            window.targetingTurret.setFixedTarget(mouseX, mouseY);
+            window.isPlacingTarget = false;
+            const placedTurret = window.targetingTurret;
+            window.targetingTurret = null;
+            // Keep the turret selected and refresh the info panel to show the updated state
+            turrets.forEach(t => t.selected = (t === placedTurret));
+            showSelectedTurretInfo(placedTurret);
         }
         return;
     }
 
-    // Block other interactions if dual path warning is active
+    if (isPlacingTurret && selectedTurretType) {
+        // Handle normal turret placement
+        if (mouseX >= 0 && mouseX <= 700 && mouseY >= 0 && mouseY <= 700) {
+            placeSelectedTurret(mouseX, mouseY);
+        }
+        return;
+    }
+
     if (isDualPathWarningActive) {
         return;
     }
 
-    // if (mouseX > width - 50 && mouseX < width - 10 && mouseY > 10 && mouseY < 50) {
-    //     isPaused = true;
-    //     return;
-    // }
-
     if (isPopupActive) { 
         const turretInfoPopup = document.getElementById('turretInfo');
-        const isClickInsidePopup = turretInfoPopup.contains(event.target);
+        const isClickInsidePopup = turretInfoPopup && turretInfoPopup.contains(event.target);
 
         if (!isClickInsidePopup && mouseY < 560 && mouseX < 800) { 
             turrets.forEach(t => t.selected = false);
@@ -1334,6 +1355,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.totalDamage = 0;
 var selectedTurretType = null; 
+var currentlySelectedTurret = null; // Track the currently selected turret for UI purposes
 var isPlacingTurret = false; 
 
 const turretsStaticInfo = {
@@ -1428,7 +1450,6 @@ function dismissDualPathWarning() {
 
 function drawDualPathWarningPopup() {
     if (!isDualPathWarningActive) return;
-    
     push();
     fill(0, 0, 0, 150);
     rect(0, 0, width, height);

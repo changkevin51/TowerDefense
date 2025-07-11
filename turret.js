@@ -193,7 +193,6 @@ class Turret {
         if (enemy) {
             this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
             
-            // Start animation when angle changes significantly or shooting
             if (abs(this.lookAngle - this.lastAngle) > 0.1 || !this.isAnimating) {
                 this.isAnimating = true;
                 this.frameNumber = 0;
@@ -434,18 +433,14 @@ function unselectAllTurrets() {
 
         super("sniper", x, y, null, sniperAnimationFrames[0], sniperAnimationFrames, turretHolderImg, roadsData); // Added "sniper" type
         this.range = 400;
-        this.size = 60; // Sniper specific size
+        this.size = 60; 
         this.gunSize = 55;
         this.shootCooldown = 100;
         this.projectileStrength = 4;
         this.hitEffects = [];
-        this.targetMode = 2; // Default for sniper
-        // this.upgrades = 0; // from super
+        this.targetMode = 2;
         this.currentTarget = null;
-        // this.frameNumber = 0; // from super
-        // this.isAnimating = false; // from super
         this.animationSpeed = 1.5;
-        // this.lastAngle = 0; // from super
         this.idleFrame = sniperAnimationFrames[0]; // Sniper's specific idle frame
         this.sniperFrames = sniperAnimationFrames; // Store specific frames if needed differently from base
     }
@@ -623,9 +618,9 @@ function unselectAllTurrets() {
 
     targetEnemy() {
         if (this.isStunned) {
-            return;  // Prevent any actions (like shooting) when stunned
+            return;  
         }
-    
+
         if (this.currentTarget) {
             const distanceSq = (this.currentTarget.x - this.x) ** 2 + (this.currentTarget.y - this.y) ** 2;
             const maxRangeSq = (this.range + this.currentTarget.size / 2) ** 2;
@@ -633,7 +628,7 @@ function unselectAllTurrets() {
                 this.currentTarget = null; // Reset target if out of range or dead
             }
         }
-    
+
         if (!this.currentTarget) {
             if (this.targetMode === 0) {
                 this.currentTarget = this.getEnemyClosestToTurret();
@@ -656,7 +651,6 @@ function unselectAllTurrets() {
             }
         }
     }
-    
     
 
     displayHitEffect(enemy) {
@@ -729,6 +723,9 @@ class WizardTurret extends Turret {
         this.targetMode = 0;
         this.animationSpeed = 5;
         this.animationDelay = 500;
+        this.hasFixedTarget = false;
+        this.fixedTargetX = 0;
+        this.fixedTargetY = 0;
     }
 
     upgrade() {
@@ -766,7 +763,6 @@ class WizardTurret extends Turret {
             let xSpeed = this.projectileSpeed * cos(this.lookAngle);
             let ySpeed = this.projectileSpeed * sin(this.lookAngle);
 
-            // Create a piercing projectile and pass reference to this turret
             const newProjectile = new PiercingProjectile(
                 x, 
                 y, 
@@ -789,8 +785,58 @@ class WizardTurret extends Turret {
         }
     }
 
+    shootTowardsTarget(targetX, targetY) {
+        this.isAnimating = true;
+        this.frameNumber = 0;
+        this.animationEndTime = millis() + this.animationDelay;
+        this.lookAngle = atan2(targetY - this.y, targetX - this.x);
+
+        let x = this.x + this.gunSize * cos(this.lookAngle);
+        let y = this.y + this.gunSize * sin(this.lookAngle);
+        let xSpeed = this.projectileSpeed * cos(this.lookAngle);
+        let ySpeed = this.projectileSpeed * sin(this.lookAngle);
+        const newProjectile = new PiercingProjectile(
+            x, 
+            y, 
+            xSpeed, 
+            ySpeed, 
+            this.projectileStrength, 
+            this.gameSpeed,
+            50,
+            this
+        );
+        projectiles.push(newProjectile);
+    }
+
+    setFixedTarget(x, y) {
+        this.hasFixedTarget = true;
+        this.fixedTargetX = x;
+        this.fixedTargetY = y;
+    }
+
+    clearFixedTarget() {
+        this.hasFixedTarget = false;
+        this.fixedTargetX = 0;
+        this.fixedTargetY = 0;
+    }
+
 
     targetEnemy() {
+        if (!wave.active && enemies.length === 0) {
+            return;
+        }
+
+        if (this.hasFixedTarget) {
+            this.lookAngle = atan2(this.fixedTargetY - this.y, this.fixedTargetX - this.x);
+            if (this.shootingTimer >= this.shootCooldown / this.gameSpeed) {
+                this.shootTowardsTarget(this.fixedTargetX, this.fixedTargetY);
+                this.shootingTimer = 0;
+            } else {
+                this.shootingTimer += 1; 
+            }
+            return;
+        }
+
         let enemy = null;
     
         if (this.targetMode === 0) {
@@ -830,7 +876,6 @@ class WizardTurret extends Turret {
         if (!this.placed && !this.isValid()) {
             tint(238, 75, 43); 
         }
-        // Use this.turretHolderImg instead of this.wizardHolderImg
         image(this.turretHolderImg, this.x, this.y, this.size, this.size);
         pop();
 
@@ -841,7 +886,6 @@ class WizardTurret extends Turret {
         
         let wizardSize = this.size * 2;
         if (this.isAnimating) {
-            // Use this.turretFrames instead of this.wizardFrames
             image(this.turretFrames[Math.floor(this.frameNumber)], 0, 0, wizardSize, wizardSize);
             this.frameNumber += this.animationSpeed / this.gameSpeed;
             if (this.frameNumber >= this.turretFrames.length) { // Use this.turretFrames.length
@@ -870,6 +914,13 @@ class WizardTurret extends Turret {
             image(speedBoostEffectImg, this.x, this.y, this.size * 1.8, this.size * 1.8);
             noTint();
             imageMode(CORNER);
+            pop();
+        }
+
+        if (this.hasFixedTarget && this.placed && window.currentlySelectedTurret === this) {
+            push();
+            imageMode(CENTER);
+            image(targetImg, this.fixedTargetX, this.fixedTargetY, 60, 60);
             pop();
         }
     }
@@ -948,17 +999,13 @@ class FrosterTurret extends Turret {
             pop();
         }
 
-        // Draw static holder
         push();
         imageMode(CENTER);
         if (!this.placed && !this.isValid()) {
             tint(238, 75, 43); 
         }
-        // Use this.turretHolderImg instead of this.frosterHolderImg
         image(this.turretHolderImg, this.x, this.y, this.size, this.size);
         pop();
-
-        // Draw animated turret
         push();
         imageMode(CENTER);
         translate(this.x, this.y);
@@ -1062,6 +1109,9 @@ class MachineGunTurret extends Turret {
         this.animationSpeed = 12; 
         this.cursorX = mouseX;
         this.cursorY = mouseY;
+        this.hasFixedTarget = false;
+        this.fixedTargetX = 0;
+        this.fixedTargetY = 0;
     }
 
     upgrade() {
@@ -1133,6 +1183,25 @@ class MachineGunTurret extends Turret {
             imageMode(CORNER);
             pop();
         }
+
+        if (this.hasFixedTarget && this.placed && window.currentlySelectedTurret === this) {
+            push();
+            imageMode(CENTER);
+            image(targetImg, this.fixedTargetX, this.fixedTargetY, 60, 60);
+            pop();
+        }
+    }
+
+    setFixedTarget(x, y) {
+        this.hasFixedTarget = true;
+        this.fixedTargetX = x;
+        this.fixedTargetY = y;
+    }
+
+    clearFixedTarget() {
+        this.hasFixedTarget = false;
+        this.fixedTargetX = 0;
+        this.fixedTargetY = 0;
     }
 
     shootProjectile() {
@@ -1140,8 +1209,13 @@ class MachineGunTurret extends Turret {
             this.isAnimating = true;
             this.frameNumber = 0;
             
-            this.cursorX = mouseX;
-            this.cursorY = mouseY;
+            if (this.hasFixedTarget) {
+                this.cursorX = this.fixedTargetX;
+                this.cursorY = this.fixedTargetY;
+            } else {
+                this.cursorX = mouseX;
+                this.cursorY = mouseY;
+            }
             
             this.lookAngle = atan2(this.cursorY - this.y, this.cursorX - this.x);
             
@@ -1170,9 +1244,15 @@ class MachineGunTurret extends Turret {
         }
         
         if (this.placed) {
-            this.cursorX = mouseX;
-            this.cursorY = mouseY;
-            this.lookAngle = atan2(this.cursorY - this.y, this.cursorX - this.x);
+            if (this.hasFixedTarget) {
+                this.cursorX = this.fixedTargetX;
+                this.cursorY = this.fixedTargetY;
+                this.lookAngle = atan2(this.fixedTargetY - this.y, this.fixedTargetX - this.x);
+            } else {
+                this.cursorX = mouseX;
+                this.cursorY = mouseY;
+                this.lookAngle = atan2(this.cursorY - this.y, this.cursorX - this.x);
+            }
         }
     }
 
@@ -1203,14 +1283,14 @@ class EvolvedShooterTurret extends Turret {
         this.range = 150;
         this.size = 50;
         this.gunSize = 37.5;
-        this.shootCooldown = 15; // Half of normal shooter (30), so 2x speed
+        this.shootCooldown = 15; 
         this.projectileStrength = 1; // Base damage, will be modified by 0.65 when actually dealing damage
         this.baseDamageReduction = 0.65; // 35% damage reduction
         this.targetMode = 0;
         this.animationSpeed = 8;
-        this.isLeftGun = true; // Track which gun should fire next
-        this.leftGunOffset = -8; // Offset for left gun
-        this.rightGunOffset = 8; // Offset for right gun
+        this.isLeftGun = true; 
+        this.leftGunOffset = -8; 
+        this.rightGunOffset = 8; 
     }
 
     upgrade() {
@@ -1241,14 +1321,12 @@ class EvolvedShooterTurret extends Turret {
         if (enemy) {
             this.lookAngle = atan2(enemy.y - this.y, enemy.x - this.x);
             
-            // Start animation when shooting
             if (!this.isAnimating) {
                 this.isAnimating = true;
                 this.frameNumber = 0;
             }
             this.lastAngle = this.lookAngle;
 
-            // Calculate gun position based on which gun is firing
             let gunOffset = this.isLeftGun ? this.leftGunOffset : this.rightGunOffset;
             let offsetX = gunOffset * cos(this.lookAngle + PI/2);
             let offsetY = gunOffset * sin(this.lookAngle + PI/2);
@@ -1258,13 +1336,10 @@ class EvolvedShooterTurret extends Turret {
             let xSpeed = this.projectileSpeed * cos(this.lookAngle) * this.gameSpeed;
             let ySpeed = this.projectileSpeed * sin(this.lookAngle) * this.gameSpeed;
             
-            // Calculate actual damage with reduction and round up
             let actualDamage = Math.ceil(this.projectileStrength * this.baseDamageReduction);
     
             projectiles.push(new Projectile(x, y, xSpeed, ySpeed, actualDamage, this.gameSpeed, 10, this));
             this.shootingTimer = 0;
-            
-            // Toggle between left and right gun
             this.isLeftGun = !this.isLeftGun;
         }
     }
@@ -1341,4 +1416,3 @@ class EvolvedShooterTurret extends Turret {
     }
 }
 
-//...existing code...

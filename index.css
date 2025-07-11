@@ -1415,9 +1415,6 @@ table td {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
-
-
-
 .turret-shop-item:nth-child(1) .turret-tooltip,
 .turret-shop-item:nth-child(3) .turret-tooltip {
     left: 10px;
