@@ -538,10 +538,27 @@ function handleBuyTurretClick() {
         }
         const buyTextButton = document.getElementById('buyText');
         if (buyTextButton) buyTextButton.style.display = 'none';
+        
+        // Create shop header with back button and title
+        const shopTitleContainer = document.createElement('div');
+        shopTitleContainer.className = 'shop-title-container';
+        
+        const backButton = document.createElement('div');
+        backButton.className = 'shop-back-button';
+        backButton.onclick = () => closeTurretShop();
+        
+        const backImg = document.createElement('img');
+        backImg.src = 'images/back-button.png';
+        backImg.alt = 'Back';
+        backButton.appendChild(backImg);
+        
         const shopTitle = document.createElement('div');
         shopTitle.className = 'shop-title';
         shopTitle.textContent = 'TURRET SHOP';
-        turretMenu.appendChild(shopTitle);
+        
+        shopTitleContainer.appendChild(backButton);
+        shopTitleContainer.appendChild(shopTitle);
+        turretMenu.appendChild(shopTitleContainer);
         const shopHeader = document.createElement('div');
         shopHeader.className = 'turret-shop-header';
         const moneyDisplay = document.createElement('div');
@@ -688,11 +705,6 @@ function handleBuyTurretClick() {
             shopGrid.appendChild(item);
         }
         turretMenu.appendChild(shopGrid);
-        const cancelButton = document.createElement('button');
-        cancelButton.id = 'cancelTurretSelectionButton';
-        cancelButton.textContent = 'Cancel';
-        cancelButton.onclick = closeTurretShop;
-        turretMenu.appendChild(cancelButton);
     }
 }
 
@@ -1094,10 +1106,26 @@ function handleBuyPowerUpClick() {
         const powerUpTextButton = document.getElementById('powerUpText');
         if (powerUpTextButton) powerUpTextButton.style.display = 'none';
         
+        // Create shop header with back button and title
+        const shopTitleContainer = document.createElement('div');
+        shopTitleContainer.className = 'shop-title-container';
+        
+        const backButton = document.createElement('div');
+        backButton.className = 'shop-back-button';
+        backButton.onclick = () => closePowerUpShop();
+        
+        const backImg = document.createElement('img');
+        backImg.src = 'images/back-button.png';
+        backImg.alt = 'Back';
+        backButton.appendChild(backImg);
+        
         const shopTitle = document.createElement('div');
         shopTitle.className = 'shop-title';
-        shopTitle.textContent = 'POWER-UP STORE';
-        powerUpMenu.appendChild(shopTitle);
+        shopTitle.textContent = 'POWER-UPS';
+        
+        shopTitleContainer.appendChild(backButton);
+        shopTitleContainer.appendChild(shopTitle);
+        powerUpMenu.appendChild(shopTitleContainer);
         
         const shopHeader = document.createElement('div');
         shopHeader.className = 'turret-shop-header';
@@ -1196,12 +1224,6 @@ function handleBuyPowerUpClick() {
             shopGrid.appendChild(item);
         }
         powerUpMenu.appendChild(shopGrid);
-        
-        const cancelButton = document.createElement('button');
-        cancelButton.id = 'cancelPowerUpSelectionButton';
-        cancelButton.textContent = 'Cancel';
-        cancelButton.onclick = closePowerUpShop;
-        powerUpMenu.appendChild(cancelButton);
     }
 }
 

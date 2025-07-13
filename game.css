@@ -761,7 +761,7 @@ table td {
     display: flex !important; 
     flex-direction: column;
     align-items: center;
-    justify-content: space-between; /* Changed from flex-start to space-between */
+    justify-content: flex-start; /* Changed from flex-start to space-between */
     position: absolute;
     top: 0;
     left: 0;
@@ -770,7 +770,7 @@ table td {
     background: rgba(20, 20, 20, 0.95); 
     backdrop-filter: blur(8px);
     border-radius: 0 15px 15px 0; 
-    padding: 20px;
+    padding: 10px 20px;
     box-sizing: border-box;
     z-index: 150; 
     font-family: 'Exo 2', sans-serif;
@@ -815,7 +815,7 @@ table td {
     background: rgba(40, 40, 40, 0.7);
     border-radius: 10px;
     padding: 10px 15px;
-    margin-bottom: 0px;
+    margin: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -838,10 +838,56 @@ table td {
     color: #FFD700; 
 }
 
+.shop-title-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.shop-back-button {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.shop-back-button:hover {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+    transform: translateY(-50%) translateX(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border-color: rgba(120, 44, 190, 0.5);
+}
+
+.shop-back-button:active {
+    transform: translateY(-50%) translateX(0px) scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+.shop-back-button img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(1.2) drop-shadow(0 0 2px rgba(255, 255, 255, 0.3));
+}
+
 .shop-title {
     width: 100%;
     text-align: center;
-    margin: 0 0 10px 0;
+    margin: 0;
     color: #FFD700;
     font-family: 'Russo One', sans-serif;
     font-size: 1.5em;
@@ -849,15 +895,13 @@ table td {
     letter-spacing: 1px;
 }
 
-
-
 .turret-shop-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr); 
     gap: 10px; 
     width: 90%;
-    margin: 0 auto 0 auto; 
-    padding: 10px 6px; 
+    margin: 0 auto; 
+    padding: 6px; 
 }
 
 .turret-shop-item {
@@ -872,7 +916,7 @@ table td {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 160px;
+    height: 155px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     z-index: 1000; 
 }
@@ -935,7 +979,7 @@ table td {
     margin: 0;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
     margin-bottom: 32px;
-    margin-top:-12px;
+    margin-top:-14px;
 }
 
 .price-tag {
