@@ -1,5 +1,3 @@
-
-
 #gameCanvas {
     position: relative;
     width: 700px; 
@@ -8,8 +6,6 @@
     border-radius: inherit;
     box-shadow: inset 0 5px 15px rgba(0, 0, 0, 0.2);
 }
-
-
 
 .popupMenu button {
     background: linear-gradient(145deg, #007acc, #005f99);
@@ -36,28 +32,14 @@
 .popupMenu button img {
     width: 85px;
     height: 85px;
-    
 }
 
 .popupMenu button:active {
     transform: translateY(1px);
 }
 
-
 #turretMenu button{
     width: 200px;
-}
-
-
-
-
-
-
-.tip-image {
-    width: 100%;
-    border-radius: 8px;
-    margin-top: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 table {
@@ -172,180 +154,605 @@ table td {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 760px;
-    height: 140px;
-    background: linear-gradient(145deg, rgba(30, 30, 30, 0.95), rgba(20, 20, 20, 0.95));
+    width: 100%;
+    max-width: none;
+    height: 180px; /* Increased height significantly for better layout */
+    background: linear-gradient(145deg, 
+        rgba(15, 23, 42, 0.98) 0%, 
+        rgba(30, 41, 59, 0.95) 25%,
+        rgba(15, 23, 42, 0.98) 50%,
+        rgba(30, 41, 59, 0.95) 75%,
+        rgba(15, 23, 42, 0.98) 100%
+    );
+    backdrop-filter: blur(25px) saturate(200%);
     color: #fff;
-    padding: 15px 20px;
+    padding: 20px 15px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
     font-family: 'Exo 2', sans-serif;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 15px 15px 0 0;
+    box-shadow: 
+        0 -15px 50px rgba(59, 130, 246, 0.3),
+        0 -8px 25px rgba(0, 0, 0, 0.8),
+        inset 0 2px 4px rgba(255, 255, 255, 0.08),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+    border-top: 3px solid transparent;
+    border-image: linear-gradient(90deg, 
+        rgba(59, 130, 246, 0.8) 0%,
+        rgba(147, 51, 234, 0.8) 25%,
+        rgba(236, 72, 153, 0.8) 50%,
+        rgba(147, 51, 234, 0.8) 75%,
+        rgba(59, 130, 246, 0.8) 100%
+    ) 1;
+    border-radius: 20px 20px 0 0;
     z-index: 50;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+    border-left: 1px solid rgba(59, 130, 246, 0.4);
+    border-right: 1px solid rgba(59, 130, 246, 0.4);
+    overflow: hidden;
+}
+
+.turret-info::before {
+    content: '';
+    position: absolute;
+    top: -3px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, 
+        rgba(59, 130, 246, 0.9) 0%,
+        rgba(147, 51, 234, 0.9) 25%,
+        rgba(236, 72, 153, 0.9) 50%,
+        rgba(147, 51, 234, 0.9) 75%,
+        rgba(59, 130, 246, 0.9) 100%
+    );
+    background-size: 200% 100%;
+    animation: borderFlow 4s ease-in-out infinite;
+}
+
+.turret-info::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+        radial-gradient(2px 2px at 20% 30%, rgba(59, 130, 246, 0.8), transparent),
+        radial-gradient(2px 2px at 40% 70%, rgba(236, 72, 153, 0.6), transparent),
+        radial-gradient(1px 1px at 90% 40%, rgba(147, 51, 234, 0.8), transparent),
+        radial-gradient(1px 1px at 60% 20%, rgba(59, 130, 246, 0.5), transparent),
+        radial-gradient(2px 2px at 80% 80%, rgba(236, 72, 153, 0.7), transparent);
+    background-size: 200px 200px, 300px 300px, 150px 150px, 250px 250px, 180px 180px;
+    animation: particleFloat 8s ease-in-out infinite;
+    pointer-events: none;
+    opacity: 0.6;
+}
+
+@keyframes borderFlow {
+    0% { 
+        background-position: 0% 50%;
+        opacity: 0.8; 
+    }
+    50% { 
+        background-position: 100% 50%;
+        opacity: 1; 
+    }
+    100% { 
+        background-position: 0% 50%;
+        opacity: 0.8; 
+    }
+}
+
+@keyframes particleFloat {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.6;
+    }
+    25% { 
+        transform: translateY(-10px) rotate(90deg);
+        opacity: 0.8;
+    }
+    50% { 
+        transform: translateY(-5px) rotate(180deg);
+        opacity: 1;
+    }
+    75% { 
+        transform: translateY(-15px) rotate(270deg);
+        opacity: 0.7;
+    }
+}
+
+#turretDetailsHeader {
+    top: 40%;
+    left: -10px;
 }
 
 .turret-info h3 {
-    margin: 0;
-    font-size: 20px;
-    letter-spacing: 1px;
-    color: #FFD700;
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    position: relative;
+    margin: 4px 0 8px 0; 
+    font-size: 12px; 
+    letter-spacing: 0.5px; 
+    color: #FFF;
+    text-shadow: 
+        0 0 15px rgba(59, 130, 246, 0.8),
+        0 0 30px rgba(147, 51, 234, 0.6),
+        0 2px 4px rgba(0, 0, 0, 0.8);
     text-align: center;
-    font-family: 'Russo One', sans-serif;
+    font-family: 'Orbitron', 'Russo One', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: linear-gradient(145deg, 
+        rgba(15, 23, 42, 0.98) 0%, 
+        rgba(30, 41, 59, 0.98) 50%,
+        rgba(15, 23, 42, 0.98) 100%
+    );
+    padding: 6px 12px; 
+    border-radius: 6px; 
+    border: 2px solid transparent;
+    border-image: linear-gradient(90deg, 
+        rgba(59, 130, 246, 0.6) 0%,
+        rgba(147, 51, 234, 0.6) 50%,
+        rgba(59, 130, 246, 0.6) 100%
+    ) 1;
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.4),
+        inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    z-index: 10;
+}
+
+.turret-info h3::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, 
+        rgba(59, 130, 246, 0.3) 0%,
+        rgba(147, 51, 234, 0.3) 25%,
+        rgba(236, 72, 153, 0.3) 50%,
+        rgba(147, 51, 234, 0.3) 75%,
+        rgba(59, 130, 246, 0.3) 100%
+    );
+    border-radius: 0 0 17px 17px;
+    animation: headerGlow 3s ease-in-out infinite alternate;
+    z-index: -1;
+}
+
+@keyframes headerGlow {
+    0% { opacity: 0.5; }
+    100% { opacity: 1; }
 }
 
 .turret-info .info-container {
     display: flex;
     justify-content: space-between;
-    max-width: 500px;
-    align-items: center;
-    height: 100px;
+    align-items: stretch; 
+    width: 100%;
+    height: 110%;
+    gap: 15px; 
+    margin-top: 0; 
+    position: relative;
+    z-index: 5;
 }
 
-#turretCurrentStats,
-#turretNextStats {
-    background: rgba(60, 60, 60, 0.5);
-    padding: 8px 12px;
-    border-radius: 8px;
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
-    font-size: 13px;
-    line-height: 1.4em;
-    width: 200px;
-    height: 95px;
+#turretCurrentStats {
+    flex: 1; 
+    background: linear-gradient(145deg, 
+        rgba(22, 78, 99, 0.85) 0%, 
+        rgba(15, 58, 80, 0.9) 50%,
+        rgba(8, 47, 73, 0.95) 100%
+    );
+    padding: 15px; 
+    border-radius: 15px;
+    box-shadow: 
+        inset 0 2px 8px rgba(0, 0, 0, 0.3),
+        0 8px 20px rgba(0, 0, 0, 0.4),
+        0 0 15px rgba(56, 189, 248, 0.2);
+    border: 2px solid rgba(56, 189, 248, 0.4);
+    font-size: 14px; 
+    line-height: 1.4; 
+    height: 100%; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    font-weight: 600;
+    color: #e8f4f8;
+    position: relative;
     overflow: hidden;
-    text-overflow: ellipsis;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    word-wrap: break-word; 
+    min-width: 0; 
+    padding-top:20px;
+
+}
+
+#turretCurrentStats:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        inset 0 2px 8px rgba(0, 0, 0, 0.3),
+        0 12px 25px rgba(0, 0, 0, 0.5),
+        0 0 25px rgba(56, 189, 248, 0.4);
+}
+
+#turretCurrentStats::before {
+    content: attr(data-level);
+    position: absolute;
+    top: -10px;
+    left: 15px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #38BDF8;
+    background: linear-gradient(145deg, 
+        rgba(15, 58, 80, 0.98) 0%, 
+        rgba(8, 47, 73, 0.98) 100%
+    );
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(56, 189, 248, 0.5);
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 8px rgba(56, 189, 248, 0.8);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#turretCurrentStats::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(56, 189, 248, 0.1), 
+        transparent
+    );
+    animation: currentStatsFlow 4s ease-in-out infinite;
+}
+
+@keyframes currentStatsFlow {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: -100%; }
+}
+
+#turretNextStats {
+    flex: 1; 
+    background: linear-gradient(145deg, 
+        rgba(120, 53, 15, 0.85) 0%, 
+        rgba(146, 64, 14, 0.9) 50%,
+        rgba(154, 52, 18, 0.95) 100%
+    );
+    padding: 15px; 
+    border-radius: 15px;
+    box-shadow: 
+        inset 0 2px 8px rgba(0, 0, 0, 0.3),
+        0 8px 20px rgba(0, 0, 0, 0.4),
+        0 0 15px rgba(251, 146, 60, 0.2);
+    border: 2px solid rgba(251, 146, 60, 0.4);
+    font-size: 14px; 
+    line-height: 1.4; 
+    height: 100%; 
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; 
+    font-weight: 600;
+    color: #fef3e2;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    word-wrap: break-word; 
+    min-width: 0; 
+    padding-top:20px;
+}
+
+#turretNextStats:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        inset 0 2px 8px rgba(0, 0, 0, 0.3),
+        0 12px 25px rgba(0, 0, 0, 0.5),
+        0 0 25px rgba(251, 146, 60, 0.4);
+}
+
+#turretNextStats::before {
+    content: 'NEXT LEVEL';
+    position: absolute;
+    top: -10px;
+    left: 15px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #FB923C;
+    background: linear-gradient(145deg, 
+        rgba(146, 64, 14, 0.98) 0%, 
+        rgba(154, 52, 18, 0.98) 100%
+    );
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(251, 146, 60, 0.5);
+    letter-spacing: 1.5px;
+    text-shadow: 0 0 8px rgba(251, 146, 60, 0.8);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#turretNextStats::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(251, 146, 60, 0.1), 
+        transparent
+    );
+    animation: nextStatsFlow 4s ease-in-out infinite;
+    animation-delay: 2s;
+}
+
+@keyframes nextStatsFlow {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: -100%; }
 }
 
 #upgradeCostLabel {
     position: absolute;
-    top: 15px;
-    right: 210px;
-    font-size: 18px;
+    top: 20px;
+    right: 220px;
+    font-size: 20px;
     font-weight: 700;
-    color: #FFD700;
+    color: #FFF;
     text-align: center;
-    padding: 5px 15px;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 20px;
+    padding: 8px 20px;
+    background: linear-gradient(145deg, 
+        rgba(168, 85, 247, 0.9) 0%, 
+        rgba(139, 69, 19, 0.9) 100%
+    );
+    border-radius: 25px;
     font-family: 'Russo One', sans-serif;
-    border: 1px solid rgba(255, 215, 0, 0.3);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border: 2px solid rgba(168, 85, 247, 0.5);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(168, 85, 247, 0.3);
+    text-shadow: 
+        0 0 10px rgba(168, 85, 247, 0.8),
+        0 2px 4px rgba(0, 0, 0, 0.6);
+    letter-spacing: 1px;
+    animation: costPulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes costPulse {
+    0% { 
+        transform: scale(1);
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.4),
+            0 0 20px rgba(168, 85, 247, 0.3);
+    }
+    100% { 
+        transform: scale(1.05);
+        box-shadow: 
+            0 6px 20px rgba(0, 0, 0, 0.5),
+            0 0 30px rgba(168, 85, 247, 0.5);
+    }
 }
 
 .upgrade-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-  }
+    gap: 15px;
+    flex: 0 0 auto;
+    width: 180px; 
+    height: auto; 
+    justify-content: center;
+    position: relative;
+    z-index: 10;
+    align-self: center; 
+}
 
 .turret-info .buttons-container {
   display: flex;
-  gap: 10px; 
+  gap: 12px; 
+  align-items: center;
+  justify-content: center;
 }
 
 .damage-counter {
     position: absolute;
     top: 15px;
-    right: 20px;
-    padding: 5px 15px;
-    background: rgba(60, 60, 60, 0.5);
-    border-radius: 20px;
-    font-size: 14px;
-    color: #FFD700;
+    right: 25px;
+    padding: 6px 14px;
+    background: linear-gradient(145deg, 
+        rgba(239, 68, 68, 0.9) 0%, 
+        rgba(185, 28, 28, 0.95) 100%
+    );
+    border-radius: 25px;
+    font-size: 15px;
+    color: #FFF;
     display: flex;
     align-items: center;
-    gap: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    gap: 8px;
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(239, 68, 68, 0.3);
+    border: 2px solid rgba(248, 113, 113, 0.5);
     font-family: 'Exo 2', sans-serif;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+    letter-spacing: 1px;
+    animation: damageGlow 2s ease-in-out infinite alternate;
+}
+
+.damage-counter::before {
+    content: '⚔️';
+    font-size: 14px;
+}
+
+@keyframes damageGlow {
+    0% { 
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.4),
+            0 0 20px rgba(239, 68, 68, 0.3);
+    }
+    100% { 
+        box-shadow: 
+            0 6px 20px rgba(0, 0, 0, 0.5),
+            0 0 30px rgba(239, 68, 68, 0.5);
+    }
 }
 
 #upgradeButton {
-    position: absolute;
-    padding: 15px 25px;
-    height: 80px;
-    width: 170px;
-    background: linear-gradient(145deg, #4CAF50, #388E3C);
-    border: none;
+    position: relative;
+    padding: 18px 30px;
+    height: 70px;
+    width: 160px;
+    background: linear-gradient(145deg, 
+        rgba(34, 197, 94, 0.9) 0%, 
+        rgba(21, 128, 61, 0.95) 50%,
+        rgba(15, 118, 110, 1) 100%
+    );
+    border: 2px solid rgba(34, 197, 94, 0.6);
     color: #fff;
     cursor: pointer;
     font-size: 18px;
-    border-radius: 10px;
+    border-radius: 15px;
     font-weight: 700;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-    top: 55px;
-    right: 20px;
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(34, 197, 94, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     font-family: 'Exo 2', sans-serif;
+    overflow: hidden;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+    margin-top: 50px;
+}
+
+#upgradeButton::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.3), 
+        transparent
+    );
+    transition: left 0.6s ease;
+}
+
+#upgradeButton:hover::before {
+    left: 100%;
 }
 
 #upgradeButton:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
-    background: linear-gradient(145deg, #5BBD60, #43A047);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+        0 12px 30px rgba(0, 0, 0, 0.5),
+        0 0 35px rgba(34, 197, 94, 0.5);
+    background: linear-gradient(145deg, 
+        rgba(34, 197, 94, 1) 0%, 
+        rgba(21, 128, 61, 1) 50%,
+        rgba(15, 118, 110, 1) 100%
+    );
+    border-color: rgba(34, 197, 94, 0.8);
 }
 
 #upgradeButton.blue {
-    background: linear-gradient(145deg, #388E3C, #2E7D32);
+    background: linear-gradient(145deg, 
+        rgba(59, 130, 246, 0.9) 0%, 
+        rgba(37, 99, 235, 0.95) 50%,
+        rgba(29, 78, 216, 1) 100%
+    );
+    border-color: rgba(59, 130, 246, 0.6);
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(59, 130, 246, 0.3);
 }
 
 #upgradeButton.blue:hover {
-    background: linear-gradient(145deg, #43A047, #388E3C);
+    background: linear-gradient(145deg, 
+        rgba(59, 130, 246, 1) 0%, 
+        rgba(37, 99, 235, 1) 50%,
+        rgba(29, 78, 216, 1) 100%
+    );
+    box-shadow: 
+        0 12px 30px rgba(0, 0, 0, 0.5),
+        0 0 35px rgba(59, 130, 246, 0.5);
 }
 
 #upgradeButton.red {
-    background: linear-gradient(145deg, #ef5350, #d32f2f);
+    background: linear-gradient(145deg, 
+        rgba(239, 68, 68, 0.9) 0%, 
+        rgba(220, 38, 38, 0.95) 50%,
+        rgba(185, 28, 28, 1) 100%
+    );
+    border-color: rgba(239, 68, 68, 0.6);
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(239, 68, 68, 0.3);
 }
 
 #upgradeButton.red:hover {
-    background: linear-gradient(145deg, #f44336, #e53935);
+    background: linear-gradient(145deg, 
+        rgba(239, 68, 68, 1) 0%, 
+        rgba(220, 38, 38, 1) 50%,
+        rgba(185, 28, 28, 1) 100%
+    );
+    box-shadow: 
+        0 12px 30px rgba(0, 0, 0, 0.5),
+        0 0 35px rgba(239, 68, 68, 0.5);
 }
 
 #sellButton {
     position: absolute;
-    top: 6px;
-    left: 10px;
-    padding: 8px 20px;
-    height: 35px;
-    background: linear-gradient(145deg, #FFA726, #FB8C00);
-    border: none;
+    top: 8px;
+    left: 15px;
+    padding: 5px 12px;
+    height: 40px;
+    background: linear-gradient(145deg, 
+        rgba(251, 146, 60, 0.9) 0%, 
+        rgba(245, 101, 101, 0.95) 100%
+    );
+    border: 2px solid rgba(251, 146, 60, 0.6);
     color: #fff;
     cursor: pointer;
     font-size: 14px;
-    border-radius: 8px;
+    border-radius: 10px;
     font-weight: 600;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.4),
+        0 0 14x rgba(251, 146, 60, 0.3);
     transition: all 0.3s ease;
     z-index: 1000;
     font-family: 'Exo 2', sans-serif;
     text-transform: uppercase;
     letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 #sellButton:hover {
-    background: linear-gradient(145deg, #FB8C00, #F57C00);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(145deg, 
+        rgba(251, 146, 60, 1) 0%, 
+        rgba(245, 101, 101, 1) 100%
+    );
+    transform: translateY(-3px);
+    box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.5),
+        0 0 25px rgba(251, 146, 60, 0.5);
+    border-color: rgba(251, 146, 60, 0.8);
 }
-
-
-
-
-
-
-
-
-
 
 
 @import url('https://fonts.googleapis.com/css2?family=Russo+One&family=Exo+2:wght@400;600;700&display=swap');
@@ -450,7 +857,7 @@ table td {
     gap: 10px; 
     width: 90%;
     margin: 0 auto 0 auto; 
-    padding: 10px; 
+    padding: 10px 6px; 
 }
 
 .turret-shop-item {
@@ -464,8 +871,8 @@ table td {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
-    height: 140px;
+    justify-content: center;
+    height: 160px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     z-index: 1000; 
 }
@@ -518,10 +925,6 @@ table td {
     border-color: #888;
 }
 
-/* .turret-shop-item.disabled:hover {
-    transform: none;
-    box-shadow: none;
-} */
 
 .turret-name {
     color: white;
@@ -532,6 +935,7 @@ table td {
     margin: 0;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
     margin-bottom: 32px;
+    margin-top:-12px;
 }
 
 .price-tag {
@@ -761,17 +1165,6 @@ table td {
     height: 22px !important;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 .easy-tooltip {
     border-color: rgba(100, 255, 100, 0.3);
 }
@@ -783,9 +1176,6 @@ table td {
 .hard-tooltip {
     border-color: rgba(255, 100, 100, 0.3);
 }
-
-
-
 
 .popup.minion-warning.show {
     opacity: 1;
@@ -1268,4 +1658,88 @@ table td {
 
 .turret-shop-item.flipping {
     animation: flipCard 0.6s ease-in-out;
+}
+
+/* Ensure all buttons in upgrade section have consistent styling */
+.upgrade-section button {
+    position: relative;
+    border: 2px solid;
+    cursor: pointer;
+    font-weight: 700;
+    border-radius: 15px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: 'Exo 2', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.4),
+        inset 0 2px 4px rgba(255, 255, 255, 0.1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+    overflow: hidden;
+}
+
+.upgrade-section button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.3), 
+        transparent
+    );
+    transition: left 0.6s ease;
+}
+
+.upgrade-section button:hover::before {
+    left: 100%;
+}
+
+.upgrade-section button:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+        0 12px 30px rgba(0, 0, 0, 0.5),
+        inset 0 2px 4px rgba(255, 255, 255, 0.2);
+}
+
+#setTargetButton {
+    position: absolute;
+    top: 58px; /* Position below sell button (8px + 40px height + 10px gap) */
+    left: 15px; /* Same left position as sell button */
+    padding: 10px 15px;
+    height: 40px; /* Same height as sell button */
+    width: auto; /* Auto width to match content */
+    font-size: 15px; /* Same font size as sell button */
+    background: linear-gradient(145deg, 
+        rgba(168, 85, 247, 0.9) 0%, 
+        rgba(147, 51, 234, 0.95) 100%
+    );
+    border: 2px solid rgba(168, 85, 247, 0.6);
+    color: #fff;
+    cursor: pointer;
+    border-radius: 10px;
+    font-weight: 600;
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.4),
+        0 0 15px rgba(168, 85, 247, 0.3);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    font-family: 'Exo 2', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+#setTargetButton:hover {
+    background: linear-gradient(145deg, 
+        rgba(168, 85, 247, 1) 0%, 
+        rgba(147, 51, 234, 1) 100%
+    );
+    transform: translateY(-3px);
+    box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.5),
+        0 0 25px rgba(168, 85, 247, 0.5);
+    border-color: rgba(168, 85, 247, 0.8);
 }

@@ -249,8 +249,10 @@ function showSelectedTurretInfo(turret) {
                            (turret.type === "shooter2") ? "Dual Gun System" :
                            turretStats.ability;
 
-    document.getElementById('turretCurrentStats').innerHTML = `
-        Level: ${level}<br>
+    const currentStatsElement = document.getElementById('turretCurrentStats');
+    currentStatsElement.setAttribute('data-level', `LEVEL ${level}`);
+    
+    currentStatsElement.innerHTML = `
         Range: ${range}<br>
         Damage: ${strength}<br>
         Cooldown: ${cooldown}<br>
@@ -279,11 +281,10 @@ function showSelectedTurretInfo(turret) {
             nextSpecialAbility = "+ Target Invisible Enemies and Instant Hit";
         }
         nextText = `
-            Next Level:<br>
-            → Range: ${nextRange}<br>
-            → Damage: ${nextStrength}<br>
-            → Cooldown: ${nextCooldown}<br>
-            → Special Ability: ${nextSpecialAbility}
+            Range: ${nextRange}<br>
+            Damage: ${nextStrength}<br>
+            Cooldown: ${nextCooldown}<br>
+            Special Ability: ${nextSpecialAbility}
         `;
     }
     document.getElementById('turretNextStats').innerHTML = nextText;
@@ -362,22 +363,13 @@ function showSelectedTurretInfo(turret) {
         if (!targetButton) {
             targetButton = document.createElement('button');
             targetButton.id = 'setTargetButton';
-            targetButton.style.cssText = `
-                margin-top: 10px;
-                padding: 8px 16px;
-                background-color: #ffa500;
-                color: white;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                font-weight: bold;
-                width: 100%;
-                transition: background-color 0.3s;
-            `;
+            // Remove inline styles to let CSS handle positioning
+            targetButton.style.cssText = '';
             
-            const upgradeSection = document.querySelector('.upgrade-section');
-            if (upgradeSection) {
-                upgradeSection.appendChild(targetButton);
+            // Append to turret info container for absolute positioning
+            const turretInfo = document.querySelector('.turret-info');
+            if (turretInfo) {
+                turretInfo.appendChild(targetButton);
             }
         }
         

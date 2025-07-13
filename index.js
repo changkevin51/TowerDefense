@@ -414,7 +414,7 @@ function drawAnimatedDecorations() {
     }
     
     push();
-    translate(220, 320);
+    translate(235, 320);
     if (campfireFrames[campfireCurrentFrame]) {
         image(campfireFrames[campfireCurrentFrame], 0, 0, 
               campfireFrames[campfireCurrentFrame].width * 2, 
@@ -454,7 +454,7 @@ function getDecorationBounds() {
         { x: 650, y: 490, width: cactus2.width*0.9, height: cactus2.height*0.9 },
         { x: 275, y: 80, width: sign.width * 0.7, height: sign.height * 0.7 },
         { x: 540, y: 120, width: bigRock.width * 0.5, height: bigRock.height * 0.5 }, 
-        { x: 200, y: 320, width: (campfireFrames[0] ? campfireFrames[0].width * 2 : 64), height: (campfireFrames[0] ? campfireFrames[0].height * 2 : 64) }, // Campfire bounds
+        { x: 215, y: 320, width: (campfireFrames[0] ? campfireFrames[0].width * 2 : 64), height: (campfireFrames[0] ? campfireFrames[0].height * 2 : 64) }, // Campfire bounds
         { x: 150, y: 10, width: (flagFrames[0] ? flagFrames[0].width * 1.6 : 64), height: (flagFrames[0] ? flagFrames[0].height * 1.6 : 64) }, // Flag bounds
     ];
 }

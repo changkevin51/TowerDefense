@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TurretFall</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="game.css">
   <link rel="stylesheet" href="tutorial.css">
   <link rel="stylesheet" href="page.css">
@@ -17,7 +20,8 @@
     <img id="turret" src="images/turret.png" alt="Turret">
     <h4 id="message">This tower defense game is designed to push your strategic skills to the limit. It's OK to lose some health at the start, you'll get them back eventually!</h4>
 
-    <div id="popup" class="popup">      <div class="popup-header">
+    <div id="popup" class="popup">      
+      <div class="popup-header">
         <button class="tab-button active" onclick="showTab('tutorial')">Tutorial</button>
         <button class="tab-button" onclick="showTab('stats')">Turrets</button>
         <button class="tab-button" onclick="showTab('powerups')">Power-ups</button>
@@ -124,7 +128,83 @@
     </button>
     
     <div id="container">
-      <div id="gameCanvas">
+      <div id="gameCanvasWrapper">
+        <div id="gameCanvas">
+        </div>
+        <div id="turretInfo" class="turret-info">
+          <button id="sellButton">💰 Sell</button>
+          <div class="damage-counter">Total Damage: 0</div>
+          <h3 id="turretDetailsHeader">🎯 Turret Command Center</h3>
+          
+          <div class="info-container">
+            <div id="turretCurrentStats">
+              Range: 150<br>
+              Damage: 30<br>
+              Cooldown: 5s
+            </div>
+            
+            <div id="turretNextStats">
+              Range: 180<br>
+              Damage: 35<br>
+              Cooldown: 4s
+            </div>
+
+            <div class="upgrade-section">
+              <button id="upgradeButton" class="blue">⚡ Upgrade</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Game Menu positioned to the right of canvas -->
+      <div id="gameMenu">
+        <div id="menuInfo">
+          <div title="Money" class="menu-stat">
+            <img src="images/money.png" alt="Money Icon">
+            <h2 id="Money">100</h2>
+          </div>
+          <div title="Health" class="menu-stat">
+            <img src="images/health.png" alt="Health Icon">
+            <h2 id="Health">100</h2>
+          </div>
+          <div title="Wave" class="menu-stat">
+            <img src="images/wave.png" alt="Wave Icon">
+            <h2 id="Wave">0</h2>
+          </div>
+        </div>
+        <div id="menuButtons">
+            <button class="hoverButton" id="buyText" onclick="handleBuyTurretClick()"> <!-- MODIFIED onclick handler -->
+          </button>
+
+          <div id="turretMenu" style="display: none;"> 
+          </div>
+
+          <button class="hoverButton" id="powerUpText" onclick="handleBuyPowerUpClick()">
+            Power-Up Store <img src="images/abilities/speedboost.png" alt="Power-Up Store" style="width: 20px; height: 20px; vertical-align: middle;">
+          </button>
+
+          <div id="powerUpMenu" style="display: none;">
+          </div>
+          
+          <button id="startWaveButton" class="hoverButton" onclick="toggleAutoStart()" onmouseover="checkWave()">
+            Start Wave 
+            <span class="autoStartToggle">Auto Start Toggle: False</span>
+            <span class="hoverText" id="waveText">Wave Ready</span>
+          </button>
+
+          <button class="hoverButton" onclick="toggleSpeed()" onmouseover="checkSpeed()">
+            Toggle Speed
+            <span class="hoverText" id="speedText">Current Speed: 1x</span>
+          </button>
+          <button class="hoverButton" onclick="changeTargetMode()" onmouseover="checkTargetMode()">
+            Change Target Mode
+            <span class="hoverText" id="targetModeText">Mode: 0 (Closest)</span>
+          </button>
+        </div>
+        <div id="healthPopup" class="popupMessage">+ x Health</div>
+        <div id="moneypopup" class="popupMessage">+ x $</div>
+        <div id="bossWarningPopup" class="popupMessage">Boss Wave Incoming!</div>
+        <div id="minionWarningPopup" class="popupMessage">Boss Spawning Minions!</div>
       </div>
       <div id="difficultyScreen" class="difficulty-screen">
           <h1 class="title">SELECT DIFFICULTY</h1>
@@ -174,83 +254,7 @@
           </div>
           <div class="help-text">Hover on a difficulty for more information</div>
       </div>
-      
-          <div id="turretInfo" class="turret-info">
-            <button id="sellButton">Sell</button>
-            <h3 id="turretDetailsHeader">Turret Details</h3>
-            <div class="damage-counter">Damage: 0</div>
-            
-            <div class="info-container">
-              <div id="turretCurrentStats">
-                Level: 2<br>
-                Range: 150<br>
-                Damage: 30<br>
-                Cooldown: 5s
-              </div>
-              
-              <div id="turretNextStats">
-                Next Level:<br>
-                Range: 180<br>
-                Damage: 35<br>
-                Cooldown: 4s
-              </div>
 
-              <div class="upgrade-section">
-                <button id="upgradeButton" class="blue">Upgrade</button>
-              </div>
-            </div>
-          </div>
-
-      <div id="gameMenu">
-        <div id="menuInfo">
-          <div title="Money" class="menu-stat">
-            <img src="images/money.png" alt="Money Icon">
-            <h2 id="Money">100</h2>
-          </div>
-          <div title="Health" class="menu-stat">
-            <img src="images/health.png" alt="Health Icon">
-            <h2 id="Health">100</h2>
-          </div>
-          <div title="Wave" class="menu-stat">
-            <img src="images/wave.png" alt="Wave Icon">
-            <h2 id="Wave">0</h2>
-          </div>
-        </div>
-        <div id="menuButtons">
-            <button class="hoverButton" id="buyText" onclick="handleBuyTurretClick()"> <!-- MODIFIED onclick handler -->
-          </button>
-
-          <div id="turretMenu" style="display: none;"> 
-          </div>
-
-          <button class="hoverButton" id="powerUpText" onclick="handleBuyPowerUpClick()">
-            Power-Up Store <img src="images/abilities/speedboost.png" alt="Power-Up Store" style="width: 20px; height: 20px; vertical-align: middle;">
-          </button>
-
-          <div id="powerUpMenu" style="display: none;">
-          </div>
-          
-          <button id="startWaveButton" class="hoverButton" onclick="toggleAutoStart()" onmouseover="checkWave()">
-            Start Wave 
-            <span class="autoStartToggle">Auto Start Toggle: False</span>
-            <span class="hoverText" id="waveText">Wave Ready</span>
-          </button>
-
-          <button class="hoverButton" onclick="toggleSpeed()" onmouseover="checkSpeed()">
-            Toggle Speed
-            <span class="hoverText" id="speedText">Current Speed: 1x</span>
-          </button>
-          <button class="hoverButton" onclick="changeTargetMode()" onmouseover="checkTargetMode()">
-            Change Target Mode
-            <span class="hoverText" id="targetModeText">Mode: 0 (Closest)</span>
-          </button>
-        </div>
-        <div id="healthPopup" class="popupMessage">+ x Health</div>
-        <div id="moneypopup" class="popupMessage">+ x $</div>
-        <div id="bossWarningPopup" class="popupMessage">Boss Wave Incoming!</div>
-        <div id="minionWarningPopup" class="popupMessage">Boss Spawning Minions!</div>
-      </div> 
-    <br>
       <!-- Cancel Selection Overlay -->
     <div id="cancelSelectionOverlay" style="display: none;">
       <div class="overlay-content">Click here to cancel turret selection</div>
