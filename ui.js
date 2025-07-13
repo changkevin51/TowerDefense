@@ -1153,8 +1153,9 @@ function handleBuyPowerUpClick() {
         powerUpMenu.appendChild(shopHeader);
         
         const shopGrid = document.createElement('div');
-        shopGrid.className = 'turret-shop-grid';
-          for (const type in powerUpsStaticInfo) {
+        shopGrid.className = 'power-up-shop-grid';
+        
+        for (const type in powerUpsStaticInfo) {
             const powerUpInfo = powerUpsStaticInfo[type];
             const currentCost = powerUpInfo.getCost();
             const canAfford = money >= currentCost;
@@ -1162,7 +1163,7 @@ function handleBuyPowerUpClick() {
                             (type === 'healthReduction' && activeHealthReduction.active);
             
             const item = document.createElement('div');
-            item.className = 'turret-shop-item';
+            item.className = 'power-up-shop-item';
             if (!canAfford || isActive) {
                 item.className += ' disabled';
             }
@@ -1176,17 +1177,22 @@ function handleBuyPowerUpClick() {
             name.className = 'turret-name';
             name.textContent = powerUpInfo.name;
             
+            const description = document.createElement('div');
+            description.className = 'power-up-description';
+            description.textContent = powerUpInfo.description;
+            
             const price = document.createElement('div');
             price.className = 'price-tag';
             if (isActive) {
                 price.textContent = 'ACTIVE';
-                price.style.color = '#4CAF50';
+                price.style.background = 'linear-gradient(90deg, #4CAF50, #8BC34A)';
             } else {
                 price.textContent = `$${currentCost}`;
             }
             
             item.appendChild(img);
             item.appendChild(name);
+            item.appendChild(description);
             item.appendChild(price);
               const tooltip = document.createElement('div');
             tooltip.className = 'turret-tooltip';
