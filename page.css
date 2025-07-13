@@ -59,14 +59,14 @@ body::before {
     right: 0;
     z-index: 1000;
     text-align: center;
-    font-size: clamp(24px, 4vw, 48px);
+    font-size: clamp(18px, 3vw, 32px);
     font-weight: 900;
     color: #ffffff;
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(26, 26, 46, 0.9) 100%);
     backdrop-filter: blur(20px) saturate(180%);
     text-transform: uppercase;
-    letter-spacing: 3px;
-    padding: 15px 20px;
+    letter-spacing: 2px;
+    padding: 8px 15px;
     text-shadow: 
         0 0 10px rgba(120, 44, 190, 0.8),
         0 0 20px rgba(120, 44, 190, 0.6),
@@ -111,7 +111,7 @@ body::before {
     background: radial-gradient(ellipse at center, rgba(26, 26, 46, 0.3) 0%, rgba(0, 0, 0, 0.8) 100%);
     z-index: 10;
     padding: 0;
-    padding-top: 100px;
+    padding-top: 70px;
     padding-bottom: 40px; 
     box-sizing: border-box;
     gap: 0; 
@@ -119,12 +119,12 @@ body::before {
 
 #gameCanvasWrapper {
     position: relative;
-    max-height: calc(100vh - 140px); 
+    max-height: calc(100vh - 110px); 
     max-width: calc(100vw - 320px); 
     aspect-ratio: 8 / 7;
     
-    width: min(calc(100vw - 320px), calc((100vh - 140px) * 8/7));
-    height: min(calc(100vh - 140px), calc((100vw - 320px) * 7/8));
+    width: min(calc(100vw - 320px), calc((100vh - 110px) * 8/7));
+    height: min(calc(100vh - 110px), calc((100vw - 320px) * 7/8));
     
     transform-origin: center center;
     transition: transform 0.3s ease;
@@ -227,7 +227,7 @@ body::before {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 25px;
+    padding: 15px 25px;
     box-sizing: border-box;
     font-family: 'Exo 2', sans-serif;
     border-left: 2px solid rgba(120, 44, 190, 0.4);
@@ -267,7 +267,7 @@ body::before {
     );
     border-radius: 12px;
     padding: 20px;
-    margin-bottom: 25px;
+    margin-bottom: 5px;
     border: 1px solid rgba(120, 44, 190, 0.3);
     box-shadow: 
         0 4px 15px rgba(0, 0, 0, 0.3),
@@ -406,26 +406,6 @@ body::before {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
-
-.hoverButton .hoverText {
-    position: absolute;
-    right: 220px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 200px;
-    background-color: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 5px;
-    font-size: 14px;
-    border-radius: 5px;
-    text-align: center;
-    visibility: hidden;
-    z-index: 10000;
-}
-
-.hoverButton:hover .hoverText {
-    visibility: visible;
 }
 
 .hoverButton:hover {
@@ -1031,11 +1011,13 @@ body::before {
 }
 
 #cancelSelectionOverlay {
-    position: fixed; 
-    top: 100px; 
-    right: 0; 
-    width: 300px; 
-    height: calc(100vh - 140px);
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
     background: linear-gradient(145deg, 
         rgba(120, 44, 190, 0.3) 0%, 
         rgba(80, 30, 130, 0.4) 50%,
@@ -1050,6 +1032,7 @@ body::before {
     justify-content: center;
     align-items: center;
     border-left: 2px solid rgba(120, 44, 190, 0.6);
+    border-radius: 15px;
 }
 
 #cancelSelectionOverlay.active {
@@ -1208,6 +1191,20 @@ body::before {
     visibility: visible;
 }
 
+/* Button subtext styles for speed and target mode display */
+.button-subtext {
+    display: block;
+    font-size: 12px;
+    opacity: 0.8;
+    font-family: 'Exo 2', sans-serif;
+    margin-top: 5px;
+    color: #FFD700;
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+}
+
 /* Responsive Design for Smaller Screens */
 @media screen and (max-width: 768px) {
     #header {
@@ -1346,4 +1343,80 @@ body::before {
         height: 75px;
         font-size: 18px;
     }
+}
+
+/* Wave button hover tooltip */
+#startWaveButton {
+    position: relative;
+}
+
+#startWaveButton::after {
+    content: attr(data-wave-status);
+    position: absolute;
+    right: -220px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 200px;
+    background-color: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 6px;
+    text-align: center;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.3s, opacity 0.3s ease;
+    z-index: 10000;
+    pointer-events: none;
+    border: 1px solid rgba(120, 44, 190, 0.3);
+}
+
+#startWaveButton:hover::after {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Wave button text change on hover */
+#startWaveButton[data-wave-ready="true"]:hover #waveButtonText {
+    display: none;
+}
+
+#startWaveButton[data-wave-ready="true"]:hover .autoStartToggle {
+    margin-top: 15px;
+    transition: margin-top 0.2s ease;
+}
+
+#startWaveButton[data-wave-ready="true"]:hover::before {
+    content: "Wave Ready";
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    font-weight: 600;
+    color: #4CAF50;
+    z-index: 10;
+    white-space: nowrap;
+}
+
+#startWaveButton[data-wave-ready="false"]:hover #waveButtonText {
+    display: none;
+}
+
+#startWaveButton[data-wave-ready="false"]:hover .autoStartToggle {
+    margin-top: 15px;
+    transition: margin-top 0.2s ease;
+}
+
+#startWaveButton[data-wave-ready="false"]:hover::before {
+    content: "Wave Not Ready";
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 16px;
+    font-weight: 600;
+    color: #f44336;
+    z-index: 10;
+    white-space: nowrap;
 }

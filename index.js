@@ -317,6 +317,12 @@ window.targetingTurret = null;
     prerenderBackground();
     
     updateInfo();
+    
+    // Initialize wave button status
+    const waveButton = document.getElementById('startWaveButton');
+    if (waveButton) {
+        waveButton.setAttribute('data-wave-ready', 'true');
+    }
 
     document.getElementById('turretInfo').style.display = 'none';
     isPopupActive = false;

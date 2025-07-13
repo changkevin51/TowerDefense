@@ -186,25 +186,29 @@
           <div id="powerUpMenu" style="display: none;">
           </div>
           
-          <button id="startWaveButton" class="hoverButton" onclick="toggleAutoStart()" onmouseover="checkWave()">
-            Start Wave 
+          <button id="startWaveButton" class="hoverButton" onclick="toggleAutoStart()">
+            <span id="waveButtonText">Start Wave</span>
             <span class="autoStartToggle">Auto Start Toggle: False</span>
-            <span class="hoverText" id="waveText">Wave Ready</span>
           </button>
 
-          <button class="hoverButton" onclick="toggleSpeed()" onmouseover="checkSpeed()">
+          <button class="hoverButton" onclick="toggleSpeed()">
             Toggle Speed
-            <span class="hoverText" id="speedText">Current Speed: 1x</span>
+            <span class="button-subtext" id="speedText">Current Speed: 1x</span>
           </button>
-          <button class="hoverButton" onclick="changeTargetMode()" onmouseover="checkTargetMode()">
+          <button class="hoverButton" onclick="changeTargetMode()">
             Change Target Mode
-            <span class="hoverText" id="targetModeText">Mode: 0 (Closest)</span>
+            <span class="button-subtext" id="targetModeText">Select a turret</span>
           </button>
         </div>
         <div id="healthPopup" class="popupMessage">+ x Health</div>
         <div id="moneypopup" class="popupMessage">+ x $</div>
         <div id="bossWarningPopup" class="popupMessage">Boss Wave Incoming!</div>
         <div id="minionWarningPopup" class="popupMessage">Boss Spawning Minions!</div>
+        
+        <!-- Cancel Selection Overlay positioned within game menu -->
+        <div id="cancelSelectionOverlay" style="display: none;">
+          <div class="overlay-content">Click here to cancel turret selection</div>
+        </div>
       </div>
       <div id="difficultyScreen" class="difficulty-screen">
           <h1 class="title">SELECT DIFFICULTY</h1>
@@ -255,10 +259,6 @@
           <div class="help-text">Hover on a difficulty for more information</div>
       </div>
 
-      <!-- Cancel Selection Overlay -->
-    <div id="cancelSelectionOverlay" style="display: none;">
-      <div class="overlay-content">Click here to cancel turret selection</div>
-    </div>
   </div>
 
   <!-- <div id="leaderboardPrompt" class="popupMessage">

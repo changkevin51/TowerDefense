@@ -109,6 +109,11 @@ function updateInfo() {
     
     updatePowerUpCosts();
     
+    // Update button displays
+    checkSpeed();
+    checkTargetMode();
+    updateWaveButtonText();
+    
     const turret = getTurretBeingSelected();
     if (turret) {
         showSelectedTurretInfo(turret);
@@ -169,21 +174,23 @@ function updateWaveButtonText() {
     const autoStartText = document.querySelector('.autoStartToggle');
     autoStartText.textContent = `Auto Start Toggle: ${autoStart ? "True" : "False"}`;
 
-    const waveButton = document.querySelector('#waveText');
-    waveButton.textContent = wave.active ? "Wave Active" : "Wave Ready";
+    const waveButton = document.querySelector('#startWaveButton');
+    if (waveButton) {
+        waveButton.setAttribute('data-wave-ready', wave.active ? "false" : "true");
+    }
 }
 
 function checkTargetMode() {
     let turret = getTurretBeingSelected();
-    let text = "Targeting Mode: ";
+    let text = "";
     
     if (turret) {
-        if (turret.targetMode === 0) text += "Closest";
-        else if (turret.targetMode === 1) text += "Strongest";
-        else if (turret.targetMode === 2) text += "First";
-        else if (turret.targetMode === 3) text += "Last";
+        if (turret.targetMode === 0) text = "Closest";
+        else if (turret.targetMode === 1) text = "Strongest";
+        else if (turret.targetMode === 2) text = "First";
+        else if (turret.targetMode === 3) text = "Last";
     } else {
-        text += "None";
+        text = "Select a turret";
     }
 
     document.getElementById("targetModeText").textContent = text;
@@ -211,6 +218,8 @@ function showSelectedTurretInfo(turret) {
             window.isPlacingTarget = false;
             window.targetingTurret = null;
         }
+        // Update target mode display when no turret is selected
+        checkTargetMode();
         return;
     }
 
@@ -413,6 +422,9 @@ function showSelectedTurretInfo(turret) {
             targetButton.style.display = 'none';
         }
     }
+    
+    // Update target mode display when a turret is selected
+    checkTargetMode();
 }
 
 function updateTurretHoverInfo() {
@@ -480,8 +492,8 @@ function updateTurretHoverInfo() {
             </div>
         `;
         
-        turretHoverInfo.style.left = mouseX + 20 + 'px';
-        turretHoverInfo.style.top = mouseY - 100 + 'px';
+        turretHoverInfo.style.left = mouseX + 50 + 'px';
+        turretHoverInfo.style.top = mouseY - 150 + 'px';
         turretHoverInfo.style.display = 'block';
         
         hoveredTurret = mouseOverTurret;
@@ -991,13 +1003,11 @@ function getTurretTypeSize(type) {
 }
 
 function checkWave() {
-    var text = "";
-    if (wave.active == false && enemies.length == 0) {
-        text = "Wave Ready";
-    } else {
-        text = "Wave Not Ready";
+    const waveButton = document.getElementById("startWaveButton");
+    if (waveButton) {
+        const isReady = !wave.active && enemies.length === 0;
+        waveButton.setAttribute('data-wave-ready', isReady ? "true" : "false");
     }
-    document.getElementById("waveText").textContent = text;
 }
 
 function toggleAutoStart() {
