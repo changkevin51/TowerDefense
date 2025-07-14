@@ -376,45 +376,19 @@ function populatePowerUps() {
 
     container.appendChild(powerUpGrid);
 
-    const usageGuide = document.createElement("div");
-    usageGuide.className = "powerup-usage-guide";
-    usageGuide.innerHTML = `
-        <h2 class="section-header">🎮 How to Use Power-ups</h2>
-        <div class="usage-steps">
-            <div class="usage-step">
-                <div class="step-number">1</div>
-                <div class="step-content">
-                    <h4>Purchase</h4>
-                    <p>Click the "Buy Power-up" button in the game menu</p>
-                </div>
-            </div>
-            <div class="usage-step">
-                <div class="step-number">2</div>
-                <div class="step-content">
-                    <h4>Select</h4>
-                    <p>Choose the power-up you want from the shop</p>
-                </div>
-            </div>
-            <div class="usage-step">
-                <div class="step-number">3</div>
-                <div class="step-content">
-                    <h4>Activate</h4>
-                    <p>Click on the power-up to activate it instantly</p>
-                </div>
-            </div>
-        </div>
-        <div class="powerup-notes">
-            <h3>📋 Important Notes</h3>
-            <ul>
-                <li>Power-up costs increase with each wave</li>
-                <li>Only one of each type can be active at a time</li>
-                <li>Speed Boost affects all placed turrets</li>
-                <li>Health Reduction affects all enemies currently on the map</li>
-            </ul>
-        </div>
+    const notesSection = document.createElement("div");
+    notesSection.className = "powerup-notes";
+    notesSection.innerHTML = `
+        <h3>📋 Important Notes</h3>
+        <ul>
+            <li>Power-up costs increase with each wave</li>
+            <li>Only one of each type can be active at a time</li>
+            <li>Speed Boost affects all placed turrets</li>
+            <li>Health Reduction affects all enemies currently on the map</li>
+        </ul>
     `;
     
-    container.appendChild(usageGuide);
+    container.appendChild(notesSection);
 }
 
   document.addEventListener("DOMContentLoaded", () => {
