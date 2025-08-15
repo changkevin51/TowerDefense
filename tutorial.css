@@ -183,7 +183,6 @@
     to { transform: rotate(360deg); }
 }
 
-/* CARD CONTENT */
 .turret-card-header, .powerup-card-header {
     display: flex;
     align-items: center;
